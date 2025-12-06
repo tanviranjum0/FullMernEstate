@@ -1,0 +1,16 @@
+{
+  "name": "mern-estate",
+  "version": "1.2.2",
+  "main": "app.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "npm install --prefix back && npm install --prefix front && npm run build --prefix front",
+    "start": "npm run start --prefix back"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
