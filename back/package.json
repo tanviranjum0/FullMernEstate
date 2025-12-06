@@ -2,14 +2,14 @@
   "name": "mern-estate-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "engines": {
     "node": ">=22.0.0"
   },
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "watch": "node --watch app.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "watch": "node --watch index.js"
   },
   "keywords": [],
   "author": "",
