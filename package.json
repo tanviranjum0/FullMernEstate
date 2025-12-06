@@ -1,9 +1,9 @@
 {
-  "name": "mern-estate",
+  "name": "mern-estate-front",
   "version": "1.2.2",
   "main": "app.js",
   "engines": {
-    "node": ">=22.0.0"
+    "node": "22.20.0"
   },
   "scripts": {
     "build": "npm install --prefix back && npm install --prefix front && npm run build --prefix front",
