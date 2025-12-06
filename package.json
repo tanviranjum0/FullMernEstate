@@ -1,7 +1,7 @@
 {
   "name": "mern-estate-front",
   "version": "1.2.2",
-  "main": "app.js",
+  "main": "index.js",
   "engines": {
     "node": "22.20.0"
   },
