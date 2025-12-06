@@ -112,7 +112,7 @@ export default function CreateListing() {
 
     async function createListing() {
       const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/listing/create`,
+        `/api/listing/create`,
         {
           method: "POST",
           mode: "cors",

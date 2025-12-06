@@ -30,7 +30,7 @@ export default function SignUp() {
       return setError("Please provide a valid email address")
     }
 
-    const isExistingUser = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/${email}`)
+    const isExistingUser = await fetch(`/api/user/${email}`)
     const existed = await isExistingUser.json()
     if (!existed.data) {
       setLoading(false)
@@ -49,7 +49,7 @@ export default function SignUp() {
     const ImageData = await imageRes.json();
 
     const res = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,
+      `/api/auth/signup`,
       {
         method: "POST",
         credentials: "include",

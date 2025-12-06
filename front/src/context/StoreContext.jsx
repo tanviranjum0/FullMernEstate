@@ -13,7 +13,7 @@ const ContextContainer = ({ children }) => {
       setIsAlreadyLoggedIn(false)
       return
     }
-    const data = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/check-login`, {
+    const data = await fetch(`/api/auth/check-login`, {
       method: "GET",
       mode: "cors",
       credentials: "include",
@@ -27,10 +27,10 @@ const ContextContainer = ({ children }) => {
   }
   const fetchInitialListings = async () => {
     const sale = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/api/listing/get?limit=9&type=sale`
+      `/api/listing/get?limit=9&type=sale`
     );
     const rent = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/api/listing/get?limit=9&type=rent`
+      `/api/listing/get?limit=9&type=rent`
     );
     const data = await sale.json();
     const data2 = await rent.json();

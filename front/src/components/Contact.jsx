@@ -12,7 +12,7 @@ export default function Contact({ listing }) {
     const fetchLandlord = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/user/${listing.userRef}`
+          `/api/user/${listing.userRef}`
         );
         const data = await res.json();
         setLandlord(data);

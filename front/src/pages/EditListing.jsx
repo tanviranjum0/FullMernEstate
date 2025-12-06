@@ -81,7 +81,7 @@ const EditListing = () => {
         }
         if (f.files.length != 0) {
             const images = [...f.files];
-            await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/listing/delete-image/${listing._id}`, {
+            await fetch(`/api/listing/delete-image/${listing._id}`, {
                 method: "DELETE",
                 mode: "cors",
                 credentials: "include",
@@ -111,7 +111,7 @@ const EditListing = () => {
 
         async function updateListing() {
             const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/api/listing/update/${listing._id}`,
+                `/api/listing/update/${listing._id}`,
                 {
                     method: "POST",
                     mode: "cors",

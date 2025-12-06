@@ -18,7 +18,7 @@ const Profile = () => {
     useEffect(() => {
         if (!user) return window.location.href = "/"
         async function getListings() {
-            const listings = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/listing/user-listings/${user.userObject.id}`, {
+            const listings = await fetch(`/api/listing/user-listings/${user.userObject.id}`, {
                 method: "GET",
                 mode: "cors",
                 credentials: "include",
@@ -37,7 +37,7 @@ const Profile = () => {
         const urlParams = new URLSearchParams(location.search);
         urlParams.set("startIndex", userListings.progress);
         const searchQuery = urlParams.toString();
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/listing/user-listings/${user.userObject.id}?${searchQuery}`, {
+        const res = await fetch(`/api/listing/user-listings/${user.userObject.id}?${searchQuery}`, {
             method: "GET",
             mode: "cors",
             credentials: "include",
@@ -60,7 +60,7 @@ const Profile = () => {
         document
             .getElementById("confirmLogOutBox")
             .classList.toggle("hidden");
-        const logOut = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signout`, {
+        const logOut = await fetch(`/api/auth/signout`, {
             mode: "cors",
             credentials: "include"
         })
@@ -76,7 +76,7 @@ const Profile = () => {
         document
             .getElementById("confirmDeleteAccountBox")
             .classList.toggle("hidden");
-        const data = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/delete/${user.userObject.id}`, {
+        const data = await fetch(`/api/user/delete/${user.userObject.id}`, {
             method: "DELETE",
             mode: "cors",
             credentials: "include"
@@ -94,7 +94,7 @@ const Profile = () => {
         setListingDeleteLoading(true)
         const listingId = JSON.parse(localStorage.getItem("ListingToBeDeleted"));
 
-        const data = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/listing/delete/${listingId}`, {
+        const data = await fetch(`/api/listing/delete/${listingId}`, {
             method: "DELETE",
             mode: "cors",
             credentials: "include"

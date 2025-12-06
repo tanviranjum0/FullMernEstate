@@ -26,7 +26,7 @@ const Login = () => {
     }
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        `/api/auth/login`,
         {
           method: "POST",
           credentials: "include",

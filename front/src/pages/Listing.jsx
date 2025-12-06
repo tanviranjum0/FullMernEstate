@@ -22,7 +22,7 @@ function Listing() {
   useEffect(() => {
     const fetchListing = async () => {
       setLoading(true)
-      const listing = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/listing/get/${params.id}`, {
+      const listing = await fetch(`/api/listing/get/${params.id}`, {
         mode: "cors",
         method: "GET",
         credentials: "include"
