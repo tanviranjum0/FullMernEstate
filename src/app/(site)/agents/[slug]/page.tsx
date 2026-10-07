@@ -130,7 +130,7 @@ async function AgentProfile({ params }: { params: PageProps<"/agents/[slug]">["p
             ) : null}
           </div>
           <aside aria-label={`Contact ${agent.name}`}>
-            <div className="bg-paper p-6 shadow-hairline sm:p-8 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
+            <div className="bg-paper p-6 shadow-hairline sm:p-8 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:max-h-[calc(100dvh-var(--header-h)-3rem)] lg:overflow-y-auto lg:overscroll-contain">
               <AgentContactCard agent={agent} eyebrow="Get in touch" />
               <div className="mt-8 border-t border-sand-200 pt-8">
                 <h2 className="font-display text-heading-3 text-ink-900">Send {agent.name.split(" ")[0]} a message</h2>

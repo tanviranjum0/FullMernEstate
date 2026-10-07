@@ -34,10 +34,11 @@ export const inquirySchema = z
       "Please choose a valid date",
     ),
     viewingTimeSlot: z.enum(VIEWING_TIME_SLOTS).optional().or(z.literal("").transform(() => undefined)),
-    consent: z
-      .union([z.literal("on"), z.literal(true), z.literal("true")])
-      .optional()
-      .refine((value) => value !== undefined, "Please confirm we may contact you about this enquiry"),
+    // A missing checkbox is absent from FormData, so normalise to a boolean before requiring `true`.
+    consent: z.preprocess(
+      (value) => value === "on" || value === true || value === "true",
+      z.literal(true, { error: "Please confirm we may contact you about this enquiry" }),
+    ),
     website: z.string().max(0, "Invalid submission").optional().or(z.literal("")),
     sourcePath: optionalText(500),
   })

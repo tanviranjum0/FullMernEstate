@@ -15,6 +15,7 @@ import {
   type InquiryType,
 } from "@/config/domain";
 import { fieldErrorsFrom } from "@/lib/actions";
+import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils/cn";
 import { inquirySchema, MAX_VIEWING_DAYS_AHEAD } from "@/lib/validation/inquiry";
 import { submitInquiryAction, type InquiryActionState } from "@/server/actions/inquiries";
@@ -48,6 +49,10 @@ export function InquiryForm({
   const id = useId();
   const pathname = usePathname();
   const formRef = useRef<HTMLFormElement>(null);
+  // Listing pages are statically cached, so signed-in details are filled in on the client.
+  const { data: session } = authClient.useSession();
+  const prefillName = defaultName || session?.user.name || "";
+  const prefillEmail = defaultEmail || session?.user.email || "";
   const [type, setType] = useState<InquiryType>(defaultType ?? types[0] ?? "general");
   const [contact, setContact] = useState<(typeof CONTACT_METHODS)[number]>("email");
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
@@ -141,15 +146,24 @@ export function InquiryForm({
 
       <div className={cn("grid gap-5", !compact && "sm:grid-cols-2")}>
         <Field id={fid("name")} label="Full name" error={errors.name}>
-          <Input {...fieldA11y(fid("name"), errors.name)} name="name" autoComplete="name" defaultValue={defaultName} required maxLength={120} />
+          <Input
+            {...fieldA11y(fid("name"), errors.name)}
+            key={`name-${prefillName}`}
+            name="name"
+            autoComplete="name"
+            defaultValue={prefillName}
+            required
+            maxLength={120}
+          />
         </Field>
         <Field id={fid("email")} label="Email" error={errors.email}>
           <Input
             {...fieldA11y(fid("email"), errors.email)}
+            key={`email-${prefillEmail}`}
             name="email"
             type="email"
             autoComplete="email"
-            defaultValue={defaultEmail}
+            defaultValue={prefillEmail}
             required
             maxLength={254}
           />

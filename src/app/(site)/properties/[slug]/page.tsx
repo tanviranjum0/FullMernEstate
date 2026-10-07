@@ -351,7 +351,7 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
 
         <aside id="enquire" className="scroll-mt-28 lg:pt-1" aria-label="Enquire about this residence">
           <div className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
-            <div className="bg-paper p-6 shadow-hairline sm:p-8">
+            <div className="bg-paper p-6 shadow-hairline sm:p-8 lg:max-h-[calc(100dvh-var(--header-h)-3rem)] lg:overflow-y-auto lg:overscroll-contain">
               {agent ? (
                 <div className="mb-8 border-b border-sand-200 pb-8">
                   <AgentContactCard agent={agent} propertyId={property.id} />
