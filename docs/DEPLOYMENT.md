@@ -3,9 +3,44 @@
 Target: **Vercel** (Fluid compute, Node.js runtime) + **MongoDB Atlas** (via the Vercel
 Marketplace) + **Vercel Blob** for media. Email is optional (**Resend**).
 
-> Status: not yet deployed. Creating the Atlas integration (which means accepting its terms),
-> the Blob store and the domain needs the account owner's approval. These steps are written so
-> they can be run as soon as that is given.
+## Current production setup (deployed 2026-10-08)
+
+| Item                               | Value                                                                                                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| URL                                | https://estate.tanvirdev.site                                                                                                                           |
+| Vercel project                     | `estate` (scope `tanviranjum010`), deployed with the CLI from a working copy; not connected to Git                                                      |
+| Functions region                   | `bom1` (Mumbai), pinned in `vercel.json` next to the database                                                                                           |
+| Database                           | MongoDB Atlas `cluster0` (AWS `ap-south-1`), database `tanvirdev_property`                                                                              |
+| Media                              | Vercel Blob store `estate-media` (public, `bom1`), connected to all environments                                                                        |
+| Environment variables (Production) | `MONGODB_URI`, `BETTER_AUTH_SECRET` (secrets), `NEXT_PUBLIC_SITE_URL`, `BETTER_AUTH_URL`, `BLOB_READ_WRITE_TOKEN`                                       |
+| DNS (Cloudflare)                   | `CNAME estate → cname.vercel-dns.com` (DNS only) and `TXT _vercel` ownership verification                                                               |
+| Content                            | Labelled demonstration catalogue (site-wide "sample data" announcement)                                                                                 |
+| Email                              | Not configured, so password reset is unavailable                                                                                                        |
+| Web Analytics / Speed Insights     | Not enabled. Web Analytics is free but must be confirmed interactively (`vercel project web-analytics enable estate`). Speed Insights is a paid add-on. |
+
+To redeploy after changes, run this from the repository root (linked via `.vercel/project.json`):
+
+```bash
+vercel deploy --prod
+```
+
+`.vercelignore` keeps `.env*`, credential files and `.data/` out of the upload.
+
+To run a script against production, use the git-ignored `.env.deploy-production` (never loaded by
+Next.js):
+
+```bash
+npx tsx --env-file=.env.deploy-production scripts/sync-indexes.ts
+```
+
+### Removing the demonstration content
+
+1. In `/admin`, delete the sample listings, advisors and articles.
+2. Clear the announcement in Site settings.
+3. Keep the locations if they match the areas you serve, and edit their guides.
+
+The sections below describe how this setup was created, for reference or for a fresh
+environment.
 
 ## 1. Decisions to make first
 

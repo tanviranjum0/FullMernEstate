@@ -123,5 +123,16 @@ data:
   description arrives after `</head>`. Crawlers that don't execute JavaScript (Bing, social
   previews) get it in `<head>`. See [SEO.md](SEO.md).
 
-These are lab numbers on a developer machine. Field data (Vercel Speed Insights) is only
-available once the site is deployed.
+These are lab numbers on a developer machine.
+
+Against the live site (https://estate.tanvirdev.site, same Lighthouse settings, 2026-10-08):
+
+| Page                               | Performance | Accessibility | Best practices | SEO |
+| ---------------------------------- | ----------- | ------------- | -------------- | --- |
+| `/`                                | 67          | 100           | 100            | 100 |
+| `/properties`                      | 65          | 100           | 100            | 91  |
+| `/properties/banani-garden-duplex` | 64          | 100           | 100            | 100 |
+
+Server response time was 40 ms (served from Vercel's cache in `bom1`). Unthrottled, the
+homepage's largest image painted about 1.1 s after navigation; the simulated mobile LCP was
+5.2–6.1 s. Field data needs Vercel Speed Insights, a paid add-on that is not enabled.

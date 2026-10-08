@@ -142,9 +142,9 @@ tests/            unit, integration, e2e (+ setup)
   - typecheck, lint and format check are clean
   - 84 unit and integration tests pass
   - 23 Playwright journeys pass against a production build
-- **Not deployed yet.** Provisioning MongoDB Atlas and Vercel Blob, and connecting the domain,
-  need the account owner's approval; [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) has the exact
-  steps.
+- **Live at https://estate.tanvirdev.site** (Vercel `bom1`, MongoDB Atlas Mumbai, Vercel Blob)
+  with the labelled demonstration catalogue. The setup and redeploy steps are in
+  [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 Known gaps and backlog:
 
