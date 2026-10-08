@@ -24,12 +24,19 @@ export function ArticleCard({
         href={`/insights/${article.slug}`}
         tabIndex={-1}
         aria-hidden
-        className={cn("relative block overflow-hidden bg-sand-100", size === "large" ? "aspect-[16/10]" : "aspect-[3/2]")}
+        className={cn(
+          "relative block overflow-hidden bg-sand-100",
+          size === "large" ? "aspect-[16/10]" : "aspect-[3/2]",
+        )}
       >
         <ResponsiveImage
           image={article.coverImage}
           alt=""
-          sizes={size === "large" ? "(min-width: 1024px) 55vw, 92vw" : "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"}
+          sizes={
+            size === "large"
+              ? "(min-width: 1024px) 55vw, 92vw"
+              : "(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+          }
           className="transition-transform duration-[1400ms] ease-luxe group-hover:scale-[1.04]"
         />
       </Link>
@@ -45,12 +52,17 @@ export function ArticleCard({
             size === "large" ? "text-heading-2" : "text-[1.55rem]",
           )}
         >
-          <Link href={`/insights/${article.slug}`} className="transition-colors hover:text-harbour-700">
+          <Link
+            href={`/insights/${article.slug}`}
+            className="transition-colors hover:text-harbour-700"
+          >
             {article.title}
           </Link>
         </Heading>
         {article.excerpt ? (
-          <p className={cn("mt-3 text-stone-600", size === "large" ? "text-lead" : "line-clamp-3")}>{article.excerpt}</p>
+          <p className={cn("mt-3 text-stone-600", size === "large" ? "text-lead" : "line-clamp-3")}>
+            {article.excerpt}
+          </p>
         ) : null}
         <p className="mt-4 text-sm text-stone-600">
           {article.authorName}

@@ -42,7 +42,12 @@ async function AgentEditor({ params }: { params: PageProps<"/admin/agents/[id]">
         description={isNew ? undefined : `/agents/${agent!.slug}`}
         back={{ href: "/admin/agents", label: "Advisors" }}
       />
-      <AgentForm key={id} id={isNew ? null : id} initial={agent?.input ?? EMPTY_AGENT} options={options} />
+      <AgentForm
+        key={id}
+        id={isNew ? null : id}
+        initial={agent?.input ?? EMPTY_AGENT}
+        options={options}
+      />
     </>
   );
 }

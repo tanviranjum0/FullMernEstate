@@ -21,7 +21,9 @@ async function cardsInOrder(ids: Types.ObjectId[]): Promise<PropertyCard[]> {
     PROPERTY_CARD_STAGE as unknown as PipelineStage,
   ]);
   const byId = new Map(rows.map((row) => [row._id.toString(), toPropertyCard(row)]));
-  return ids.map((id) => byId.get(id.toString())).filter((card): card is PropertyCard => Boolean(card));
+  return ids
+    .map((id) => byId.get(id.toString()))
+    .filter((card): card is PropertyCard => Boolean(card));
 }
 
 export async function getSavedProperties(userId: string, limit = 100): Promise<PropertyCard[]> {
@@ -50,9 +52,14 @@ export interface SavedSearchSummary {
   createdAt: string;
 }
 
-export async function getSavedSearches(userId: string, names: Record<string, string>): Promise<SavedSearchSummary[]> {
+export async function getSavedSearches(
+  userId: string,
+  names: Record<string, string>,
+): Promise<SavedSearchSummary[]> {
   await connectToDatabase();
-  const rows = await SavedSearchModel.find({ user: new Types.ObjectId(userId) }).sort({ createdAt: -1 }).lean();
+  const rows = await SavedSearchModel.find({ user: new Types.ObjectId(userId) })
+    .sort({ createdAt: -1 })
+    .lean();
   return rows.map((row) => ({
     id: row._id.toString(),
     name: row.name,

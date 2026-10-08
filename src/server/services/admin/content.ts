@@ -4,7 +4,12 @@ import { Types } from "mongoose";
 import type { CurrentUser } from "@/lib/auth/session";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { readingTimeMinutes } from "@/lib/format";
-import type { AgentInput, ArticleInput, LocationInput, SiteSettingsInput } from "@/lib/validation/admin";
+import type {
+  AgentInput,
+  ArticleInput,
+  LocationInput,
+  SiteSettingsInput,
+} from "@/lib/validation/admin";
 import { cacheTags } from "@/server/cache-tags";
 import { AgentModel, type AgentRecord } from "@/server/models/agent";
 import { ArticleModel, type ArticleRecord } from "@/server/models/article";
@@ -26,17 +31,32 @@ export async function saveAgent(actor: CurrentUser, id: string | null, input: Ag
 
   let userId = existing?.userId ?? "";
   if (input.userEmail) {
-    const user = await UserModel.findOne({ email: input.userEmail.toLowerCase() }, { _id: 1 }).lean();
-    if (!user) throw new AdminActionError("No account exists with that email. Ask the advisor to register first.", "validation", "userEmail");
+    const user = await UserModel.findOne(
+      { email: input.userEmail.toLowerCase() },
+      { _id: 1 },
+    ).lean();
+    if (!user)
+      throw new AdminActionError(
+        "No account exists with that email. Ask the advisor to register first.",
+        "validation",
+        "userEmail",
+      );
     userId = user._id.toString();
     const linked = await AgentModel.exists(id ? { userId, _id: { $ne: id } } : { userId });
-    if (linked) throw new AdminActionError("That account is already linked to another advisor.", "conflict", "userEmail");
+    if (linked)
+      throw new AdminActionError(
+        "That account is already linked to another advisor.",
+        "conflict",
+        "userEmail",
+      );
     await UserModel.updateOne({ _id: user._id, role: "user" }, { $set: { role: "agent" } });
   } else if (!input.userEmail && existing?.userId) {
     userId = "";
   }
 
-  const slug = await uniqueSlug(AgentModel, input.slug || input.name, { excludeId: id ?? undefined });
+  const slug = await uniqueSlug(AgentModel, input.slug || input.name, {
+    excludeId: id ?? undefined,
+  });
   const document = {
     slug,
     name: input.name,
@@ -56,10 +76,19 @@ export async function saveAgent(actor: CurrentUser, id: string | null, input: Ag
     seo: input.seo,
   };
   const saved = existing
-    ? (await AgentModel.findByIdAndUpdate(id, replaceFields(document), { returnDocument: "after", lean: true }))!
+    ? (await AgentModel.findByIdAndUpdate(id, replaceFields(document), {
+        returnDocument: "after",
+        lean: true,
+      }))!
     : (await AgentModel.create(document)).toObject();
 
-  await recordAudit(actor, existing ? "agent.updated" : "agent.created", "agent", saved._id.toString(), `${existing ? "Updated" : "Created"} advisor ${saved.name}${input.active ? "" : " (inactive)"}`);
+  await recordAudit(
+    actor,
+    existing ? "agent.updated" : "agent.created",
+    "agent",
+    saved._id.toString(),
+    `${existing ? "Updated" : "Created"} advisor ${saved.name}${input.active ? "" : " (inactive)"}`,
+  );
   updateTag(cacheTags.agents);
   updateTag(cacheTags.agent(slug));
   if (existing?.slug && existing.slug !== slug) updateTag(cacheTags.agent(existing.slug));
@@ -80,13 +109,24 @@ export async function saveLocation(actor: CurrentUser, id: string | null, input:
   if (parentSlug && !(await LocationModel.exists({ kind: "city", slug: parentSlug }))) {
     throw new AdminActionError("Choose an existing city", "validation", "parentSlug");
   }
-  const slug = await uniqueSlug(LocationModel, input.slug || input.name, { excludeId: id ?? undefined, scope: { parentSlug } });
+  const slug = await uniqueSlug(LocationModel, input.slug || input.name, {
+    excludeId: id ?? undefined,
+    scope: { parentSlug },
+  });
   if (existing && existing.slug !== slug) {
     const inUse =
       existing.kind === "city"
         ? await PropertyModel.exists({ "location.citySlug": existing.slug })
-        : await PropertyModel.exists({ "location.neighbourhoodSlug": existing.slug, "location.citySlug": existing.parentSlug });
-    if (inUse) throw new AdminActionError("Listings use this location, so its URL slug cannot change.", "conflict", "slug");
+        : await PropertyModel.exists({
+            "location.neighbourhoodSlug": existing.slug,
+            "location.citySlug": existing.parentSlug,
+          });
+    if (inUse)
+      throw new AdminActionError(
+        "Listings use this location, so its URL slug cannot change.",
+        "conflict",
+        "slug",
+      );
   }
 
   const document = {
@@ -103,25 +143,40 @@ export async function saveLocation(actor: CurrentUser, id: string | null, input:
     nearby: input.nearby.filter(Boolean),
     marketNotes: input.marketNotes,
     faqs: input.faqs,
-    center: input.lat !== undefined && input.lng !== undefined ? { lat: input.lat, lng: input.lng } : undefined,
+    center:
+      input.lat !== undefined && input.lng !== undefined
+        ? { lat: input.lat, lng: input.lng }
+        : undefined,
     zoom: input.zoom,
     published: input.published,
     sortOrder: input.sortOrder,
     seo: input.seo,
   };
   const saved = existing
-    ? (await LocationModel.findByIdAndUpdate(id, replaceFields(document), { returnDocument: "after", lean: true }))!
+    ? (await LocationModel.findByIdAndUpdate(id, replaceFields(document), {
+        returnDocument: "after",
+        lean: true,
+      }))!
     : (await LocationModel.create(document)).toObject();
 
   // Keep denormalised names on listings in sync when a location is renamed.
   if (existing && existing.name !== input.name) {
     const field = existing.kind === "city" ? "location.cityName" : "location.neighbourhoodName";
-    const match = existing.kind === "city" ? { "location.citySlug": slug } : { "location.citySlug": parentSlug, "location.neighbourhoodSlug": slug };
+    const match =
+      existing.kind === "city"
+        ? { "location.citySlug": slug }
+        : { "location.citySlug": parentSlug, "location.neighbourhoodSlug": slug };
     await PropertyModel.updateMany(match, { $set: { [field]: input.name } });
     updateTag(cacheTags.properties);
   }
 
-  await recordAudit(actor, existing ? "location.updated" : "location.created", "location", saved._id.toString(), `${existing ? "Updated" : "Created"} ${input.kind} ${input.name}`);
+  await recordAudit(
+    actor,
+    existing ? "location.updated" : "location.created",
+    "location",
+    saved._id.toString(),
+    `${existing ? "Updated" : "Created"} ${input.kind} ${input.name}`,
+  );
   updateTag(cacheTags.locations);
   updateTag(cacheTags.location(parentSlug ? `${parentSlug}/${slug}` : slug));
   return { id: saved._id.toString(), slug };
@@ -138,7 +193,9 @@ export async function saveArticle(actor: CurrentUser, id: string | null, input: 
   if (input.authorId && !(await AgentModel.exists({ _id: input.authorId }))) {
     throw new AdminActionError("Choose a valid author", "validation", "authorId");
   }
-  const slug = await uniqueSlug(ArticleModel, input.slug || input.title, { excludeId: id ?? undefined });
+  const slug = await uniqueSlug(ArticleModel, input.slug || input.title, {
+    excludeId: id ?? undefined,
+  });
   const document = {
     slug,
     title: input.title,
@@ -153,15 +210,25 @@ export async function saveArticle(actor: CurrentUser, id: string | null, input: 
     status: input.status,
     featured: input.featured,
     readingMinutes: readingTimeMinutes(input.body),
-    publishedAt: input.status === "published" ? (existing?.publishedAt ?? new Date()) : existing?.publishedAt,
+    publishedAt:
+      input.status === "published" ? (existing?.publishedAt ?? new Date()) : existing?.publishedAt,
     seo: input.seo,
     updatedBy: actor.id,
   };
   const saved = existing
-    ? (await ArticleModel.findByIdAndUpdate(id, replaceFields(document), { returnDocument: "after", lean: true }))!
+    ? (await ArticleModel.findByIdAndUpdate(id, replaceFields(document), {
+        returnDocument: "after",
+        lean: true,
+      }))!
     : (await ArticleModel.create({ ...document, createdBy: actor.id })).toObject();
 
-  await recordAudit(actor, existing ? "article.updated" : "article.created", "article", saved._id.toString(), `${existing ? "Updated" : "Created"} “${input.title}” (${input.status})`);
+  await recordAudit(
+    actor,
+    existing ? "article.updated" : "article.created",
+    "article",
+    saved._id.toString(),
+    `${existing ? "Updated" : "Created"} “${input.title}” (${input.status})`,
+  );
   updateTag(cacheTags.articles);
   updateTag(cacheTags.article(slug));
   if (existing?.slug && existing.slug !== slug) updateTag(cacheTags.article(existing.slug));
@@ -194,7 +261,9 @@ export async function saveSiteSettings(actor: CurrentUser, input: SiteSettingsIn
     announcement: input.announcement,
     updatedBy: actor.id,
   };
-  await SiteSettingsModel.findOneAndUpdate({ key: "global" }, replaceFields(document), { upsert: true });
+  await SiteSettingsModel.findOneAndUpdate({ key: "global" }, replaceFields(document), {
+    upsert: true,
+  });
   await recordAudit(actor, "settings.updated", "settings", "global", "Updated site settings");
   updateTag(cacheTags.settings);
 }

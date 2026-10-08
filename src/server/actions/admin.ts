@@ -16,9 +16,19 @@ import {
   siteSettingsInput,
   userUpdateInput,
 } from "@/lib/validation/admin";
-import { deleteArticle, saveAgent, saveArticle, saveLocation, saveSiteSettings } from "@/server/services/admin/content";
+import {
+  deleteArticle,
+  saveAgent,
+  saveArticle,
+  saveLocation,
+  saveSiteSettings,
+} from "@/server/services/admin/content";
 import { updateInquiry, updateUser } from "@/server/services/admin/people";
-import { deleteProperty, saveProperty, setPropertyStatus } from "@/server/services/admin/properties";
+import {
+  deleteProperty,
+  saveProperty,
+  setPropertyStatus,
+} from "@/server/services/admin/properties";
 import { AdminActionError } from "@/server/services/admin/shared";
 
 type Guarded<T> = (actor: CurrentUser) => Promise<ActionResult<T>>;
@@ -35,20 +45,36 @@ async function guarded<T>(permission: Permission, run: Guarded<T>): Promise<Acti
     return await run(auth.user);
   } catch (error) {
     if (error instanceof AdminActionError) {
-      return actionError(error.message, error.code, error.field ? { [error.field]: error.message } : undefined);
+      return actionError(
+        error.message,
+        error.code,
+        error.field ? { [error.field]: error.message } : undefined,
+      );
     }
     if ((error as { code?: number }).code === 11000) {
-      return actionError("Something with that name or URL already exists.", "conflict", { slug: "Already in use" });
+      return actionError("Something with that name or URL already exists.", "conflict", {
+        slug: "Already in use",
+      });
     }
     console.error("[admin] action failed", { error: (error as Error).message });
     return actionError("The change could not be saved. Please try again.");
   }
 }
 
-function parse<S extends z.ZodType>(schema: S, input: unknown): { ok: true; data: z.output<S> } | { ok: false; result: ActionResult<never> } {
+function parse<S extends z.ZodType>(
+  schema: S,
+  input: unknown,
+): { ok: true; data: z.output<S> } | { ok: false; result: ActionResult<never> } {
   const parsed = schema.safeParse(input);
   if (parsed.success) return { ok: true, data: parsed.data };
-  return { ok: false, result: actionError("Please correct the highlighted fields.", "validation", fieldErrorsFrom(parsed.error)) };
+  return {
+    ok: false,
+    result: actionError(
+      "Please correct the highlighted fields.",
+      "validation",
+      fieldErrorsFrom(parsed.error),
+    ),
+  };
 }
 
 const validId = (id: unknown): id is string => typeof id === "string" && Types.ObjectId.isValid(id);
@@ -66,9 +92,13 @@ export async function savePropertyAction(id: string | null, input: unknown) {
   });
 }
 
-export async function setPropertyStatusAction(id: string, status: "draft" | "published" | "archived") {
+export async function setPropertyStatusAction(
+  id: string,
+  status: "draft" | "published" | "archived",
+) {
   return guarded<undefined>("admin:access", async (actor) => {
-    if (!validId(id) || !["draft", "published", "archived"].includes(status)) return actionError("Invalid request.", "validation");
+    if (!validId(id) || !["draft", "published", "archived"].includes(status))
+      return actionError("Invalid request.", "validation");
     await setPropertyStatus(actor, id, status);
     revalidatePath("/admin/properties");
     return { ok: true, data: undefined };
@@ -128,7 +158,8 @@ export async function deleteArticleAction(id: string) {
 
 export async function previewMarkdownAction(markdown: unknown) {
   return guarded<{ html: string }>("admin:access", async () => {
-    if (typeof markdown !== "string" || markdown.length > 60_000) return actionError("Invalid content.", "validation");
+    if (typeof markdown !== "string" || markdown.length > 60_000)
+      return actionError("Invalid content.", "validation");
     return { ok: true, data: { html: renderMarkdown(markdown) } };
   });
 }

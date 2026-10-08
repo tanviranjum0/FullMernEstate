@@ -11,7 +11,15 @@ const noopSubscribe = () => () => undefined;
 const itemClass =
   "flex w-full cursor-pointer items-center gap-3 rounded-xs px-3 py-2.5 text-sm text-ink-800 outline-none data-[highlighted]:bg-sand-100";
 
-export function ShareButton({ url, title, propertyId }: { url: string; title: string; propertyId: string }) {
+export function ShareButton({
+  url,
+  title,
+  propertyId,
+}: {
+  url: string;
+  title: string;
+  propertyId: string;
+}) {
   const { notify } = useToast();
   const [copied, setCopied] = useState(false);
   const canNativeShare = useSyncExternalStore(
@@ -59,7 +67,11 @@ export function ShareButton({ url, title, propertyId }: { url: string; title: st
               </Menu.Item>
             ) : null}
             <Menu.Item className={itemClass} onClick={copy} closeOnClick={false}>
-              {copied ? <Check strokeWidth={1.5} className="size-4" /> : <Link2 strokeWidth={1.5} className="size-4" />}
+              {copied ? (
+                <Check strokeWidth={1.5} className="size-4" />
+              ) : (
+                <Link2 strokeWidth={1.5} className="size-4" />
+              )}
               {copied ? "Copied" : "Copy link"}
             </Menu.Item>
             <Menu.Item
@@ -71,10 +83,19 @@ export function ShareButton({ url, title, propertyId }: { url: string; title: st
             </Menu.Item>
             <Menu.Item
               className={itemClass}
-              render={<a href={`https://wa.me/?text=${text}%20${encoded}`} target="_blank" rel="noopener noreferrer" />}
+              render={
+                <a
+                  href={`https://wa.me/?text=${text}%20${encoded}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
               onClick={() => track("share", propertyId)}
             >
-              <span aria-hidden className="grid size-4 place-items-center text-[0.6rem] font-bold">W</span> WhatsApp
+              <span aria-hidden className="grid size-4 place-items-center text-[0.6rem] font-bold">
+                W
+              </span>{" "}
+              WhatsApp
             </Menu.Item>
             <Menu.Item
               className={itemClass}
@@ -87,7 +108,10 @@ export function ShareButton({ url, title, propertyId }: { url: string; title: st
               }
               onClick={() => track("share", propertyId)}
             >
-              <span aria-hidden className="grid size-4 place-items-center text-[0.6rem] font-bold">in</span> LinkedIn
+              <span aria-hidden className="grid size-4 place-items-center text-[0.6rem] font-bold">
+                in
+              </span>{" "}
+              LinkedIn
             </Menu.Item>
           </Menu.Popup>
         </Menu.Positioner>

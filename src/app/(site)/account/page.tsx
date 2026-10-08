@@ -26,12 +26,16 @@ async function Overview() {
   ];
   return (
     <>
-      <h1 className="font-display text-heading-1 text-ink-900">Welcome, {user.name.split(" ")[0]}</h1>
+      <h1 className="font-display text-heading-1 text-ink-900">
+        Welcome, {user.name.split(" ")[0]}
+      </h1>
       <ul className="mt-10 grid gap-px border border-sand-200 bg-sand-200 sm:grid-cols-3">
         {stats.map((stat) => (
           <li key={stat.label} className="bg-ivory">
             <Link href={stat.href} className="block p-6 transition-colors hover:bg-paper">
-              <span className="font-display text-[2.6rem] leading-none text-ink-900 tabular">{stat.value}</span>
+              <span className="tabular font-display text-[2.6rem] leading-none text-ink-900">
+                {stat.value}
+              </span>
               <span className="mt-2 block text-sm text-stone-600">{stat.label}</span>
             </Link>
           </li>
@@ -43,7 +47,10 @@ async function Overview() {
           <h2 id="recent-account" className="font-display text-heading-3 text-ink-900">
             Recently viewed
           </h2>
-          <Link href="/properties" className="text-sm text-stone-600 underline underline-offset-4 hover:text-ink-900">
+          <Link
+            href="/properties"
+            className="text-sm text-stone-600 underline underline-offset-4 hover:text-ink-900"
+          >
             Continue browsing
           </Link>
         </div>
@@ -65,18 +72,27 @@ async function Overview() {
           <h2 id="inquiries-account" className="font-display text-heading-3 text-ink-900">
             Latest enquiries
           </h2>
-          <Link href="/account/enquiries" className="text-sm text-stone-600 underline underline-offset-4 hover:text-ink-900">
+          <Link
+            href="/account/enquiries"
+            className="text-sm text-stone-600 underline underline-offset-4 hover:text-ink-900"
+          >
             View all
           </Link>
         </div>
         {inquiries.length ? (
           <ul className="mt-6 divide-y divide-sand-200 border-y border-sand-200">
             {inquiries.map((inquiry) => (
-              <li key={inquiry.id} className="flex flex-wrap items-center justify-between gap-3 py-4">
+              <li
+                key={inquiry.id}
+                className="flex flex-wrap items-center justify-between gap-3 py-4"
+              >
                 <div>
-                  <p className="font-medium text-ink-900">{inquiry.propertyTitle || INQUIRY_TYPE_LABELS[inquiry.type]}</p>
+                  <p className="font-medium text-ink-900">
+                    {inquiry.propertyTitle || INQUIRY_TYPE_LABELS[inquiry.type]}
+                  </p>
                   <p className="text-sm text-stone-600">
-                    {INQUIRY_TYPE_LABELS[inquiry.type]} · {formatDate(inquiry.createdAt)} · Ref {inquiry.reference}
+                    {INQUIRY_TYPE_LABELS[inquiry.type]} · {formatDate(inquiry.createdAt)} · Ref{" "}
+                    {inquiry.reference}
                   </p>
                 </div>
                 <Badge tone="outline">{INQUIRY_STATUS_LABELS[inquiry.status]}</Badge>

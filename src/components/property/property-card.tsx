@@ -54,17 +54,21 @@ export function PropertyCard({
             className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-950/35 to-transparent opacity-80"
           />
         </Link>
-        <PropertyBadges property={property} className="pointer-events-none absolute top-4 left-4 z-10" />
+        <PropertyBadges
+          property={property}
+          className="pointer-events-none absolute top-4 left-4 z-10"
+        />
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-100 transition-opacity duration-300 md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
           <FavoriteButton propertyId={property.id} title={property.title} />
           <CompareButton propertyId={property.id} title={property.title} />
         </div>
         <div className="pointer-events-none absolute right-4 bottom-4 left-4 z-10 flex items-end justify-between gap-3 text-ivory">
           <span className="text-[0.66rem] font-semibold tracking-[0.18em] uppercase">
-            {LISTING_TYPE_LABELS[property.listingType]} · {PROPERTY_TYPE_LABELS[property.propertyType]}
+            {LISTING_TYPE_LABELS[property.listingType]} ·{" "}
+            {PROPERTY_TYPE_LABELS[property.propertyType]}
           </span>
           {property.imageCount > 1 ? (
-            <span className="flex items-center gap-1.5 text-xs tabular">
+            <span className="tabular flex items-center gap-1.5 text-xs">
               <Camera aria-hidden strokeWidth={1.5} className="size-3.5" />
               <span className="sr-only">Photos:</span>
               {property.imageCount}
@@ -89,7 +93,11 @@ export function PropertyCard({
         </Heading>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-2 pt-4">
           <PriceTag price={property.price} listingType={property.listingType} />
-          <SpecsInline bedrooms={property.bedrooms} bathrooms={property.bathrooms} areaSqft={property.areaSqft} />
+          <SpecsInline
+            bedrooms={property.bedrooms}
+            bathrooms={property.bathrooms}
+            areaSqft={property.areaSqft}
+          />
         </div>
       </div>
     </article>

@@ -40,7 +40,12 @@ const propertySchema = new Schema(
     status: { type: String, enum: PUBLICATION_STATUSES, default: "draft", required: true },
     listingType: { type: String, enum: LISTING_TYPES, required: true },
     propertyType: { type: String, enum: PROPERTY_TYPES, required: true },
-    availability: { type: String, enum: AVAILABILITY_STATUSES, default: "available", required: true },
+    availability: {
+      type: String,
+      enum: AVAILABILITY_STATUSES,
+      default: "available",
+      required: true,
+    },
     price: {
       amount: { type: Number, required: true, min: 0, max: 1e13 },
       currency: { type: String, enum: SUPPORTED_CURRENCIES, required: true, default: "BDT" },
@@ -102,7 +107,12 @@ const propertySchema = new Schema(
 
 propertySchema.index({ status: 1, listingType: 1, publishedAt: -1 });
 propertySchema.index({ status: 1, listingType: 1, "price.amount": 1 });
-propertySchema.index({ status: 1, "location.citySlug": 1, "location.neighbourhoodSlug": 1, publishedAt: -1 });
+propertySchema.index({
+  status: 1,
+  "location.citySlug": 1,
+  "location.neighbourhoodSlug": 1,
+  publishedAt: -1,
+});
 propertySchema.index({ status: 1, "flags.featured": 1, publishedAt: -1 });
 propertySchema.index({ status: 1, propertyType: 1, publishedAt: -1 });
 propertySchema.index({ status: 1, "specs.areaSqft": -1 });

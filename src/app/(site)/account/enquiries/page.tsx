@@ -18,33 +18,54 @@ async function Enquiries() {
   return (
     <>
       <h1 className="font-display text-heading-1 text-ink-900">Enquiries & viewings</h1>
-      <p className="mt-3 text-stone-600">Enquiries you send while signed in are listed here with their current status.</p>
+      <p className="mt-3 text-stone-600">
+        Enquiries you send while signed in are listed here with their current status.
+      </p>
       {inquiries.length ? (
         <div className="mt-10 overflow-x-auto">
           <table className="w-full min-w-[40rem] text-left text-sm">
             <caption className="sr-only">Your enquiries</caption>
             <thead>
               <tr className="border-b border-ink-900 text-[0.68rem] tracking-[0.14em] text-stone-600 uppercase">
-                <th scope="col" className="py-3 pr-4 font-semibold">Reference</th>
-                <th scope="col" className="py-3 pr-4 font-semibold">Enquiry</th>
-                <th scope="col" className="py-3 pr-4 font-semibold">Viewing</th>
-                <th scope="col" className="py-3 pr-4 font-semibold">Sent</th>
-                <th scope="col" className="py-3 font-semibold">Status</th>
+                <th scope="col" className="py-3 pr-4 font-semibold">
+                  Reference
+                </th>
+                <th scope="col" className="py-3 pr-4 font-semibold">
+                  Enquiry
+                </th>
+                <th scope="col" className="py-3 pr-4 font-semibold">
+                  Viewing
+                </th>
+                <th scope="col" className="py-3 pr-4 font-semibold">
+                  Sent
+                </th>
+                <th scope="col" className="py-3 font-semibold">
+                  Status
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sand-200">
               {inquiries.map((inquiry) => (
                 <tr key={inquiry.id}>
-                  <td className="py-4 pr-4 font-medium text-ink-900 tabular">{inquiry.reference}</td>
+                  <td className="tabular py-4 pr-4 font-medium text-ink-900">
+                    {inquiry.reference}
+                  </td>
                   <td className="py-4 pr-4">
-                    <span className="block text-stone-600">{INQUIRY_TYPE_LABELS[inquiry.type]}</span>
+                    <span className="block text-stone-600">
+                      {INQUIRY_TYPE_LABELS[inquiry.type]}
+                    </span>
                     {inquiry.propertySlug ? (
-                      <Link href={`/properties/${inquiry.propertySlug}`} className="text-ink-900 underline-offset-4 hover:underline">
+                      <Link
+                        href={`/properties/${inquiry.propertySlug}`}
+                        className="text-ink-900 underline-offset-4 hover:underline"
+                      >
                         {inquiry.propertyTitle}
                       </Link>
                     ) : null}
                   </td>
-                  <td className="py-4 pr-4 text-stone-700">{inquiry.viewingDate ? formatDate(inquiry.viewingDate) : "—"}</td>
+                  <td className="py-4 pr-4 text-stone-700">
+                    {inquiry.viewingDate ? formatDate(inquiry.viewingDate) : "—"}
+                  </td>
                   <td className="py-4 pr-4 text-stone-700">{formatDate(inquiry.createdAt)}</td>
                   <td className="py-4">
                     <Badge tone="outline">{INQUIRY_STATUS_LABELS[inquiry.status]}</Badge>

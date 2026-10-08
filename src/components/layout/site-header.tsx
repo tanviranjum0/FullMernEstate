@@ -15,7 +15,15 @@ async function HeaderUser() {
   const user = await getCurrentUser();
   return (
     <UserMenu
-      user={user ? { name: user.name, email: user.email, canAccessAdmin: hasPermission(user.role, "admin:access") } : null}
+      user={
+        user
+          ? {
+              name: user.name,
+              email: user.email,
+              canAccessAdmin: hasPermission(user.role, "admin:access"),
+            }
+          : null
+      }
     />
   );
 }

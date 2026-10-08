@@ -14,10 +14,16 @@ export async function generateStaticParams() {
   return params.length ? params : [{ city: "__none__", neighbourhood: "__none__" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/locations/[city]/[neighbourhood]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/locations/[city]/[neighbourhood]">): Promise<Metadata> {
   const { city, neighbourhood } = await params;
-  const [location, parent] = await Promise.all([getLocation(city, neighbourhood), getLocation(city)]);
-  if (!location || !parent) return { title: "Location not found", robots: { index: false, follow: true } };
+  const [location, parent] = await Promise.all([
+    getLocation(city, neighbourhood),
+    getLocation(city),
+  ]);
+  if (!location || !parent)
+    return { title: "Location not found", robots: { index: false, follow: true } };
   const title = location.seo.title || `Luxury homes in ${location.name}, ${parent.name}`;
   const description = location.seo.description || location.intro;
   return {
@@ -28,14 +34,23 @@ export async function generateMetadata({ params }: PageProps<"/locations/[city]/
   };
 }
 
-async function NeighbourhoodContent({ params }: { params: PageProps<"/locations/[city]/[neighbourhood]">["params"] }) {
+async function NeighbourhoodContent({
+  params,
+}: {
+  params: PageProps<"/locations/[city]/[neighbourhood]">["params"];
+}) {
   const { city, neighbourhood } = await params;
-  const [location, parent] = await Promise.all([getLocation(city, neighbourhood), getLocation(city)]);
+  const [location, parent] = await Promise.all([
+    getLocation(city, neighbourhood),
+    getLocation(city),
+  ]);
   if (!location || !parent) notFound();
   return <LocationDetailView location={location} city={parent} neighbourhoods={[]} />;
 }
 
-export default function NeighbourhoodPage({ params }: PageProps<"/locations/[city]/[neighbourhood]">) {
+export default function NeighbourhoodPage({
+  params,
+}: PageProps<"/locations/[city]/[neighbourhood]">) {
   return (
     <Suspense fallback={<Skeleton className="h-[70svh] w-full" />}>
       <NeighbourhoodContent params={params} />

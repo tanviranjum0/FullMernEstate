@@ -49,7 +49,9 @@ export function getServerEnv(): ServerEnv {
     const problems = parsed.error.issues
       .map((issue) => `  - ${issue.path.join(".") || "env"}: ${issue.message}`)
       .join("\n");
-    throw new Error(`Invalid server environment configuration:\n${problems}\nSee docs/ENVIRONMENT.md.`);
+    throw new Error(
+      `Invalid server environment configuration:\n${problems}\nSee docs/ENVIRONMENT.md.`,
+    );
   }
   cached = parsed.data;
   return cached;

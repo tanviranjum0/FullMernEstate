@@ -12,7 +12,10 @@ import { LazyMap } from "./lazy-map";
 
 function markerLabel(point: MapPoint) {
   if (point.price.onRequest) return "POA";
-  return formatPrice(point.price.amount, point.price.currency, { compact: true }).replace("BDT ", "৳");
+  return formatPrice(point.price.amount, point.price.currency, { compact: true }).replace(
+    "BDT ",
+    "৳",
+  );
 }
 
 /**
@@ -24,20 +27,35 @@ export function MapSearch({ points }: { points: MapPoint[] }) {
   const [mobileView, setMobileView] = useState<"list" | "map">("map");
   const listRef = useRef<HTMLUListElement>(null);
   const markers = useMemo(
-    () => points.map((point) => ({ id: point.id, lat: point.lat, lng: point.lng, label: markerLabel(point), title: point.title })),
+    () =>
+      points.map((point) => ({
+        id: point.id,
+        lat: point.lat,
+        lng: point.lng,
+        label: markerLabel(point),
+        title: point.title,
+      })),
     [points],
   );
 
   const focusListItem = (id: string) => {
     setActiveId(id);
-    listRef.current?.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    listRef.current
+      ?.querySelector(`[data-id="${id}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
 
   return (
     <div className="relative grid h-[calc(100dvh-var(--header-h)-9rem)] min-h-[32rem] lg:grid-cols-[26rem_1fr]">
-      <div className={cn("min-h-0 overflow-y-auto border-r border-sand-200", mobileView === "map" && "hidden lg:block")}>
+      <div
+        className={cn(
+          "min-h-0 overflow-y-auto border-r border-sand-200",
+          mobileView === "map" && "hidden lg:block",
+        )}
+      >
         <p className="sticky top-0 z-10 border-b border-sand-200 bg-ivory/95 px-5 py-3 text-sm text-stone-600 backdrop-blur-sm">
-          <span className="font-semibold text-ink-900 tabular">{points.length}</span> residences on the map
+          <span className="tabular font-semibold text-ink-900">{points.length}</span> residences on
+          the map
         </p>
         <ul ref={listRef} className="divide-y divide-sand-200">
           {points.map((point) => (
@@ -53,11 +71,26 @@ export function MapSearch({ points }: { points: MapPoint[] }) {
                 )}
               >
                 <div className="relative aspect-[4/3] w-32 shrink-0 overflow-hidden bg-sand-100">
-                  {point.image ? <Image src={point.image.src} alt="" fill sizes="128px" className="object-cover" /> : null}
+                  {point.image ? (
+                    <Image
+                      src={point.image.src}
+                      alt=""
+                      fill
+                      sizes="128px"
+                      className="object-cover"
+                    />
+                  ) : null}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate font-display text-xl leading-tight text-ink-900">{point.title}</p>
-                  <PriceTag price={point.price} listingType={point.listingType} className="mt-1 [&>span:first-child]:text-lg" showPrevious={false} />
+                  <p className="truncate font-display text-xl leading-tight text-ink-900">
+                    {point.title}
+                  </p>
+                  <PriceTag
+                    price={point.price}
+                    listingType={point.listingType}
+                    className="mt-1 [&>span:first-child]:text-lg"
+                    showPrevious={false}
+                  />
                   <p className="mt-1 text-xs text-stone-600">
                     {point.bedrooms ? `${point.bedrooms} beds` : null}
                     {point.bedrooms && point.areaSqft ? " · " : null}

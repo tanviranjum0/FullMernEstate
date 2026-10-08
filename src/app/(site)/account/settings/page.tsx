@@ -6,7 +6,15 @@ import { requireUser } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Settings" };
 
-function Panel({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+function Panel({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
     <section className="grid gap-6 border-t border-sand-200 py-10 lg:grid-cols-[16rem_1fr] lg:gap-12">
       <div>

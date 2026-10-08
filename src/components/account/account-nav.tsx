@@ -17,9 +17,10 @@ export function AccountNav() {
   return (
     <nav aria-label="Account">
       <p className="eyebrow mb-4 hidden text-stone-600 lg:block">Your account</p>
-      <ul className="scrollbar-none -mx-[var(--gutter)] flex gap-1 overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:flex-col lg:px-0">
+      <ul className="-mx-[var(--gutter)] flex scrollbar-none gap-1 overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:flex-col lg:px-0">
         {links.map((link) => {
-          const active = link.href === "/account" ? pathname === "/account" : pathname.startsWith(link.href);
+          const active =
+            link.href === "/account" ? pathname === "/account" : pathname.startsWith(link.href);
           return (
             <li key={link.href}>
               <Link
@@ -27,7 +28,9 @@ export function AccountNav() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "block rounded-sm px-4 py-2.5 text-sm whitespace-nowrap transition-colors",
-                  active ? "bg-ink-900 text-ivory" : "text-stone-700 hover:bg-sand-100 hover:text-ink-900",
+                  active
+                    ? "bg-ink-900 text-ivory"
+                    : "text-stone-700 hover:bg-sand-100 hover:text-ink-900",
                 )}
               >
                 {link.label}

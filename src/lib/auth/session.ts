@@ -42,7 +42,10 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const role: UserRole = isUserRole(user.role) ? user.role : "user";
   let agentId: string | null = null;
   if (role === "agent") {
-    const agent = await AgentModel.findOne({ userId: session.user.id, active: true }, { _id: 1 }).lean();
+    const agent = await AgentModel.findOne(
+      { userId: session.user.id, active: true },
+      { _id: 1 },
+    ).lean();
     agentId = agent?._id.toString() ?? null;
   }
 
@@ -64,8 +67,7 @@ export async function requireUser(returnTo: string): Promise<CurrentUser> {
 }
 
 export type AuthorizationResult =
-  | { ok: true; user: CurrentUser }
-  | { ok: false; reason: "unauthenticated" | "forbidden" };
+  { ok: true; user: CurrentUser } | { ok: false; reason: "unauthenticated" | "forbidden" };
 
 export async function authorize(permission: Permission): Promise<AuthorizationResult> {
   const user = await getCurrentUser();

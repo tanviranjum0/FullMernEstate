@@ -11,7 +11,9 @@ export function requireEnv(name: string): string {
 
 export function describeHost(uri: string): { host: string; isLocal: boolean } {
   const withoutScheme = uri.replace(/^mongodb(\+srv)?:\/\//, "");
-  const afterCredentials = withoutScheme.includes("@") ? withoutScheme.split("@")[1]! : withoutScheme;
+  const afterCredentials = withoutScheme.includes("@")
+    ? withoutScheme.split("@")[1]!
+    : withoutScheme;
   const host = afterCredentials.split(/[/?]/)[0] ?? "";
   const isLocal = host.split(",").every((h) => /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(h));
   return { host: host.replace(/:[^,]*$/, ""), isLocal };

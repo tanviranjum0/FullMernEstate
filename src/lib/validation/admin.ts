@@ -13,7 +13,16 @@ import {
 import { SLUG_PATTERN } from "@/lib/slug";
 
 /** Slugs that would collide with static routes under the same prefix. */
-export const RESERVED_SLUGS = new Set(["map", "new", "edit", "category", "page", "search", "admin", "api"]);
+export const RESERVED_SLUGS = new Set([
+  "map",
+  "new",
+  "edit",
+  "category",
+  "page",
+  "search",
+  "admin",
+  "api",
+]);
 
 const slug = z
   .string()
@@ -31,7 +40,10 @@ const optionalNumber = (min: number, max: number) =>
     z.number({ error: "Enter a number" }).min(min).max(max).optional(),
   );
 const requiredNumber = (min: number, max: number, message = "Enter a number") =>
-  z.preprocess((value) => (value === "" || value === null ? undefined : Number(value)), z.number({ error: message }).min(min).max(max));
+  z.preprocess(
+    (value) => (value === "" || value === null ? undefined : Number(value)),
+    z.number({ error: message }).min(min).max(max),
+  );
 
 /**
  * Media URLs must come from our own storage (uploads), our static assets, or known image CDNs
@@ -47,7 +59,10 @@ const ALLOWED_MEDIA = [
 export const mediaSrc = z
   .string()
   .max(2048)
-  .refine((value) => ALLOWED_MEDIA.some((pattern) => pattern.test(value)), "Image must be uploaded through the media library");
+  .refine(
+    (value) => ALLOWED_MEDIA.some((pattern) => pattern.test(value)),
+    "Image must be uploaded through the media library",
+  );
 
 export const mediaImageInput = z.object({
   src: mediaSrc,
@@ -64,7 +79,10 @@ export const mediaImageInput = z.object({
 });
 export type MediaImageInput = z.infer<typeof mediaImageInput>;
 
-const httpsUrl = z.union([z.literal(""), z.url({ protocol: /^https$/, error: "Use a full https:// link" }).max(2048)]);
+const httpsUrl = z.union([
+  z.literal(""),
+  z.url({ protocol: /^https$/, error: "Use a full https:// link" }).max(2048),
+]);
 const seoInput = z.object({ title: text(70).default(""), description: text(170).default("") });
 
 export const propertyInput = z
@@ -72,7 +90,11 @@ export const propertyInput = z
     title: z.string().trim().min(4, "Add a title").max(140),
     slug: optionalSlug.default(""),
     headline: text(220).default(""),
-    description: z.string().trim().min(40, "Write at least a short description (40+ characters)").max(12_000),
+    description: z
+      .string()
+      .trim()
+      .min(40, "Write at least a short description (40+ characters)")
+      .max(12_000),
     status: z.enum(PUBLICATION_STATUSES),
     listingType: z.enum(LISTING_TYPES),
     propertyType: z.enum(PROPERTY_TYPES),
@@ -115,19 +137,34 @@ export const propertyInput = z
       .max(20)
       .default([]),
     videoUrl: httpsUrl.default(""),
-    virtualTour: z.object({ url: httpsUrl.default(""), kind: z.enum(VIRTUAL_TOUR_KINDS).default("tour360") }),
+    virtualTour: z.object({
+      url: httpsUrl.default(""),
+      kind: z.enum(VIRTUAL_TOUR_KINDS).default("tour360"),
+    }),
     agentId: z.union([z.string().regex(/^[a-f0-9]{24}$/i), z.literal("")]).default(""),
     seo: seoInput.default({ title: "", description: "" }),
   })
   .superRefine((data, ctx) => {
     if ((data.location.lat === undefined) !== (data.location.lng === undefined)) {
-      ctx.addIssue({ code: "custom", path: ["location", "lat"], message: "Provide both latitude and longitude" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["location", "lat"],
+        message: "Provide both latitude and longitude",
+      });
     }
     if (data.price.amount <= 0) {
-      ctx.addIssue({ code: "custom", path: ["price", "amount"], message: "Enter the price — it is still used for search when shown as “on request”" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["price", "amount"],
+        message: "Enter the price — it is still used for search when shown as “on request”",
+      });
     }
     if (data.status === "published" && data.images.length === 0) {
-      ctx.addIssue({ code: "custom", path: ["images"], message: "Add at least one photograph before publishing" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["images"],
+        message: "Add at least one photograph before publishing",
+      });
     }
     if (data.price.previousAmount !== undefined && data.price.previousAmount <= data.price.amount) {
       ctx.addIssue({
@@ -151,7 +188,11 @@ export const agentInput = z.object({
   languages: z.array(text(40)).max(12).default([]),
   specialties: z.array(text(80)).max(12).default([]),
   areas: z.array(slug).max(30).default([]),
-  socials: z.object({ linkedin: httpsUrl.default(""), instagram: httpsUrl.default(""), website: httpsUrl.default("") }),
+  socials: z.object({
+    linkedin: httpsUrl.default(""),
+    instagram: httpsUrl.default(""),
+    website: httpsUrl.default(""),
+  }),
   active: z.boolean().default(true),
   sortOrder: requiredNumber(0, 10_000).default(100),
   userEmail: z.union([z.literal(""), z.email()]).default(""),
@@ -159,7 +200,10 @@ export const agentInput = z.object({
 });
 export type AgentInput = z.infer<typeof agentInput>;
 
-const faqInput = z.object({ question: z.string().trim().min(3).max(240), answer: z.string().trim().min(3).max(2_000) });
+const faqInput = z.object({
+  question: z.string().trim().min(3).max(240),
+  answer: z.string().trim().min(3).max(2_000),
+});
 
 export const locationInput = z
   .object({
@@ -171,7 +215,15 @@ export const locationInput = z
     intro: text(1_200).default(""),
     body: text(20_000).default(""),
     heroImage: mediaImageInput.nullable().default(null),
-    highlights: z.array(z.object({ title: z.string().trim().min(2).max(120), text: z.string().trim().min(2).max(600) })).max(12).default([]),
+    highlights: z
+      .array(
+        z.object({
+          title: z.string().trim().min(2).max(120),
+          text: z.string().trim().min(2).max(600),
+        }),
+      )
+      .max(12)
+      .default([]),
     lifestyle: z.array(text(60)).max(20).default([]),
     nearby: z.array(text(80)).max(20).default([]),
     marketNotes: text(4_000).default(""),
@@ -185,7 +237,11 @@ export const locationInput = z
   })
   .superRefine((data, ctx) => {
     if (data.kind === "neighbourhood" && !data.parentSlug) {
-      ctx.addIssue({ code: "custom", path: ["parentSlug"], message: "Choose the city this neighbourhood belongs to" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["parentSlug"],
+        message: "Choose the city this neighbourhood belongs to",
+      });
     }
   });
 export type LocationInput = z.infer<typeof locationInput>;
@@ -227,12 +283,28 @@ export const siteSettingsInput = z.object({
     subheadline: text(300).default(""),
     image: mediaImageInput.nullable().default(null),
     videoUrl: z
-      .union([z.literal(""), z.string().regex(/^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/.+\.(mp4|webm)$/i, "Upload video to media storage")])
+      .union([
+        z.literal(""),
+        z
+          .string()
+          .regex(
+            /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/.+\.(mp4|webm)$/i,
+            "Upload video to media storage",
+          ),
+      ])
       .default(""),
   }),
   about: z.object({
     story: text(12_000).default(""),
-    values: z.array(z.object({ title: z.string().trim().min(2).max(120), text: z.string().trim().min(2).max(600) })).max(8).default([]),
+    values: z
+      .array(
+        z.object({
+          title: z.string().trim().min(2).max(120),
+          text: z.string().trim().min(2).max(600),
+        }),
+      )
+      .max(8)
+      .default([]),
   }),
   testimonials: z
     .array(

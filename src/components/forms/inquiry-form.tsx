@@ -56,13 +56,17 @@ export function InquiryForm({
   const [type, setType] = useState<InquiryType>(defaultType ?? types[0] ?? "general");
   const [contact, setContact] = useState<(typeof CONTACT_METHODS)[number]>("email");
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
-  const [state, formAction, pending] = useActionState<InquiryActionState, FormData>(submitInquiryAction, null);
+  const [state, formAction, pending] = useActionState<InquiryActionState, FormData>(
+    submitInquiryAction,
+    null,
+  );
 
   const errors = { ...(state && !state.ok ? state.fieldErrors : {}), ...clientErrors };
   const fid = (name: string) => `${id}-${name}`;
 
   useEffect(() => {
-    if (state && !state.ok) formRef.current?.querySelector<HTMLElement>("[aria-invalid=true]")?.focus();
+    if (state && !state.ok)
+      formRef.current?.querySelector<HTMLElement>("[aria-invalid=true]")?.focus();
   }, [state]);
 
   if (state?.ok) {
@@ -73,12 +77,16 @@ export function InquiryForm({
           {type === "viewing" ? "Viewing request received" : "Thank you — we have your enquiry"}
         </h3>
         <p className="mt-3 text-stone-600">
-          {state.message ?? "An advisor will be in touch, usually within one working day."} Your reference is{" "}
-          <strong className="font-semibold text-ink-900 tabular">{state.data.reference}</strong>.
+          {state.message ?? "An advisor will be in touch, usually within one working day."} Your
+          reference is{" "}
+          <strong className="tabular font-semibold text-ink-900">{state.data.reference}</strong>.
         </p>
         <p className="mt-4 text-sm text-stone-600">
           Signed-in clients can follow enquiries under{" "}
-          <Link href="/account/enquiries" className="underline underline-offset-4 hover:text-ink-900">
+          <Link
+            href="/account/enquiries"
+            className="underline underline-offset-4 hover:text-ink-900"
+          >
             Enquiries & viewings
           </Link>
           .
@@ -116,7 +124,11 @@ export function InquiryForm({
       aria-describedby={state && !state.ok ? `${id}-form-error` : undefined}
     >
       {types.length > 1 ? (
-        <div role="radiogroup" aria-label="Enquiry type" className="grid auto-cols-fr grid-flow-col gap-1 rounded-sm bg-sand-100 p-1">
+        <div
+          role="radiogroup"
+          aria-label="Enquiry type"
+          className="grid auto-cols-fr grid-flow-col gap-1 rounded-sm bg-sand-100 p-1"
+        >
           {types.map((option) => (
             <button
               key={option}
@@ -126,10 +138,16 @@ export function InquiryForm({
               onClick={() => setType(option)}
               className={cn(
                 "h-10 rounded-xs px-2 text-[0.7rem] font-semibold tracking-[0.1em] uppercase transition-colors",
-                type === option ? "bg-paper text-ink-900 shadow-hairline" : "text-stone-600 hover:text-ink-900",
+                type === option
+                  ? "bg-paper text-ink-900 shadow-hairline"
+                  : "text-stone-600 hover:text-ink-900",
               )}
             >
-              {option === "property" ? "Information" : option === "viewing" ? "Viewing" : INQUIRY_TYPE_LABELS[option].replace(" request", "")}
+              {option === "property"
+                ? "Information"
+                : option === "viewing"
+                  ? "Viewing"
+                  : INQUIRY_TYPE_LABELS[option].replace(" request", "")}
             </button>
           ))}
         </div>
@@ -141,7 +159,14 @@ export function InquiryForm({
       <input type="hidden" name="sourcePath" value={pathname} />
       <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label htmlFor={fid("website")}>Leave this field empty</label>
-        <input id={fid("website")} name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
+        <input
+          id={fid("website")}
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
       </div>
 
       <div className={cn("grid gap-5", !compact && "sm:grid-cols-2")}>
@@ -180,7 +205,9 @@ export function InquiryForm({
               key={method}
               className={cn(
                 "flex h-11 cursor-pointer items-center justify-center rounded-sm border text-sm transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-harbour-600",
-                contact === method ? "border-ink-900 bg-ink-900 text-ivory" : "border-sand-300 text-ink-800 hover:border-stone-400",
+                contact === method
+                  ? "border-ink-900 bg-ink-900 text-ivory"
+                  : "border-sand-300 text-ink-800 hover:border-stone-400",
               )}
             >
               <input
@@ -221,8 +248,17 @@ export function InquiryForm({
               required
             />
           </Field>
-          <Field id={fid("viewingTimeSlot")} label="Time of day" optional error={errors.viewingTimeSlot}>
-            <Select {...fieldA11y(fid("viewingTimeSlot"), errors.viewingTimeSlot)} name="viewingTimeSlot" defaultValue="">
+          <Field
+            id={fid("viewingTimeSlot")}
+            label="Time of day"
+            optional
+            error={errors.viewingTimeSlot}
+          >
+            <Select
+              {...fieldA11y(fid("viewingTimeSlot"), errors.viewingTimeSlot)}
+              name="viewingTimeSlot"
+              defaultValue=""
+            >
               <option value="">Any time</option>
               {VIEWING_TIME_SLOTS.map((slot) => (
                 <option key={slot} value={slot}>
@@ -234,7 +270,12 @@ export function InquiryForm({
         </div>
       ) : null}
 
-      <Field id={fid("message")} label="Message" optional={type !== "general"} error={errors.message}>
+      <Field
+        id={fid("message")}
+        label="Message"
+        optional={type !== "general"}
+        error={errors.message}
+      >
         <Textarea
           {...fieldA11y(fid("message"), errors.message)}
           key={type}
@@ -247,7 +288,11 @@ export function InquiryForm({
 
       <div>
         <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-stone-700">
-          <Checkbox name="consent" className="mt-0.5" {...fieldA11y(fid("consent"), errors.consent)} />
+          <Checkbox
+            name="consent"
+            className="mt-0.5"
+            {...fieldA11y(fid("consent"), errors.consent)}
+          />
           <span>
             I agree to be contacted about this enquiry. See our{" "}
             <Link href="/privacy" className="underline underline-offset-4 hover:text-ink-900">
@@ -264,7 +309,11 @@ export function InquiryForm({
       </div>
 
       {state && !state.ok ? (
-        <p id={`${id}-form-error`} role="alert" className="rounded-sm bg-danger-50 px-4 py-3 text-sm text-danger-600">
+        <p
+          id={`${id}-form-error`}
+          role="alert"
+          className="rounded-sm bg-danger-50 px-4 py-3 text-sm text-danger-600"
+        >
           {state.error}
         </p>
       ) : null}

@@ -11,7 +11,10 @@ import type { PropertyCard } from "@/server/dto";
 export function RecentlyViewedStrip({ excludeId }: { excludeId?: string }) {
   const ids = recentlyViewedList.useList();
   const [cards, setCards] = useState<PropertyCard[]>([]);
-  const key = ids.filter((id) => id !== excludeId).slice(0, 6).join(",");
+  const key = ids
+    .filter((id) => id !== excludeId)
+    .slice(0, 6)
+    .join(",");
 
   useEffect(() => {
     if (!key) return;
@@ -38,7 +41,7 @@ export function RecentlyViewedStrip({ excludeId }: { excludeId?: string }) {
           Clear
         </button>
       </div>
-      <ul className="scrollbar-none mt-8 flex snap-x gap-5 overflow-x-auto pb-2">
+      <ul className="mt-8 flex snap-x scrollbar-none gap-5 overflow-x-auto pb-2">
         {cards.map((card) => (
           <li key={card.id} className="w-64 shrink-0 snap-start">
             <Link href={`/properties/${card.slug}`} className="group block">
@@ -55,7 +58,12 @@ export function RecentlyViewedStrip({ excludeId }: { excludeId?: string }) {
               </div>
               <p className="eyebrow mt-3 text-stone-600">{locationLine(card)}</p>
               <p className="mt-1 font-display text-xl leading-tight text-ink-900">{card.title}</p>
-              <PriceTag price={card.price} listingType={card.listingType} className="mt-2 [&>span:first-child]:text-lg" showPrevious={false} />
+              <PriceTag
+                price={card.price}
+                listingType={card.listingType}
+                className="mt-2 [&>span:first-child]:text-lg"
+                showPrevious={false}
+              />
             </Link>
           </li>
         ))}

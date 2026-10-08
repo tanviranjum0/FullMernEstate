@@ -31,7 +31,11 @@ import { toEmbed } from "@/lib/media/embed";
 import { ogImage } from "@/lib/seo/url";
 import type { PropertyDetail } from "@/server/dto";
 import { getAgentById } from "@/server/queries/content";
-import { getPropertyBySlug, getPublishedPropertySlugs, getSimilarProperties } from "@/server/queries/properties";
+import {
+  getPropertyBySlug,
+  getPublishedPropertySlugs,
+  getSimilarProperties,
+} from "@/server/queries/properties";
 
 export async function generateStaticParams() {
   const slugs = await getPublishedPropertySlugs(40);
@@ -56,10 +60,15 @@ function metaDescription(property: PropertyDetail) {
         compact: true,
         period: property.listingType === "rent" ? "month" : null,
       });
-  return `${PROPERTY_TYPE_LABELS[property.propertyType]} ${LISTING_TYPE_LABELS[property.listingType].toLowerCase()} in ${locationText(property)}. ${facts.join(", ")}. ${price}. ${property.headline}`.slice(0, 160);
+  return `${PROPERTY_TYPE_LABELS[property.propertyType]} ${LISTING_TYPE_LABELS[property.listingType].toLowerCase()} in ${locationText(property)}. ${facts.join(", ")}. ${price}. ${property.headline}`.slice(
+    0,
+    160,
+  );
 }
 
-export async function generateMetadata({ params }: PageProps<"/properties/[slug]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/properties/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const property = await getPropertyBySlug(slug);
   if (!property) return { title: "Residence not found", robots: { index: false, follow: true } };
@@ -75,9 +84,20 @@ export async function generateMetadata({ params }: PageProps<"/properties/[slug]
   };
 }
 
-function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section aria-labelledby={id} className="border-t border-sand-200 py-14 first:border-t-0 first:pt-0">
+    <section
+      aria-labelledby={id}
+      className="border-t border-sand-200 py-14 first:border-t-0 first:pt-0"
+    >
       <h2 id={id} className="font-display text-heading-2 text-ink-900">
         {title}
       </h2>
@@ -96,7 +116,11 @@ export default function PropertyPage({ params }: PageProps<"/properties/[slug]">
 
 function PropertySkeleton() {
   return (
-    <div aria-busy="true" aria-label="Loading residence" className="container-page pt-6 pb-[var(--section-y)]">
+    <div
+      aria-busy="true"
+      aria-label="Loading residence"
+      className="container-page pt-6 pb-[var(--section-y)]"
+    >
       <Skeleton className="mb-6 h-3 w-64" />
       <Skeleton className="aspect-[4/3] w-full md:aspect-auto md:h-[min(72vh,44rem)]" />
       <div className="grid gap-x-16 pt-12 lg:grid-cols-[minmax(0,1fr)_25rem]">
@@ -112,7 +136,11 @@ function PropertySkeleton() {
   );
 }
 
-async function PropertyDetailView({ params }: { params: PageProps<"/properties/[slug]">["params"] }) {
+async function PropertyDetailView({
+  params,
+}: {
+  params: PageProps<"/properties/[slug]">["params"];
+}) {
   const { slug } = await params;
   const property = await getPropertyBySlug(slug);
   if (!property) notFound();
@@ -123,23 +151,40 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
   ]);
 
   const url = `${siteConfig.url}/properties/${property.slug}`;
-  const paragraphs = property.description.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const paragraphs = property.description
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
   const amenityGroups = AMENITY_CATALOG.map((group) => ({
     label: group.label,
     items: group.items.filter((item) => (property.amenities as string[]).includes(item.key)),
   })).filter((group) => group.items.length > 0);
   const tour = property.virtualTour ? toEmbed(property.virtualTour.url) : null;
   const video = property.videoUrl ? toEmbed(property.videoUrl) : null;
-  const available = property.availability === "available" || property.availability === "under_offer";
+  const available =
+    property.availability === "available" || property.availability === "under_offer";
 
   const specs: [string, string | null][] = [
     ["Property type", PROPERTY_TYPE_LABELS[property.propertyType]],
     ["Status", AVAILABILITY_LABELS[property.availability]],
-    ["Interior area", property.specs.areaSqft ? formatArea(property.specs.areaSqft, siteConfig.areaUnit) : null],
-    ["Land area", property.specs.landAreaSqft ? formatArea(property.specs.landAreaSqft, siteConfig.areaUnit) : null],
+    [
+      "Interior area",
+      property.specs.areaSqft ? formatArea(property.specs.areaSqft, siteConfig.areaUnit) : null,
+    ],
+    [
+      "Land area",
+      property.specs.landAreaSqft
+        ? formatArea(property.specs.landAreaSqft, siteConfig.areaUnit)
+        : null,
+    ],
     ["Bedrooms", property.specs.bedrooms ? String(property.specs.bedrooms) : null],
     ["Bathrooms", property.specs.bathrooms ? String(property.specs.bathrooms) : null],
-    ["Parking", property.specs.parkingSpaces ? `${property.specs.parkingSpaces} space${property.specs.parkingSpaces > 1 ? "s" : ""}` : null],
+    [
+      "Parking",
+      property.specs.parkingSpaces
+        ? `${property.specs.parkingSpaces} space${property.specs.parkingSpaces > 1 ? "s" : ""}`
+        : null,
+    ],
     ["Year built", property.specs.yearBuilt ? String(property.specs.yearBuilt) : null],
     ["Floors", property.specs.floors ? String(property.specs.floors) : null],
     ["Floor level", property.specs.floorLevel !== null ? String(property.specs.floorLevel) : null],
@@ -174,13 +219,16 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
           <header className="pb-12">
             <div className="flex flex-wrap items-center gap-2">
               <p className="eyebrow text-stone-600">
-                {LISTING_TYPE_LABELS[property.listingType]} · {PROPERTY_TYPE_LABELS[property.propertyType]}
+                {LISTING_TYPE_LABELS[property.listingType]} ·{" "}
+                {PROPERTY_TYPE_LABELS[property.propertyType]}
               </p>
               {property.availability !== "available" ? (
                 <Badge tone="dark">{AVAILABILITY_LABELS[property.availability]}</Badge>
               ) : null}
               {property.flags.exclusive ? <Badge tone="bronze">Exclusive</Badge> : null}
-              {property.flags.newConstruction ? <Badge tone="outline">New development</Badge> : null}
+              {property.flags.newConstruction ? (
+                <Badge tone="outline">New development</Badge>
+              ) : null}
             </div>
             <h1 className="mt-4 font-display text-heading-1 text-ink-900">{property.title}</h1>
             <p className="mt-4 flex items-center gap-2 text-stone-600">
@@ -188,13 +236,19 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
               {property.location.displayAddress ? `${property.location.displayAddress} · ` : ""}
               {locationText(property)}
             </p>
-            {property.headline ? <p className="mt-6 max-w-2xl text-lead text-stone-700">{property.headline}</p> : null}
+            {property.headline ? (
+              <p className="mt-6 max-w-2xl text-lead text-stone-700">{property.headline}</p>
+            ) : null}
 
             <div className="mt-10 flex flex-wrap items-end justify-between gap-6 border-y border-sand-200 py-6">
               <div>
-                <PriceTag price={property.price} listingType={property.listingType} className="[&>span:first-child]:text-[2rem]" />
+                <PriceTag
+                  price={property.price}
+                  listingType={property.listingType}
+                  className="[&>span:first-child]:text-[2rem]"
+                />
                 {!property.price.onRequest ? (
-                  <p className="mt-1.5 text-xs text-stone-600 tabular">
+                  <p className="tabular mt-1.5 text-xs text-stone-600">
                     {formatPrice(property.price.amount, property.price.currency, {
                       period: property.listingType === "rent" ? "month" : null,
                     })}
@@ -206,13 +260,18 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
                   ["Bedrooms", property.bedrooms ? String(property.bedrooms) : null],
                   ["Bathrooms", property.bathrooms ? String(property.bathrooms) : null],
                   ["Area", property.areaSqft ? `${formatNumber(property.areaSqft)} sq ft` : null],
-                  ["Parking", property.specs.parkingSpaces ? String(property.specs.parkingSpaces) : null],
+                  [
+                    "Parking",
+                    property.specs.parkingSpaces ? String(property.specs.parkingSpaces) : null,
+                  ],
                 ]
                   .filter(([, value]) => value)
                   .map(([label, value]) => (
                     <div key={label}>
-                      <dt className="text-[0.66rem] font-semibold tracking-[0.16em] text-stone-600 uppercase">{label}</dt>
-                      <dd className="mt-1 font-display text-2xl text-ink-900 tabular">{value}</dd>
+                      <dt className="text-[0.66rem] font-semibold tracking-[0.16em] text-stone-600 uppercase">
+                        {label}
+                      </dt>
+                      <dd className="tabular mt-1 font-display text-2xl text-ink-900">{value}</dd>
                     </div>
                   ))}
               </dl>
@@ -239,9 +298,12 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
               {specs
                 .filter(([, value]) => value)
                 .map(([label, value]) => (
-                  <div key={label} className="flex items-baseline justify-between gap-4 border-b border-sand-200 py-3.5">
+                  <div
+                    key={label}
+                    className="flex items-baseline justify-between gap-4 border-b border-sand-200 py-3.5"
+                  >
                     <dt className="text-sm text-stone-600">{label}</dt>
-                    <dd className="text-right font-medium text-ink-900 tabular">{value}</dd>
+                    <dd className="tabular text-right font-medium text-ink-900">{value}</dd>
                   </div>
                 ))}
             </dl>
@@ -274,9 +336,16 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
                   <figure key={plan.id} className="bg-paper p-4">
                     <div className="relative aspect-[4/3]">
                       {/* eslint-disable-next-line @next/next/no-img-element -- plans are line drawings shown at intrinsic size */}
-                      <img src={plan.src} alt={plan.label || "Floor plan"} loading="lazy" className="absolute inset-0 size-full object-contain" />
+                      <img
+                        src={plan.src}
+                        alt={plan.label || "Floor plan"}
+                        loading="lazy"
+                        className="absolute inset-0 size-full object-contain"
+                      />
                     </div>
-                    {plan.label ? <figcaption className="mt-3 text-sm text-stone-600">{plan.label}</figcaption> : null}
+                    {plan.label ? (
+                      <figcaption className="mt-3 text-sm text-stone-600">{plan.label}</figcaption>
+                    ) : null}
                   </figure>
                 ))}
               </div>
@@ -298,7 +367,12 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
                   />
                 </div>
               ) : property.virtualTour ? (
-                <ButtonLink href={property.virtualTour.url} target="_blank" rel="noopener noreferrer" variant="outline">
+                <ButtonLink
+                  href={property.virtualTour.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="outline"
+                >
                   Open virtual tour <ArrowUpRight strokeWidth={1.5} />
                 </ButtonLink>
               ) : null}
@@ -344,12 +418,19 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
 
           {property.listingType === "sale" && !property.price.onRequest && available ? (
             <Section id="finance-heading" title="Finance estimate">
-              <MortgageCalculator price={property.price.amount} currency={property.price.currency} />
+              <MortgageCalculator
+                price={property.price.amount}
+                currency={property.price.currency}
+              />
             </Section>
           ) : null}
         </div>
 
-        <aside id="enquire" className="scroll-mt-28 lg:pt-1" aria-label="Enquire about this residence">
+        <aside
+          id="enquire"
+          className="scroll-mt-28 lg:pt-1"
+          aria-label="Enquire about this residence"
+        >
           <div className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
             <div className="bg-paper p-6 shadow-hairline sm:p-8 lg:max-h-[calc(100dvh-var(--header-h)-3rem)] lg:overflow-y-auto lg:overscroll-contain">
               {agent ? (
@@ -398,7 +479,12 @@ async function PropertyDetailView({ params }: { params: PageProps<"/properties/[
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t border-sand-200 bg-ivory/95 px-4 py-3 backdrop-blur-md lg:hidden">
-        <PriceTag price={property.price} listingType={property.listingType} className="[&>span:first-child]:text-lg" showPrevious={false} />
+        <PriceTag
+          price={property.price}
+          listingType={property.listingType}
+          className="[&>span:first-child]:text-lg"
+          showPrevious={false}
+        />
         <ButtonLink href="#enquire" size="sm">
           Enquire
         </ButtonLink>

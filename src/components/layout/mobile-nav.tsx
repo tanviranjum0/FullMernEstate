@@ -25,10 +25,18 @@ export function MobileNav() {
         title="Menu"
         footer={
           <div className="grid grid-cols-2 gap-2">
-            <Link href="/account" onClick={() => setOpen(false)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <Link
+              href="/account"
+              onClick={() => setOpen(false)}
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
               My account
             </Link>
-            <Link href="/contact" onClick={() => setOpen(false)} className={buttonVariants({ variant: "primary", size: "sm" })}>
+            <Link
+              href="/contact"
+              onClick={() => setOpen(false)}
+              className={buttonVariants({ variant: "primary", size: "sm" })}
+            >
               Enquire
             </Link>
           </div>
@@ -36,7 +44,11 @@ export function MobileNav() {
       >
         <nav aria-label="Mobile">
           <ul className="space-y-1">
-            {[{ href: "/", label: "Home" }, ...mainNavigation, { href: "/contact", label: "Contact" }].map((item) => {
+            {[
+              { href: "/", label: "Home" },
+              ...mainNavigation,
+              { href: "/contact", label: "Contact" },
+            ].map((item) => {
               const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
                 <li key={item.href}>
@@ -57,7 +69,11 @@ export function MobileNav() {
           </ul>
           <ul className="mt-8 space-y-3 text-sm text-stone-700">
             <li>
-              <Link href="/account/saved" onClick={() => setOpen(false)} className="hover:text-ink-900">
+              <Link
+                href="/account/saved"
+                onClick={() => setOpen(false)}
+                className="hover:text-ink-900"
+              >
                 Saved homes
               </Link>
             </li>
@@ -67,7 +83,11 @@ export function MobileNav() {
               </Link>
             </li>
             <li>
-              <Link href="/properties/map" onClick={() => setOpen(false)} className="hover:text-ink-900">
+              <Link
+                href="/properties/map"
+                onClick={() => setOpen(false)}
+                className="hover:text-ink-900"
+              >
                 Search on the map
               </Link>
             </li>

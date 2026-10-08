@@ -17,7 +17,12 @@ export interface MortgageResult {
  * Standard amortising-loan repayment: M = P·r(1+r)^n / ((1+r)^n − 1), with a zero-rate
  * fallback. Inputs are clamped so the calculator never produces NaN or negative values.
  */
-export function calculateMortgage({ price, depositPercent, annualRatePercent, years }: MortgageInput): MortgageResult {
+export function calculateMortgage({
+  price,
+  depositPercent,
+  annualRatePercent,
+  years,
+}: MortgageInput): MortgageResult {
   const safePrice = Math.max(0, price);
   const deposit = Math.round(safePrice * (Math.min(100, Math.max(0, depositPercent)) / 100));
   const loanAmount = Math.max(0, safePrice - deposit);
@@ -29,7 +34,8 @@ export function calculateMortgage({ price, depositPercent, annualRatePercent, ye
       ? 0
       : monthlyRate === 0
         ? loanAmount / months
-        : (loanAmount * monthlyRate * (1 + monthlyRate) ** months) / ((1 + monthlyRate) ** months - 1);
+        : (loanAmount * monthlyRate * (1 + monthlyRate) ** months) /
+          ((1 + monthlyRate) ** months - 1);
 
   const totalRepayable = monthlyPayment * months;
   return {

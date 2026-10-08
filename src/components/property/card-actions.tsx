@@ -82,10 +82,15 @@ export function CompareButton({
       className={cn(
         "grid place-items-center transition-colors duration-300",
         variant === "overlay"
-          ? cn("size-10 rounded-full backdrop-blur-sm", selected ? "bg-ink-900 text-ivory" : "bg-ivory/90 text-ink-900 hover:bg-ivory")
+          ? cn(
+              "size-10 rounded-full backdrop-blur-sm",
+              selected ? "bg-ink-900 text-ivory" : "bg-ivory/90 text-ink-900 hover:bg-ivory",
+            )
           : cn(
               "h-11 gap-2 rounded-sm border px-4 text-[0.72rem] font-semibold tracking-[0.08em] uppercase [&]:flex",
-              selected ? "border-ink-900 bg-ink-900 text-ivory" : "border-ink-900/20 hover:border-ink-900",
+              selected
+                ? "border-ink-900 bg-ink-900 text-ivory"
+                : "border-ink-900/20 hover:border-ink-900",
             ),
         className,
       )}

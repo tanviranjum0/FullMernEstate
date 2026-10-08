@@ -46,7 +46,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   // The return path is read when the visitor acts rather than during render: this provider wraps
   // every route, and reading the pathname while rendering would make all of them request-bound.
   const signInToSave = useCallback(() => {
-    router.push(`/sign-in?next=${encodeURIComponent(window.location.pathname + window.location.search)}&reason=save`);
+    router.push(
+      `/sign-in?next=${encodeURIComponent(window.location.pathname + window.location.search)}&reason=save`,
+    );
   }, [router]);
 
   const toggle = useCallback(
@@ -87,7 +89,10 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     [ids, signedIn, signInToSave, notify],
   );
 
-  const value = useMemo(() => ({ ready, signedIn, ids, hydrate, toggle }), [ready, signedIn, ids, hydrate, toggle]);
+  const value = useMemo(
+    () => ({ ready, signedIn, ids, hydrate, toggle }),
+    [ready, signedIn, ids, hydrate, toggle],
+  );
   return <FavoritesContext value={value}>{children}</FavoritesContext>;
 }
 
@@ -117,7 +122,9 @@ function createLocalList(key: string, max: number) {
     if (cache) return cache;
     try {
       const parsed: unknown = JSON.parse(window.localStorage.getItem(key) ?? "[]");
-      cache = Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === "string").slice(0, max) : [];
+      cache = Array.isArray(parsed)
+        ? parsed.filter((v): v is string => typeof v === "string").slice(0, max)
+        : [];
     } catch {
       cache = [];
     }
@@ -155,7 +162,8 @@ function createLocalList(key: string, max: number) {
     useList: () => useSyncExternalStore(subscribe, read, () => EMPTY),
     add: (id: string) => write([id, ...read().filter((existing) => existing !== id)]),
     remove: (id: string) => write(read().filter((existing) => existing !== id)),
-    toggle: (id: string) => (read().includes(id) ? write(read().filter((e) => e !== id)) : write([...read(), id])),
+    toggle: (id: string) =>
+      read().includes(id) ? write(read().filter((e) => e !== id)) : write([...read(), id]),
     clear: () => write([]),
   };
 }

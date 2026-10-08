@@ -51,7 +51,9 @@ export async function getExclusiveProperties(limit = 4): Promise<PropertyCard[]>
   return cards({ "flags.exclusive": true }, { publishedAt: -1 }, limit);
 }
 
-export async function searchProperties(query: PropertySearchQuery): Promise<Paginated<PropertyCard>> {
+export async function searchProperties(
+  query: PropertySearchQuery,
+): Promise<Paginated<PropertyCard>> {
   "use cache";
   cacheLife("minutes");
   cacheTag(cacheTags.properties);
@@ -74,7 +76,9 @@ export async function getPropertyBySlug(slug: string): Promise<PropertyDetail | 
   return doc ? toPropertyDetail(doc) : null;
 }
 
-export async function getPublishedPropertySlugs(limit = 5000): Promise<{ slug: string; updatedAt: string }[]> {
+export async function getPublishedPropertySlugs(
+  limit = 5000,
+): Promise<{ slug: string; updatedAt: string }[]> {
   "use cache";
   cacheLife("hours");
   cacheTag(cacheTags.properties);
@@ -142,7 +146,10 @@ export async function getPropertyCountsByLocation(): Promise<Record<string, numb
   cacheLife("hours");
   cacheTag(cacheTags.properties);
   await connectToDatabase();
-  const rows = await PropertyModel.aggregate<{ _id: { city: string; hood: string }; count: number }>([
+  const rows = await PropertyModel.aggregate<{
+    _id: { city: string; hood: string };
+    count: number;
+  }>([
     { $match: { status: "published" } },
     {
       $group: {
@@ -202,7 +209,7 @@ export async function getLocationMarketStats(
   >();
 
   const currencies = new Set(rows.map((row) => row.price?.currency));
-  const singleCurrency = currencies.size === 1 ? [...currencies][0] ?? null : null;
+  const singleCurrency = currencies.size === 1 ? ([...currencies][0] ?? null) : null;
   const priced = (type: string) =>
     rows
       .filter((row) => row.listingType === type && !row.price?.onRequest)
@@ -210,7 +217,8 @@ export async function getLocationMarketStats(
       .filter((amount) => amount > 0);
 
   const typeCounts = new Map<string, number>();
-  for (const row of rows) typeCounts.set(row.propertyType, (typeCounts.get(row.propertyType) ?? 0) + 1);
+  for (const row of rows)
+    typeCounts.set(row.propertyType, (typeCounts.get(row.propertyType) ?? 0) + 1);
 
   return {
     total: rows.length,

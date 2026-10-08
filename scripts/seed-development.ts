@@ -43,7 +43,9 @@ async function main() {
 
   const existing = await PropertyModel.estimatedDocumentCount();
   if (existing > 0 && !hasFlag("--reset")) {
-    console.error(`The database already has ${existing} listings. Re-run with --reset to replace them.`);
+    console.error(
+      `The database already has ${existing} listings. Re-run with --reset to replace them.`,
+    );
     process.exit(1);
   }
   if (hasFlag("--reset")) {
@@ -70,10 +72,14 @@ async function main() {
     SiteSettingsModel.syncIndexes(),
   ]);
 
-  await LocationModel.insertMany(seedLocations.map((location) => ({ ...location, published: true })));
+  await LocationModel.insertMany(
+    seedLocations.map((location) => ({ ...location, published: true })),
+  );
   console.log(`Locations: ${seedLocations.length}`);
 
-  const agents = await AgentModel.insertMany(seedAgents.map((agent) => ({ ...agent, active: true })));
+  const agents = await AgentModel.insertMany(
+    seedAgents.map((agent) => ({ ...agent, active: true })),
+  );
   const agentIds = new Map(agents.map((agent) => [agent.slug, agent._id as Types.ObjectId]));
   console.log(`Advisors: ${agents.length}`);
 
@@ -118,7 +124,9 @@ async function main() {
           citySlug: property.city,
           cityName: locationNames.get(property.city) ?? property.city,
           neighbourhoodSlug: property.neighbourhood,
-          neighbourhoodName: property.neighbourhood ? (locationNames.get(property.neighbourhood) ?? "") : "",
+          neighbourhoodName: property.neighbourhood
+            ? (locationNames.get(property.neighbourhood) ?? "")
+            : "",
           displayAddress: property.displayAddress,
           showExactLocation: Boolean(property.showExactLocation),
           geo: { type: "Point", coordinates: [property.coordinates[1], property.coordinates[0]] },

@@ -39,7 +39,12 @@ describe("text helpers", () => {
 
 describe("calculateMortgage", () => {
   it("matches the standard amortisation formula", () => {
-    const result = calculateMortgage({ price: 1_000_000, depositPercent: 20, annualRatePercent: 6, years: 25 });
+    const result = calculateMortgage({
+      price: 1_000_000,
+      depositPercent: 20,
+      annualRatePercent: 6,
+      years: 25,
+    });
     expect(result.deposit).toBe(200_000);
     expect(result.loanAmount).toBe(800_000);
     expect(result.monthlyPayment).toBe(5154);
@@ -47,9 +52,23 @@ describe("calculateMortgage", () => {
   });
 
   it("handles a zero rate and clamps nonsense input", () => {
-    expect(calculateMortgage({ price: 120_000, depositPercent: 0, annualRatePercent: 0, years: 10 }).monthlyPayment).toBe(1000);
-    const clamped = calculateMortgage({ price: -5, depositPercent: 150, annualRatePercent: -3, years: 0 });
-    expect(clamped).toEqual({ deposit: 0, loanAmount: 0, monthlyPayment: 0, totalInterest: 0, totalRepayable: 0 });
+    expect(
+      calculateMortgage({ price: 120_000, depositPercent: 0, annualRatePercent: 0, years: 10 })
+        .monthlyPayment,
+    ).toBe(1000);
+    const clamped = calculateMortgage({
+      price: -5,
+      depositPercent: 150,
+      annualRatePercent: -3,
+      years: 0,
+    });
+    expect(clamped).toEqual({
+      deposit: 0,
+      loanAmount: 0,
+      monthlyPayment: 0,
+      totalInterest: 0,
+      totalRepayable: 0,
+    });
   });
 });
 
@@ -65,7 +84,10 @@ describe("recommendations", () => {
     areaSqft: 2500,
     amenities: ["pool", "gym"],
   };
-  const like = (overrides: Partial<RecommendationSubject>): RecommendationSubject => ({ ...base, ...overrides });
+  const like = (overrides: Partial<RecommendationSubject>): RecommendationSubject => ({
+    ...base,
+    ...overrides,
+  });
 
   it("never recommends the same listing or the other transaction type", () => {
     expect(similarityScore(base, base)).toBe(0);
@@ -83,7 +105,13 @@ describe("recommendations", () => {
     const ranked = rankSimilar(
       base,
       [
-        like({ id: "far", citySlug: "sylhet", neighbourhoodSlug: "", propertyType: "villa", price: 5_000_000 }),
+        like({
+          id: "far",
+          citySlug: "sylhet",
+          neighbourhoodSlug: "",
+          propertyType: "villa",
+          price: 5_000_000,
+        }),
         like({ id: "close" }),
         like({ id: "rent", listingType: "rent" }),
         like({ id: "mid", neighbourhoodSlug: "banani" }),

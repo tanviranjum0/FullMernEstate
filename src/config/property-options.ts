@@ -117,9 +117,13 @@ export const AMENITY_CATALOG = [
 ] as const;
 
 export type AmenityKey = (typeof AMENITY_CATALOG)[number]["items"][number]["key"];
-export const AMENITY_ITEMS: { key: AmenityKey; label: string; category: string }[] = AMENITY_CATALOG.flatMap((group) =>
-  (group.items as readonly { key: AmenityKey; label: string }[]).map((item) => ({ ...item, category: group.category })),
-);
+export const AMENITY_ITEMS: { key: AmenityKey; label: string; category: string }[] =
+  AMENITY_CATALOG.flatMap((group) =>
+    (group.items as readonly { key: AmenityKey; label: string }[]).map((item) => ({
+      ...item,
+      category: group.category,
+    })),
+  );
 export const AMENITY_KEYS = AMENITY_CATALOG.flatMap((group) =>
   group.items.map((item) => item.key),
 ) as AmenityKey[];
@@ -139,7 +143,12 @@ export const SEARCH_FEATURE_FILTERS = [
   "smart_home",
 ] as const satisfies readonly AmenityKey[];
 
-export const LISTING_FLAGS = ["featured", "exclusive", "new-construction", "price-reduced"] as const;
+export const LISTING_FLAGS = [
+  "featured",
+  "exclusive",
+  "new-construction",
+  "price-reduced",
+] as const;
 export type ListingFlag = (typeof LISTING_FLAGS)[number];
 export const LISTING_FLAG_LABELS: Record<ListingFlag, string> = {
   featured: "Featured",
@@ -158,7 +167,10 @@ export type SortOption = (typeof SORT_OPTIONS)[number]["value"];
 
 /** Budget steps used by search filters, in the site's default currency (BDT). */
 export const PRICE_STEPS: Record<ListingType, number[]> = {
-  sale: [20_000_000, 30_000_000, 50_000_000, 75_000_000, 100_000_000, 150_000_000, 200_000_000, 300_000_000],
+  sale: [
+    20_000_000, 30_000_000, 50_000_000, 75_000_000, 100_000_000, 150_000_000, 200_000_000,
+    300_000_000,
+  ],
   rent: [100_000, 150_000, 200_000, 300_000, 500_000, 750_000, 1_000_000],
 };
 

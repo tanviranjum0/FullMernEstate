@@ -15,7 +15,15 @@ export function CompareFromStorage({ hasIds }: { hasIds: boolean }) {
   return null;
 }
 
-export function RemoveFromCompare({ propertyId, remainingIds, title }: { propertyId: string; remainingIds: string[]; title: string }) {
+export function RemoveFromCompare({
+  propertyId,
+  remainingIds,
+  title,
+}: {
+  propertyId: string;
+  remainingIds: string[];
+  title: string;
+}) {
   const router = useRouter();
   return (
     <button
@@ -23,7 +31,9 @@ export function RemoveFromCompare({ propertyId, remainingIds, title }: { propert
       aria-label={`Remove ${title} from comparison`}
       onClick={() => {
         compareList.remove(propertyId);
-        router.replace(remainingIds.length ? `/compare?ids=${remainingIds.join(",")}` : "/compare?ids=");
+        router.replace(
+          remainingIds.length ? `/compare?ids=${remainingIds.join(",")}` : "/compare?ids=",
+        );
       }}
       className="grid size-8 place-items-center rounded-full bg-ivory/90 text-ink-900 shadow-lift transition-colors hover:bg-ivory"
     >

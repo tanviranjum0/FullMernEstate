@@ -9,7 +9,9 @@ import { PropertyModel } from "@/server/models/property";
 import { FavoriteModel } from "@/server/models/user-data";
 import { recordMetric } from "@/server/services/metrics";
 
-export async function toggleFavoriteAction(propertyId: unknown): Promise<ActionResult<{ favorited: boolean }>> {
+export async function toggleFavoriteAction(
+  propertyId: unknown,
+): Promise<ActionResult<{ favorited: boolean }>> {
   if (typeof propertyId !== "string" || !Types.ObjectId.isValid(propertyId)) {
     return actionError("That home could not be found.", "validation");
   }
@@ -17,7 +19,8 @@ export async function toggleFavoriteAction(propertyId: unknown): Promise<ActionR
   if (!user) return actionError("Please sign in to save homes.", "unauthenticated");
 
   const limit = await consumeRateLimit(`favorite:${user.id}`, RATE_LIMITS.favorite);
-  if (!limit.allowed) return actionError("Too many changes in a short time. Please wait a moment.", "rate_limited");
+  if (!limit.allowed)
+    return actionError("Too many changes in a short time. Please wait a moment.", "rate_limited");
 
   await connectToDatabase();
   const property = await PropertyModel.exists({ _id: propertyId, status: "published" });

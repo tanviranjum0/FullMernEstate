@@ -12,7 +12,10 @@ export interface AuthOptionsInput {
   secret: string;
   trustedOrigins: string[];
   secureCookies: boolean;
-  sendResetPassword?: (data: { user: { email: string; name: string }; url: string }) => Promise<void>;
+  sendResetPassword?: (data: {
+    user: { email: string; name: string };
+    url: string;
+  }) => Promise<void>;
   plugins?: BetterAuthPlugin[];
 }
 
@@ -38,7 +41,9 @@ export function createAuthOptions(input: AuthOptionsInput) {
         hash: hashPassword,
         // Accounts migrated from the legacy app keep their bcrypt hashes until the next reset.
         verify: async ({ hash, password }: { hash: string; password: string }) =>
-          hash.startsWith("$2") ? bcrypt.compare(password, hash) : verifyPassword({ hash, password }),
+          hash.startsWith("$2")
+            ? bcrypt.compare(password, hash)
+            : verifyPassword({ hash, password }),
       },
       sendResetPassword: input.sendResetPassword,
     },
@@ -78,7 +83,10 @@ export function createAuthOptions(input: AuthOptionsInput) {
           before: async (session: { userId: string | ObjectId }) => {
             const user = await db
               .collection("user")
-              .findOne({ _id: new ObjectId(String(session.userId)) }, { projection: { disabled: 1 } });
+              .findOne(
+                { _id: new ObjectId(String(session.userId)) },
+                { projection: { disabled: 1 } },
+              );
             if (user?.disabled) {
               throw new APIError("FORBIDDEN", {
                 message: "This account has been disabled. Please contact us for assistance.",

@@ -25,11 +25,18 @@ export async function POST(request: Request) {
 
   const auth = await authorize("media:upload");
   if (!auth.ok) {
-    return Response.json({ error: "Not allowed" }, { status: auth.reason === "unauthenticated" ? 401 : 403 });
+    return Response.json(
+      { error: "Not allowed" },
+      { status: auth.reason === "unauthenticated" ? 401 : 403 },
+    );
   }
 
   const limit = await consumeRateLimit(`upload:${auth.user.id}`, RATE_LIMITS.upload);
-  if (!limit.allowed) return Response.json({ error: "Too many uploads. Please wait a few minutes." }, { status: 429 });
+  if (!limit.allowed)
+    return Response.json(
+      { error: "Too many uploads. Please wait a few minutes." },
+      { status: 429 },
+    );
 
   const declaredLength = Number(request.headers.get("content-length") ?? 0);
   if (declaredLength > MAX_UPLOAD_BYTES + 64 * 1024) {
@@ -44,7 +51,8 @@ export async function POST(request: Request) {
   }
   const file = form.get("file");
   const kind = String(form.get("kind") ?? "property");
-  if (!(file instanceof File) || !KINDS.has(kind)) return Response.json({ error: "Invalid upload." }, { status: 400 });
+  if (!(file instanceof File) || !KINDS.has(kind))
+    return Response.json({ error: "Invalid upload." }, { status: 400 });
   if (file.size === 0 || file.size > MAX_UPLOAD_BYTES) {
     return Response.json({ error: "Images must be smaller than 4 MB." }, { status: 413 });
   }
@@ -55,9 +63,19 @@ export async function POST(request: Request) {
     const storage = getMediaStorage();
     let src = "";
     for (const variant of processed.variants) {
-      src = await storage.put(`${folder}/${variantFileName(variant.width)}`, variant.buffer, "image/webp");
+      src = await storage.put(
+        `${folder}/${variantFileName(variant.width)}`,
+        variant.buffer,
+        "image/webp",
+      );
     }
-    await recordAudit(auth.user, "media.uploaded", "media", folder, `Uploaded ${kind} image (${processed.width}×${processed.height})`);
+    await recordAudit(
+      auth.user,
+      "media.uploaded",
+      "media",
+      folder,
+      `Uploaded ${kind} image (${processed.width}×${processed.height})`,
+    );
     return Response.json({
       src,
       width: processed.width,
@@ -68,7 +86,8 @@ export async function POST(request: Request) {
       caption: "",
     });
   } catch (error) {
-    if (error instanceof ImageValidationError) return Response.json({ error: error.message }, { status: 422 });
+    if (error instanceof ImageValidationError)
+      return Response.json({ error: error.message }, { status: 422 });
     console.error("[media] upload failed", { error: (error as Error).message });
     return Response.json({ error: "The image could not be processed." }, { status: 500 });
   }

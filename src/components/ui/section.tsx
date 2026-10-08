@@ -39,7 +39,13 @@ export function SectionHeading({
     >
       <div className={cn("max-w-2xl", align === "center" && "mx-auto")}>
         {eyebrow ? (
-          <Eyebrow className={cn("mb-5", align === "center" && "justify-center", tone === "light" && "text-ivory/70")}>
+          <Eyebrow
+            className={cn(
+              "mb-5",
+              align === "center" && "justify-center",
+              tone === "light" && "text-ivory/70",
+            )}
+          >
             {eyebrow}
           </Eyebrow>
         ) : null}
@@ -52,7 +58,11 @@ export function SectionHeading({
           {title}
         </Heading>
         {intro ? (
-          <div className={cn("mt-5 text-lead", tone === "dark" ? "text-stone-600" : "text-ivory/75")}>{intro}</div>
+          <div
+            className={cn("mt-5 text-lead", tone === "dark" ? "text-stone-600" : "text-ivory/75")}
+          >
+            {intro}
+          </div>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

@@ -19,17 +19,20 @@ export function PriceTag({
   showPrevious?: boolean;
 }) {
   if (price.onRequest) {
-    return <p className={cn("font-display text-[1.35rem] text-ink-900", className)}>Price on request</p>;
+    return (
+      <p className={cn("font-display text-[1.35rem] text-ink-900", className)}>Price on request</p>
+    );
   }
   const period = listingType === "rent" ? "month" : null;
-  const reduced = showPrevious && price.previousAmount !== null && price.previousAmount > price.amount;
+  const reduced =
+    showPrevious && price.previousAmount !== null && price.previousAmount > price.amount;
   return (
     <p className={cn("flex flex-wrap items-baseline gap-x-3 gap-y-1", className)}>
-      <span className="font-display text-[1.35rem] leading-none text-ink-900 tabular">
+      <span className="tabular font-display text-[1.35rem] leading-none text-ink-900">
         {formatPrice(price.amount, price.currency, { compact, period })}
       </span>
       {reduced ? (
-        <span className="text-sm text-stone-500 line-through decoration-stone-400 tabular">
+        <span className="tabular text-sm text-stone-500 line-through decoration-stone-400">
           <span className="sr-only">Previously </span>
           {formatPrice(price.previousAmount!, price.currency, { compact })}
         </span>
@@ -38,15 +41,23 @@ export function PriceTag({
   );
 }
 
-export function PropertyBadges({ property, className }: { property: PropertyCard; className?: string }) {
+export function PropertyBadges({
+  property,
+  className,
+}: {
+  property: PropertyCard;
+  className?: string;
+}) {
   const badges: { label: string; tone: "light" | "dark" | "bronze" | "harbour" }[] = [];
   if (property.availability !== "available") {
     badges.push({ label: AVAILABILITY_LABELS[property.availability], tone: "dark" });
   }
   if (property.flags.exclusive) badges.push({ label: "Exclusive", tone: "bronze" });
   if (property.flags.newConstruction) badges.push({ label: "New development", tone: "light" });
-  else if (property.isNew && property.availability === "available") badges.push({ label: "Just listed", tone: "light" });
-  if (property.flags.priceReduced && property.availability === "available") badges.push({ label: "Price reduced", tone: "harbour" });
+  else if (property.isNew && property.availability === "available")
+    badges.push({ label: "Just listed", tone: "light" });
+  if (property.flags.priceReduced && property.availability === "available")
+    badges.push({ label: "Price reduced", tone: "harbour" });
   if (badges.length === 0) return null;
   return (
     <div className={cn("flex flex-wrap gap-1.5", className)}>
@@ -76,9 +87,11 @@ export function SpecsInline({
     areaSqft ? formatArea(areaSqft, siteConfig.areaUnit) : null,
   ].filter(Boolean);
   return (
-    <ul className={cn("flex flex-wrap items-center gap-x-3 text-[0.82rem] text-stone-600", className)}>
+    <ul
+      className={cn("flex flex-wrap items-center gap-x-3 text-[0.82rem] text-stone-600", className)}
+    >
       {parts.map((part, index) => (
-        <li key={part} className="flex items-center gap-3 tabular">
+        <li key={part} className="tabular flex items-center gap-3">
           {index > 0 ? <span aria-hidden className="size-0.5 rounded-full bg-stone-400" /> : null}
           {part}
         </li>

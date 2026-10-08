@@ -26,12 +26,23 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import mongoose, { Types } from "mongoose";
 import { MongoClient, type Db } from "mongodb";
-import { LISTING_TYPES, PROPERTY_TYPES, SUPPORTED_CURRENCIES, type CurrencyCode } from "../src/config/property-options";
+import {
+  LISTING_TYPES,
+  PROPERTY_TYPES,
+  SUPPORTED_CURRENCIES,
+  type CurrencyCode,
+} from "../src/config/property-options";
 import { slugify } from "../src/lib/slug";
 import { RESERVED_SLUGS } from "../src/lib/validation/admin";
 import { LocationModel } from "../src/server/models/location";
 import { PropertyModel } from "../src/server/models/property";
-import { connectScriptDatabase, describeHost, hasFlag, readOption, requireEnv } from "./lib/script-db";
+import {
+  connectScriptDatabase,
+  describeHost,
+  hasFlag,
+  readOption,
+  requireEnv,
+} from "./lib/script-db";
 
 interface LegacyImage {
   secure_url?: string;
@@ -69,7 +80,13 @@ interface LegacyListing {
   updatedAt?: Date;
 }
 
-type Outcome = { legacyId: string; result: "migrated" | "skipped"; reason?: string; notes?: string[]; newId?: string };
+type Outcome = {
+  legacyId: string;
+  result: "migrated" | "skipped";
+  reason?: string;
+  notes?: string[];
+  newId?: string;
+};
 
 const BCRYPT_HASH = /^\$2[abxy]\$\d{2}\$[./A-Za-z0-9]{53}$/;
 const CLOUDINARY_URL = /^https:\/\/res\.cloudinary\.com\/[^\s]+$/;
@@ -100,28 +117,42 @@ function cloudinaryImage(image: LegacyImage | null | undefined) {
  * Users → Better Auth `user` + credential `account`
  * --------------------------------------------------------------------------------------------*/
 
-async function migrateUsers(legacy: Db, target: Db): Promise<{ outcomes: Outcome[]; idMap: Map<string, string> }> {
+async function migrateUsers(
+  legacy: Db,
+  target: Db,
+): Promise<{ outcomes: Outcome[]; idMap: Map<string, string> }> {
   const outcomes: Outcome[] = [];
   const idMap = new Map<string, string>();
   const users = await legacy.collection<LegacyUser>("users").find({}).toArray();
 
   for (const user of users) {
     const legacyId = user._id.toString();
-    const email = String(user.email ?? "").trim().toLowerCase();
+    const email = String(user.email ?? "")
+      .trim()
+      .toLowerCase();
     if (!EMAIL.test(email)) {
       outcomes.push({ legacyId, result: "skipped", reason: "missing or invalid email" });
       continue;
     }
-    const existing = await target.collection("user").findOne({ $or: [{ email }, { legacyUserId: legacyId }] }, { projection: { _id: 1 } });
+    const existing = await target
+      .collection("user")
+      .findOne({ $or: [{ email }, { legacyUserId: legacyId }] }, { projection: { _id: 1 } });
     if (existing) {
       idMap.set(legacyId, existing._id.toString());
-      outcomes.push({ legacyId, result: "skipped", reason: "an account with this email already exists", newId: existing._id.toString() });
+      outcomes.push({
+        legacyId,
+        result: "skipped",
+        reason: "an account with this email already exists",
+        newId: existing._id.toString(),
+      });
       continue;
     }
 
     const notes: string[] = [];
-    const hash = typeof user.password === "string" && BCRYPT_HASH.test(user.password) ? user.password : null;
-    if (!hash) notes.push("password hash unusable (legacy update bug); user must reset their password");
+    const hash =
+      typeof user.password === "string" && BCRYPT_HASH.test(user.password) ? user.password : null;
+    if (!hash)
+      notes.push("password hash unusable (legacy update bug); user must reset their password");
     const avatarUrl = user.avatar?.secure_url;
     const avatar = avatarUrl && CLOUDINARY_URL.test(avatarUrl) ? avatarUrl : undefined;
 
@@ -129,7 +160,10 @@ async function migrateUsers(legacy: Db, target: Db): Promise<{ outcomes: Outcome
     const now = new Date();
     const userDocument = {
       _id: userId,
-      name: String(user.username ?? "").trim().slice(0, 120) || email.split("@")[0],
+      name:
+        String(user.username ?? "")
+          .trim()
+          .slice(0, 120) || email.split("@")[0],
       email,
       emailVerified: false,
       ...(avatar ? { image: avatar } : {}),
@@ -171,11 +205,23 @@ interface KnownLocation {
   parentSlug: string;
 }
 
-function matchLocation(address: string, locations: KnownLocation[], defaultCity: KnownLocation | undefined) {
+function matchLocation(
+  address: string,
+  locations: KnownLocation[],
+  defaultCity: KnownLocation | undefined,
+) {
   const haystack = ` ${address.toLowerCase().replace(/[^a-z0-9]+/g, " ")} `;
-  const mentions = (location: KnownLocation) => haystack.includes(` ${location.name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim()} `);
+  const mentions = (location: KnownLocation) =>
+    haystack.includes(
+      ` ${location.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim()} `,
+    );
   const cities = locations.filter((location) => location.kind === "city");
-  const neighbourhood = locations.find((location) => location.kind === "neighbourhood" && mentions(location));
+  const neighbourhood = locations.find(
+    (location) => location.kind === "neighbourhood" && mentions(location),
+  );
   if (neighbourhood) {
     const city = cities.find((candidate) => candidate.slug === neighbourhood.parentSlug);
     if (city) return { city, neighbourhood, assumed: false };
@@ -201,20 +247,35 @@ async function allocateSlug(title: string, taken: Set<string>): Promise<string> 
 async function migrateListings(
   legacy: Db,
   userIds: Map<string, string>,
-  options: { currency: CurrencyCode; propertyType: (typeof PROPERTY_TYPES)[number]; defaultCitySlug?: string },
+  options: {
+    currency: CurrencyCode;
+    propertyType: (typeof PROPERTY_TYPES)[number];
+    defaultCitySlug?: string;
+  },
 ): Promise<Outcome[]> {
   const outcomes: Outcome[] = [];
-  const locations = (await LocationModel.find({}, { kind: 1, slug: 1, name: 1, parentSlug: 1 }).lean()).map((location) => ({
+  const locations = (
+    await LocationModel.find({}, { kind: 1, slug: 1, name: 1, parentSlug: 1 }).lean()
+  ).map((location) => ({
     kind: location.kind as KnownLocation["kind"],
     slug: location.slug,
     name: location.name,
     parentSlug: location.parentSlug ?? "",
   }));
-  const defaultCity = options.defaultCitySlug ? locations.find((l) => l.kind === "city" && l.slug === options.defaultCitySlug) : undefined;
-  if (options.defaultCitySlug && !defaultCity) throw new Error(`--default-city=${options.defaultCitySlug} is not a city in the target database`);
+  const defaultCity = options.defaultCitySlug
+    ? locations.find((l) => l.kind === "city" && l.slug === options.defaultCitySlug)
+    : undefined;
+  if (options.defaultCitySlug && !defaultCity)
+    throw new Error(
+      `--default-city=${options.defaultCitySlug} is not a city in the target database`,
+    );
 
   const takenSlugs = new Set<string>();
-  const listings = await legacy.collection<LegacyListing>("listings").find({}).sort({ createdAt: 1 }).toArray();
+  const listings = await legacy
+    .collection<LegacyListing>("listings")
+    .find({})
+    .sort({ createdAt: 1 })
+    .toArray();
 
   for (const listing of listings) {
     const legacyId = listing._id.toString();
@@ -222,7 +283,9 @@ async function migrateListings(
       outcomes.push({ legacyId, result: "skipped", reason: "already migrated" });
       continue;
     }
-    const title = String(listing.name ?? "").trim().slice(0, 140);
+    const title = String(listing.name ?? "")
+      .trim()
+      .slice(0, 140);
     const listingType = LISTING_TYPES.find((type) => type === listing.type);
     const regular = Number(listing.regularPrice);
     if (title.length < 4) {
@@ -230,24 +293,40 @@ async function migrateListings(
       continue;
     }
     if (!listingType) {
-      outcomes.push({ legacyId, result: "skipped", reason: `unknown listing type “${String(listing.type)}”` });
+      outcomes.push({
+        legacyId,
+        result: "skipped",
+        reason: `unknown listing type “${String(listing.type)}”`,
+      });
       continue;
     }
     if (!(regular > 0)) {
       outcomes.push({ legacyId, result: "skipped", reason: "missing price" });
       continue;
     }
-    const address = String(listing.address ?? "").trim().slice(0, 200);
+    const address = String(listing.address ?? "")
+      .trim()
+      .slice(0, 200);
     const place = matchLocation(address, locations, defaultCity);
     if (!place) {
-      outcomes.push({ legacyId, result: "skipped", reason: "address does not name a known city; pass --default-city=<slug>" });
+      outcomes.push({
+        legacyId,
+        result: "skipped",
+        reason: "address does not name a known city; pass --default-city=<slug>",
+      });
       continue;
     }
 
-    const notes = [`property type set to “${options.propertyType}” (not recorded by the legacy app)`, "image alt text needs review"];
+    const notes = [
+      `property type set to “${options.propertyType}” (not recorded by the legacy app)`,
+      "image alt text needs review",
+    ];
     if (place.assumed) notes.push(`city assumed from --default-city (${place.city.slug})`);
-    const description = String(listing.description ?? "").trim().slice(0, 12_000);
-    if (description.length < 40) notes.push("description shorter than 40 characters; expand before publishing");
+    const description = String(listing.description ?? "")
+      .trim()
+      .slice(0, 12_000);
+    if (description.length < 40)
+      notes.push("description shorter than 40 characters; expand before publishing");
 
     const discount = Number(listing.discountPrice);
     const onOffer = Boolean(listing.offer) && discount > 0 && discount < regular;
@@ -256,8 +335,17 @@ async function migrateListings(
       .map(cloudinaryImage)
       .filter((image): image is NonNullable<typeof image> => image !== null)
       .slice(0, 60)
-      .map((image, index) => ({ ...image, alt: `${title} — photograph ${index + 1}`, caption: "", blurDataURL: "", storageKey: "" }));
-    if (images.length < legacyImages.length) notes.push(`${legacyImages.length - images.length} image(s) skipped (not a Cloudinary URL or missing dimensions)`);
+      .map((image, index) => ({
+        ...image,
+        alt: `${title} — photograph ${index + 1}`,
+        caption: "",
+        blurDataURL: "",
+        storageKey: "",
+      }));
+    if (images.length < legacyImages.length)
+      notes.push(
+        `${legacyImages.length - images.length} image(s) skipped (not a Cloudinary URL or missing dimensions)`,
+      );
     if (images.length === 0) notes.push("no usable photographs; add some before publishing");
 
     const ownerId = listing.userRef?.toString() ?? "";
@@ -271,7 +359,12 @@ async function migrateListings(
       listingType,
       propertyType: options.propertyType,
       availability: "available" as const,
-      price: { amount: onOffer ? discount : regular, currency: options.currency, ...(onOffer ? { previousAmount: regular } : {}), onRequest: false },
+      price: {
+        amount: onOffer ? discount : regular,
+        currency: options.currency,
+        ...(onOffer ? { previousAmount: regular } : {}),
+        onRequest: false,
+      },
       specs: {
         bedrooms: clampInt(listing.bedrooms, 0, 50),
         bathrooms: clampInt(listing.bathrooms, 0, 50),
@@ -283,7 +376,12 @@ async function migrateListings(
       location: {
         citySlug: place.city.slug,
         cityName: place.city.name,
-        ...(place.neighbourhood ? { neighbourhoodSlug: place.neighbourhood.slug, neighbourhoodName: place.neighbourhood.name } : {}),
+        ...(place.neighbourhood
+          ? {
+              neighbourhoodSlug: place.neighbourhood.slug,
+              neighbourhoodName: place.neighbourhood.name,
+            }
+          : {}),
         displayAddress: address,
         addressLine: "",
         showExactLocation: false,
@@ -321,12 +419,16 @@ async function main() {
   const sourceDb = databaseName(legacyUri);
 
   if (target.host === source.host && targetDb === sourceDb) {
-    console.error("LEGACY_MONGODB_URI and MONGODB_URI point at the same database. Refusing to continue.");
+    console.error(
+      "LEGACY_MONGODB_URI and MONGODB_URI point at the same database. Refusing to continue.",
+    );
     process.exit(1);
   }
   if (apply && !target.isLocal) {
     if (!hasFlag("--allow-remote") || process.env.MIGRATE_CONFIRM !== targetDb) {
-      console.error(`Target ${target.host}/${targetDb} is not local. Re-run with --allow-remote and MIGRATE_CONFIRM=${targetDb}.`);
+      console.error(
+        `Target ${target.host}/${targetDb} is not local. Re-run with --allow-remote and MIGRATE_CONFIRM=${targetDb}.`,
+      );
       process.exit(1);
     }
   }
@@ -342,8 +444,13 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`${apply ? "APPLYING" : "DRY RUN"}: ${source.host}/${sourceDb} → ${target.host}/${targetDb}`);
-  const legacyClient = new MongoClient(legacyUri, { serverSelectionTimeoutMS: 10_000, readPreference: "secondaryPreferred" });
+  console.log(
+    `${apply ? "APPLYING" : "DRY RUN"}: ${source.host}/${sourceDb} → ${target.host}/${targetDb}`,
+  );
+  const legacyClient = new MongoClient(legacyUri, {
+    serverSelectionTimeoutMS: 10_000,
+    readPreference: "secondaryPreferred",
+  });
   await legacyClient.connect();
   await connectScriptDatabase(targetUri);
 
@@ -358,19 +465,41 @@ async function main() {
 
     const summarise = (label: string, outcomes: Outcome[]) => {
       const migrated = outcomes.filter((o) => o.result === "migrated").length;
-      console.log(`  ${label.padEnd(9)} ${migrated} ${apply ? "migrated" : "to migrate"}, ${outcomes.length - migrated} skipped`);
-      for (const outcome of outcomes.filter((o) => o.result === "skipped")) console.log(`    skip ${outcome.legacyId}: ${outcome.reason}`);
+      console.log(
+        `  ${label.padEnd(9)} ${migrated} ${apply ? "migrated" : "to migrate"}, ${outcomes.length - migrated} skipped`,
+      );
+      for (const outcome of outcomes.filter((o) => o.result === "skipped"))
+        console.log(`    skip ${outcome.legacyId}: ${outcome.reason}`);
     };
     summarise("Users", users.outcomes);
     summarise("Listings", listings);
 
     const reportDir = path.join(process.cwd(), ".data", "migrations");
     await mkdir(reportDir, { recursive: true });
-    const reportPath = path.join(reportDir, `legacy-${apply ? "applied" : "dry-run"}-${new Date().toISOString().replace(/[:.]/g, "-")}.json`);
-    await writeFile(reportPath, JSON.stringify({ applied: apply, source: `${source.host}/${sourceDb}`, target: `${target.host}/${targetDb}`, users: users.outcomes, listings }, null, 2));
+    const reportPath = path.join(
+      reportDir,
+      `legacy-${apply ? "applied" : "dry-run"}-${new Date().toISOString().replace(/[:.]/g, "-")}.json`,
+    );
+    await writeFile(
+      reportPath,
+      JSON.stringify(
+        {
+          applied: apply,
+          source: `${source.host}/${sourceDb}`,
+          target: `${target.host}/${targetDb}`,
+          users: users.outcomes,
+          listings,
+        },
+        null,
+        2,
+      ),
+    );
     console.log(`Report: ${path.relative(process.cwd(), reportPath)}`);
     if (!apply) console.log("Nothing was written. Re-run with --apply to migrate.");
-    else console.log("Migrated listings are drafts: review them in /admin/properties before publishing.");
+    else
+      console.log(
+        "Migrated listings are drafts: review them in /admin/properties before publishing.",
+      );
   } finally {
     await legacyClient.close();
     await mongoose.disconnect();

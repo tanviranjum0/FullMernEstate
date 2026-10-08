@@ -9,13 +9,18 @@ import { getSiteSettings } from "@/server/queries/content";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Arrange a consultation, request a valuation or ask us a question. An advisor will reply within one working day.",
+  description:
+    "Arrange a consultation, request a valuation or ask us a question. An advisor will reply within one working day.",
   alternates: { canonical: "/contact" },
 };
 
 const CONTACT_TYPES: InquiryType[] = ["general", "consultation", "valuation"];
 
-async function ContactForm({ searchParams }: { searchParams: PageProps<"/contact">["searchParams"] }) {
+async function ContactForm({
+  searchParams,
+}: {
+  searchParams: PageProps<"/contact">["searchParams"];
+}) {
   const params = await searchParams;
   const requested = Array.isArray(params.type) ? params.type[0] : params.type;
   const defaultType = CONTACT_TYPES.find((type) => type === requested) ?? "general";
@@ -55,13 +60,18 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
             <div>
               <h2 className="eyebrow text-stone-600">Office</h2>
               <p className="mt-3 font-display text-2xl text-ink-900">{contact.address}</p>
-              {contact.officeHours ? <p className="mt-2 text-stone-600">{contact.officeHours}</p> : null}
+              {contact.officeHours ? (
+                <p className="mt-2 text-stone-600">{contact.officeHours}</p>
+              ) : null}
             </div>
           ) : null}
           {contact.email ? (
             <div>
               <h2 className="eyebrow text-stone-600">Email</h2>
-              <a href={`mailto:${contact.email}`} className="mt-3 block font-display text-2xl text-ink-900 hover:text-harbour-700">
+              <a
+                href={`mailto:${contact.email}`}
+                className="mt-3 block font-display text-2xl text-ink-900 hover:text-harbour-700"
+              >
                 {contact.email}
               </a>
             </div>
@@ -85,7 +95,10 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
                   <details key={faq.id} className="group py-4">
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-ink-900 [&::-webkit-details-marker]:hidden">
                       {faq.question}
-                      <span aria-hidden className="text-xl text-stone-500 transition-transform group-open:rotate-45">
+                      <span
+                        aria-hidden
+                        className="text-xl text-stone-500 transition-transform group-open:rotate-45"
+                      >
                         +
                       </span>
                     </summary>

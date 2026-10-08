@@ -9,7 +9,9 @@ import { describeSearch } from "@/lib/search/describe";
 import { getSearchIndexability, parseSearchParams } from "@/lib/search/params";
 import { getLocationOptions } from "@/server/queries/location-names";
 
-export async function generateMetadata({ searchParams }: PageProps<"/properties">): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: PageProps<"/properties">): Promise<Metadata> {
   const query = parseSearchParams(await searchParams);
   const { names } = await getLocationOptions();
   const title = describeSearch(query, names);
@@ -24,19 +26,35 @@ export async function generateMetadata({ searchParams }: PageProps<"/properties"
   };
 }
 
-async function SearchHeading({ searchParams }: { searchParams: PageProps<"/properties">["searchParams"] }) {
+async function SearchHeading({
+  searchParams,
+}: {
+  searchParams: PageProps<"/properties">["searchParams"];
+}) {
   const query = parseSearchParams(await searchParams);
   const { names } = await getLocationOptions();
-  return <h1 className="mt-5 font-display text-heading-1 text-ink-900">{describeSearch(query, names)}</h1>;
+  return (
+    <h1 className="mt-5 font-display text-heading-1 text-ink-900">
+      {describeSearch(query, names)}
+    </h1>
+  );
 }
 
-async function Controls({ searchParams }: { searchParams: PageProps<"/properties">["searchParams"] }) {
+async function Controls({
+  searchParams,
+}: {
+  searchParams: PageProps<"/properties">["searchParams"];
+}) {
   const query = parseSearchParams(await searchParams);
   const { options } = await getLocationOptions();
   return <SearchControls key={JSON.stringify(query)} query={query} locations={options} />;
 }
 
-async function Results({ searchParams }: { searchParams: PageProps<"/properties">["searchParams"] }) {
+async function Results({
+  searchParams,
+}: {
+  searchParams: PageProps<"/properties">["searchParams"];
+}) {
   const query = parseSearchParams(await searchParams);
   const { names } = await getLocationOptions();
   return <SearchResults query={query} names={names} />;
@@ -46,7 +64,9 @@ export default function PropertiesPage({ searchParams }: PageProps<"/properties"
   return (
     <div className="container-page pt-10 pb-[var(--section-y)] sm:pt-14">
       <Breadcrumbs items={[{ label: "Properties", href: "/properties" }]} />
-      <Suspense fallback={<h1 className="mt-5 font-display text-heading-1 text-ink-900">Residences</h1>}>
+      <Suspense
+        fallback={<h1 className="mt-5 font-display text-heading-1 text-ink-900">Residences</h1>}
+      >
         <SearchHeading searchParams={searchParams} />
       </Suspense>
       <div className="sticky top-[var(--header-h)] z-30 -mx-[var(--gutter)] mt-8 border-y border-sand-200 bg-ivory/95 px-[var(--gutter)] py-3 backdrop-blur-md">

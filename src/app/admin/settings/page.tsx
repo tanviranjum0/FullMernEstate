@@ -17,7 +17,10 @@ async function Settings() {
 export default function AdminSettingsPage() {
   return (
     <>
-      <AdminPageHeader title="Site settings" description="Content shared across the public website. Changes are live as soon as they are saved." />
+      <AdminPageHeader
+        title="Site settings"
+        description="Content shared across the public website. Changes are live as soon as they are saved."
+      />
       <Suspense fallback={<Skeleton className="h-96 w-full" />}>
         <Settings />
       </Suspense>

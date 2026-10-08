@@ -42,9 +42,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...tree.flatMap(({ city, neighbourhoods }) => [
       { url: `${base}${city.href}`, changeFrequency: "weekly" as const, priority: 0.7 },
-      ...neighbourhoods.map((n) => ({ url: `${base}${n.href}`, changeFrequency: "weekly" as const, priority: 0.6 })),
+      ...neighbourhoods.map((n) => ({
+        url: `${base}${n.href}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      })),
     ]),
-    ...agents.map((agent) => ({ url: `${base}/agents/${agent.slug}`, changeFrequency: "monthly" as const, priority: 0.4 })),
+    ...agents.map((agent) => ({
+      url: `${base}/agents/${agent.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    })),
     ...ARTICLE_CATEGORIES.map((category) => ({
       url: `${base}/insights/category/${category.slug}`,
       changeFrequency: "weekly" as const,

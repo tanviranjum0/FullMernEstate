@@ -30,7 +30,10 @@ function jaccard(a: readonly string[], b: readonly string[]): number {
  * the most weight, then type and price band, then size and shared amenities. Listings of a
  * different transaction type (sale vs. rent) are never similar.
  */
-export function similarityScore(base: RecommendationSubject, candidate: RecommendationSubject): number {
+export function similarityScore(
+  base: RecommendationSubject,
+  candidate: RecommendationSubject,
+): number {
   if (candidate.id === base.id || candidate.listingType !== base.listingType) return 0;
 
   let score = 0;
@@ -39,7 +42,8 @@ export function similarityScore(base: RecommendationSubject, candidate: Recommen
   if (candidate.propertyType === base.propertyType) score += 20;
   score += 20 * relativeCloseness(base.price, candidate.price);
   score += 10 * (1 - clamp01(Math.abs(base.bedrooms - candidate.bedrooms) / 3));
-  if (base.areaSqft && candidate.areaSqft) score += 10 * relativeCloseness(base.areaSqft, candidate.areaSqft);
+  if (base.areaSqft && candidate.areaSqft)
+    score += 10 * relativeCloseness(base.areaSqft, candidate.areaSqft);
   score += 10 * jaccard(base.amenities, candidate.amenities);
   return Math.round(score * 10) / 10;
 }

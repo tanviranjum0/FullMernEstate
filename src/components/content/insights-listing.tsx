@@ -31,7 +31,10 @@ export async function InsightsListing({
   return (
     <div className="container-page pb-[var(--section-y)]">
       <div className="flex flex-col gap-6 border-y border-sand-200 py-5 lg:flex-row lg:items-center lg:justify-between">
-        <nav aria-label="Categories" className="scrollbar-none -mx-[var(--gutter)] overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:px-0">
+        <nav
+          aria-label="Categories"
+          className="-mx-[var(--gutter)] scrollbar-none overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:px-0"
+        >
           <ul className="flex gap-2 whitespace-nowrap">
             <li>
               <Link
@@ -39,7 +42,9 @@ export async function InsightsListing({
                 aria-current={!category ? "page" : undefined}
                 className={cn(
                   "inline-flex h-9 items-center rounded-full border px-4 text-sm transition-colors",
-                  !category ? "border-ink-900 bg-ink-900 text-ivory" : "border-sand-300 hover:border-ink-900",
+                  !category
+                    ? "border-ink-900 bg-ink-900 text-ivory"
+                    : "border-sand-300 hover:border-ink-900",
                 )}
               >
                 All
@@ -52,7 +57,9 @@ export async function InsightsListing({
                   aria-current={category === item.slug ? "page" : undefined}
                   className={cn(
                     "inline-flex h-9 items-center rounded-full border px-4 text-sm transition-colors",
-                    category === item.slug ? "border-ink-900 bg-ink-900 text-ivory" : "border-sand-300 hover:border-ink-900",
+                    category === item.slug
+                      ? "border-ink-900 bg-ink-900 text-ivory"
+                      : "border-sand-300 hover:border-ink-900",
                   )}
                 >
                   {item.name}
@@ -61,7 +68,11 @@ export async function InsightsListing({
             ))}
           </ul>
         </nav>
-        <form action={basePath} role="search" className="flex h-11 w-full items-center gap-2 rounded-sm border border-sand-300 bg-paper px-3 lg:w-80">
+        <form
+          action={basePath}
+          role="search"
+          className="flex h-11 w-full items-center gap-2 rounded-sm border border-sand-300 bg-paper px-3 lg:w-80"
+        >
           <Search aria-hidden strokeWidth={1.5} className="size-4 text-stone-500" />
           <label htmlFor="insights-search" className="sr-only">
             Search insights
@@ -87,7 +98,12 @@ export async function InsightsListing({
         <>
           {showLead ? (
             <div className="mt-14">
-              <ArticleCard article={lead} size="large" headingLevel="h2" className="lg:grid lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-12" />
+              <ArticleCard
+                article={lead}
+                size="large"
+                headingLevel="h2"
+                className="lg:grid lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-12"
+              />
             </div>
           ) : null}
           <ul className="mt-16 grid gap-x-6 gap-y-16 md:grid-cols-2 xl:grid-cols-3">
@@ -97,7 +113,12 @@ export async function InsightsListing({
               </li>
             ))}
           </ul>
-          <Pagination className="mt-20" page={results.page} pageCount={results.pageCount} hrefForPage={hrefFor} />
+          <Pagination
+            className="mt-20"
+            page={results.page}
+            pageCount={results.pageCount}
+            hrefForPage={hrefFor}
+          />
         </>
       )}
     </div>
@@ -105,8 +126,12 @@ export async function InsightsListing({
 }
 
 export function parseInsightsParams(raw: Record<string, string | string[] | undefined>) {
-  const single = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
+  const single = (value: string | string[] | undefined) =>
+    Array.isArray(value) ? value[0] : value;
   const pageValue = Number(single(raw.page));
   const q = single(raw.q)?.trim().slice(0, 80) || undefined;
-  return { page: Number.isInteger(pageValue) && pageValue > 1 && pageValue <= 100 ? pageValue : 1, q };
+  return {
+    page: Number.isInteger(pageValue) && pageValue > 1 && pageValue <= 100 ? pageValue : 1,
+    q,
+  };
 }

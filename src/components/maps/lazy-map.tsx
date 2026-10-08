@@ -23,7 +23,11 @@ function MapPlaceholder({ label }: { label: string }) {
  * Defers downloading MapLibre until the map scrolls near the viewport, so pages that merely
  * contain a map further down do not pay for it up front.
  */
-export function LazyMap({ className, eager = false, ...props }: MapCanvasProps & { eager?: boolean }) {
+export function LazyMap({
+  className,
+  eager = false,
+  ...props
+}: MapCanvasProps & { eager?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(eager);
 
@@ -44,7 +48,11 @@ export function LazyMap({ className, eager = false, ...props }: MapCanvasProps &
 
   return (
     <div ref={ref} className={className}>
-      {visible ? <MapCanvas {...props} className="h-full w-full" /> : <MapPlaceholder label="Map" />}
+      {visible ? (
+        <MapCanvas {...props} className="h-full w-full" />
+      ) : (
+        <MapPlaceholder label="Map" />
+      )}
     </div>
   );
 }

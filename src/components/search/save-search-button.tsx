@@ -10,7 +10,13 @@ import { Field, Input, fieldA11y } from "@/components/ui/form-controls";
 import { useToast } from "@/components/ui/toast";
 import { saveSearchAction } from "@/server/actions/saved-searches";
 
-export function SaveSearchButton({ queryString, suggestedName }: { queryString: string; suggestedName: string }) {
+export function SaveSearchButton({
+  queryString,
+  suggestedName,
+}: {
+  queryString: string;
+  suggestedName: string;
+}) {
   const { signedIn } = useFavorites();
   const router = useRouter();
   const pathname = usePathname();

@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { USER_ROLES } from "@/config/domain";
-import { canManageInquiry, canManageProperty, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
+import {
+  canManageInquiry,
+  canManageProperty,
+  hasPermission,
+  PERMISSIONS,
+} from "@/lib/auth/permissions";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 import { toEmbed } from "@/lib/media/embed";
 import { markdownToPlainText, renderMarkdown } from "@/lib/security/markdown";
@@ -33,7 +38,9 @@ describe("role permissions", () => {
     expect(canManageProperty({ role: "admin", agentId: null }, { agentId: "agent-2" })).toBe(true);
     expect(canManageInquiry(advisor, { assignedAgentId: "agent-1" })).toBe(true);
     expect(canManageInquiry(advisor, { assignedAgentId: "agent-9" })).toBe(false);
-    expect(canManageInquiry({ role: "editor", agentId: null }, { assignedAgentId: null })).toBe(false);
+    expect(canManageInquiry({ role: "editor", agentId: null }, { assignedAgentId: null })).toBe(
+      false,
+    );
   });
 });
 
@@ -55,7 +62,9 @@ describe("toEmbed", () => {
       src: "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0",
     });
     expect(toEmbed("https://youtu.be/dQw4w9WgXcQ")?.provider).toBe("youtube");
-    expect(toEmbed("https://vimeo.com/76979871")?.src).toBe("https://player.vimeo.com/video/76979871?dnt=1");
+    expect(toEmbed("https://vimeo.com/76979871")?.src).toBe(
+      "https://player.vimeo.com/video/76979871?dnt=1",
+    );
     expect(toEmbed("https://my.matterport.com/show/?m=SxQL3iGyoDo")?.provider).toBe("matterport");
   });
 
@@ -85,6 +94,8 @@ describe("renderMarkdown", () => {
   });
 
   it("produces plain text for descriptions", () => {
-    expect(markdownToPlainText("## Heading\n\nSome **bold** text.")).toBe("Heading Some bold text.");
+    expect(markdownToPlainText("## Heading\n\nSome **bold** text.")).toBe(
+      "Heading Some bold text.",
+    );
   });
 });

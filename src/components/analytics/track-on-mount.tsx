@@ -3,7 +3,15 @@
 import { useEffect } from "react";
 import { track, type TrackedEvent } from "@/lib/analytics/track";
 
-export function TrackOnMount({ name, subject, dedupeKey }: { name: TrackedEvent; subject?: string; dedupeKey?: string }) {
+export function TrackOnMount({
+  name,
+  subject,
+  dedupeKey,
+}: {
+  name: TrackedEvent;
+  subject?: string;
+  dedupeKey?: string;
+}) {
   useEffect(() => {
     const key = `tdp:tracked:${name}:${dedupeKey ?? subject ?? ""}`;
     try {

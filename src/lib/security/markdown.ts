@@ -46,7 +46,10 @@ export function renderMarkdown(markdown: string): string {
 }
 
 export function markdownToPlainText(markdown: string): string {
-  return sanitizeHtml(marked.parse(markdown, { async: false }), { allowedTags: [], allowedAttributes: {} })
+  return sanitizeHtml(marked.parse(markdown, { async: false }), {
+    allowedTags: [],
+    allowedAttributes: {},
+  })
     .replace(/\s+/g, " ")
     .trim();
 }

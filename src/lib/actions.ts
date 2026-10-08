@@ -4,7 +4,8 @@ export type ActionResult<T = undefined> =
   | { ok: true; data: T; message?: string }
   | { ok: false; error: string; fieldErrors?: Record<string, string>; code?: ActionErrorCode };
 
-export type ActionErrorCode = "unauthenticated" | "forbidden" | "rate_limited" | "validation" | "not_found" | "conflict";
+export type ActionErrorCode =
+  "unauthenticated" | "forbidden" | "rate_limited" | "validation" | "not_found" | "conflict";
 
 export function actionError(
   error: string,

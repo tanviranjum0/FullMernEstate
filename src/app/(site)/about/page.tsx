@@ -16,10 +16,22 @@ export const metadata: Metadata = {
 };
 
 const approach = [
-  { title: "We listen first", text: "Every search begins with a conversation about how you live, not a list of filters." },
-  { title: "We show selectively", text: "You see fewer homes, each chosen because it genuinely fits your brief." },
-  { title: "We check the details", text: "Documents, building services and running costs are reviewed before you commit." },
-  { title: "We stay with you", text: "The same advisor guides you through negotiation, registration and handover." },
+  {
+    title: "We listen first",
+    text: "Every search begins with a conversation about how you live, not a list of filters.",
+  },
+  {
+    title: "We show selectively",
+    text: "You see fewer homes, each chosen because it genuinely fits your brief.",
+  },
+  {
+    title: "We check the details",
+    text: "Documents, building services and running costs are reviewed before you commit.",
+  },
+  {
+    title: "We stay with you",
+    text: "The same advisor guides you through negotiation, registration and handover.",
+  },
 ];
 
 export default async function AboutPage() {
@@ -35,7 +47,10 @@ export default async function AboutPage() {
       {settings.hero.image ? (
         <div className="container-page">
           <div className="relative aspect-[16/9] overflow-hidden bg-sand-100 lg:aspect-[21/8]">
-            <ResponsiveImage image={settings.hero.image} sizes="(min-width: 1440px) 1340px, 100vw" />
+            <ResponsiveImage
+              image={settings.hero.image}
+              sizes="(min-width: 1440px) 1340px, 100vw"
+            />
           </div>
         </div>
       ) : null}
@@ -44,17 +59,23 @@ export default async function AboutPage() {
         <h2 className="font-display text-heading-1 text-ink-900 lg:col-span-4">Our story</h2>
         <div className="lg:col-span-7 lg:col-start-6">
           {settings.about.story ? (
-            <div className="prose-editorial text-lead" dangerouslySetInnerHTML={{ __html: renderMarkdown(settings.about.story) }} />
+            <div
+              className="prose-editorial text-lead"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(settings.about.story) }}
+            />
           ) : (
             <p className="text-lead text-stone-600">
-              {siteConfig.name} represents residences across Bangladesh, with advisors who specialise in particular
-              neighbourhoods.
+              {siteConfig.name} represents residences across Bangladesh, with advisors who
+              specialise in particular neighbourhoods.
             </p>
           )}
         </div>
       </section>
 
-      <section aria-labelledby="approach-heading" className="bg-ink-950 py-[var(--section-y)] text-ivory">
+      <section
+        aria-labelledby="approach-heading"
+        className="bg-ink-950 py-[var(--section-y)] text-ivory"
+      >
         <div className="container-page">
           <h2 id="approach-heading" className="font-display text-heading-1">
             How we work
@@ -62,7 +83,7 @@ export default async function AboutPage() {
           <ol className="mt-14 grid gap-px bg-ivory/10 sm:grid-cols-2 lg:grid-cols-4">
             {approach.map((step, index) => (
               <Reveal as="li" key={step.title} delay={index * 0.08} className="bg-ink-950 p-8">
-                <span className="text-xs tracking-[0.2em] text-ivory/50 tabular">0{index + 1}</span>
+                <span className="tabular text-xs tracking-[0.2em] text-ivory/50">0{index + 1}</span>
                 <h3 className="mt-6 font-display text-2xl">{step.title}</h3>
                 <p className="mt-3 text-ivory/70">{step.text}</p>
               </Reveal>
@@ -90,7 +111,9 @@ export default async function AboutPage() {
           <div className="container-page flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-xl">
               <h2 className="font-display text-heading-1 text-ink-900">The team</h2>
-              <p className="mt-4 text-lead text-stone-600">Meet the advisors who represent our residences.</p>
+              <p className="mt-4 text-lead text-stone-600">
+                Meet the advisors who represent our residences.
+              </p>
               <ButtonLink href="/agents" variant="outline" className="mt-8">
                 Meet our advisors
               </ButtonLink>

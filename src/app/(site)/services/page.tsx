@@ -29,11 +29,14 @@ export default function ServicesPage() {
                 aria-labelledby={`${service.slug}-title`}
                 className="grid scroll-mt-32 gap-8 border-b border-sand-200 py-14 lg:grid-cols-12"
               >
-                <span className="text-sm tracking-[0.2em] text-stone-500 tabular lg:col-span-1">
+                <span className="tabular text-sm tracking-[0.2em] text-stone-500 lg:col-span-1">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="lg:col-span-4">
-                  <h2 id={`${service.slug}-title`} className="font-display text-heading-2 text-ink-900">
+                  <h2
+                    id={`${service.slug}-title`}
+                    className="font-display text-heading-2 text-ink-900"
+                  >
                     {service.title}
                   </h2>
                   <p className="mt-4 text-lead text-stone-600">{service.summary}</p>
@@ -47,7 +50,11 @@ export default function ServicesPage() {
                   ))}
                 </ul>
                 <div className="lg:col-span-2 lg:col-start-11 lg:text-right">
-                  <ButtonLink href={`/contact?type=${service.inquiryType}`} variant="outline" size="sm">
+                  <ButtonLink
+                    href={`/contact?type=${service.inquiryType}`}
+                    variant="outline"
+                    size="sm"
+                  >
                     {service.cta}
                   </ButtonLink>
                 </div>

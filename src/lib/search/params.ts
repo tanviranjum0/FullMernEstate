@@ -58,7 +58,11 @@ function readList<T extends string>(raw: RawParams, key: string, allowed: readon
   );
 }
 
-function readEnum<T extends string>(raw: RawParams, key: string, allowed: readonly T[]): T | undefined {
+function readEnum<T extends string>(
+  raw: RawParams,
+  key: string,
+  allowed: readonly T[],
+): T | undefined {
   const value = read(raw, key);
   return value && (allowed as readonly string[]).includes(value) ? (value as T) : undefined;
 }

@@ -20,7 +20,11 @@ export function LocationCard({
   return (
     <Link
       href={location.href}
-      className={cn("group relative isolate block overflow-hidden bg-ink-900 text-ivory", aspect, className)}
+      className={cn(
+        "group relative isolate block overflow-hidden bg-ink-900 text-ivory",
+        aspect,
+        className,
+      )}
     >
       <ResponsiveImage
         image={location.heroImage}
@@ -46,7 +50,9 @@ export function LocationCard({
             className="size-6 shrink-0 translate-y-1 opacity-70 transition-transform duration-500 ease-luxe group-hover:translate-x-1 group-hover:-translate-y-0 group-hover:opacity-100"
           />
         </div>
-        {location.headline ? <p className="mt-3 line-clamp-2 text-sm text-ivory/80">{location.headline}</p> : null}
+        {location.headline ? (
+          <p className="mt-3 line-clamp-2 text-sm text-ivory/80">{location.headline}</p>
+        ) : null}
       </div>
     </Link>
   );

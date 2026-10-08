@@ -38,10 +38,18 @@ const AUTH_INDEXES: {
   { collection: "user", key: { email: 1 }, options: { name: "email_unique", unique: true } },
   { collection: "session", key: { token: 1 }, options: { name: "token_unique", unique: true } },
   { collection: "session", key: { userId: 1 }, options: { name: "userId" } },
-  { collection: "session", key: { expiresAt: 1 }, options: { name: "expiresAt_ttl", expireAfterSeconds: 0 } },
+  {
+    collection: "session",
+    key: { expiresAt: 1 },
+    options: { name: "expiresAt_ttl", expireAfterSeconds: 0 },
+  },
   { collection: "account", key: { userId: 1 }, options: { name: "userId" } },
   { collection: "verification", key: { identifier: 1 }, options: { name: "identifier" } },
-  { collection: "verification", key: { expiresAt: 1 }, options: { name: "expiresAt_ttl", expireAfterSeconds: 0 } },
+  {
+    collection: "verification",
+    key: { expiresAt: 1 },
+    options: { name: "expiresAt_ttl", expireAfterSeconds: 0 },
+  },
   { collection: "rateLimit", key: { key: 1 }, options: { name: "key_unique", unique: true } },
 ];
 

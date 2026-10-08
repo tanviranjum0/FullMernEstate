@@ -22,7 +22,11 @@ export async function uniqueSlug<T>(
 
 function withoutUndefined(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(withoutUndefined);
-  if (value !== null && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype) {
+  if (
+    value !== null &&
+    typeof value === "object" &&
+    Object.getPrototypeOf(value) === Object.prototype
+  ) {
     return Object.fromEntries(
       Object.entries(value)
         .filter(([, member]) => member !== undefined)
@@ -47,8 +51,12 @@ export function replaceFields(document: Record<string, unknown>) {
   return Object.keys($unset).length ? { $set, $unset } : { $set };
 }
 
-export function storageKeysOf(images: { storageKey?: string | null }[] | undefined | null): Set<string> {
-  return new Set((images ?? []).map((image) => image.storageKey).filter((key): key is string => Boolean(key)));
+export function storageKeysOf(
+  images: { storageKey?: string | null }[] | undefined | null,
+): Set<string> {
+  return new Set(
+    (images ?? []).map((image) => image.storageKey).filter((key): key is string => Boolean(key)),
+  );
 }
 
 export class AdminActionError extends Error {

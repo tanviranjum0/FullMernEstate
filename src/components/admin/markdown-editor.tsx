@@ -45,19 +45,35 @@ export function MarkdownEditor({
             aria-selected={tab === mode}
             aria-controls={`${id}-panel`}
             onClick={() => (mode === "write" ? setTab("write") : showPreview())}
-            className={cn("rounded-sm px-3 py-1 text-xs font-medium", tab === mode ? "bg-ink-900 text-ivory" : "text-stone-600 hover:bg-sand-100")}
+            className={cn(
+              "rounded-sm px-3 py-1 text-xs font-medium",
+              tab === mode ? "bg-ink-900 text-ivory" : "text-stone-600 hover:bg-sand-100",
+            )}
           >
             {mode === "write" ? "Write" : "Preview"}
           </button>
         ))}
-        <span className="ml-auto self-center text-xs text-stone-500">Markdown · ## headings, **bold**, lists, links</span>
+        <span className="ml-auto self-center text-xs text-stone-500">
+          Markdown · ## headings, **bold**, lists, links
+        </span>
       </div>
       <div id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-tab-${tab}`}>
         {tab === "write" ? (
-          <textarea {...a11y(id, error)} rows={rows} value={value} maxLength={maxLength} onChange={(event) => onChange(event.target.value)} className={`${adminTextarea} font-mono text-[0.85rem]`} />
+          <textarea
+            {...a11y(id, error)}
+            rows={rows}
+            value={value}
+            maxLength={maxLength}
+            onChange={(event) => onChange(event.target.value)}
+            className={`${adminTextarea} font-mono text-[0.85rem]`}
+          />
         ) : (
           <div className="min-h-40 rounded-sm border border-sand-200 bg-ivory p-5">
-            {pending ? <p className="text-sm text-stone-600">Rendering…</p> : <div className="prose-editorial" dangerouslySetInnerHTML={{ __html: html }} />}
+            {pending ? (
+              <p className="text-sm text-stone-600">Rendering…</p>
+            ) : (
+              <div className="prose-editorial" dangerouslySetInnerHTML={{ __html: html }} />
+            )}
           </div>
         )}
       </div>

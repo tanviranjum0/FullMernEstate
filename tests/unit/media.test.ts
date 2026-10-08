@@ -10,8 +10,14 @@ describe("image variants", () => {
   });
 
   it("parses the largest variant from a stored src", () => {
-    expect(parseVariantSrc("/media/property/abc/w1920.webp")).toEqual({ base: "/media/property/abc", maxWidth: 1920 });
-    expect(parseVariantSrc("https://x.public.blob.vercel-storage.com/property/abc/w2560.webp?v=1")?.maxWidth).toBe(2560);
+    expect(parseVariantSrc("/media/property/abc/w1920.webp")).toEqual({
+      base: "/media/property/abc",
+      maxWidth: 1920,
+    });
+    expect(
+      parseVariantSrc("https://x.public.blob.vercel-storage.com/property/abc/w2560.webp?v=1")
+        ?.maxWidth,
+    ).toBe(2560);
     expect(parseVariantSrc("/images/photo.jpg")).toBeNull();
   });
 
@@ -25,15 +31,24 @@ describe("image variants", () => {
 
 describe("imageLoader", () => {
   it("serves our own variants", () => {
-    expect(imageLoader({ src: "/media/property/abc/w2560.webp", width: 640, quality: 75 })).toBe("/media/property/abc/w640.webp");
+    expect(imageLoader({ src: "/media/property/abc/w2560.webp", width: 640, quality: 75 })).toBe(
+      "/media/property/abc/w640.webp",
+    );
   });
 
   it("asks known CDNs to resize", () => {
-    const unsplash = new URL(imageLoader({ src: "https://images.unsplash.com/photo-123", width: 960, quality: 70 }));
-    expect(Object.fromEntries(unsplash.searchParams)).toEqual({ w: "960", q: "70", auto: "format", fit: "max" });
-    expect(imageLoader({ src: "https://res.cloudinary.com/demo/image/upload/v1/a.jpg", width: 640 })).toBe(
-      "https://res.cloudinary.com/demo/image/upload/c_limit,w_640,q_auto,f_auto/v1/a.jpg",
+    const unsplash = new URL(
+      imageLoader({ src: "https://images.unsplash.com/photo-123", width: 960, quality: 70 }),
     );
+    expect(Object.fromEntries(unsplash.searchParams)).toEqual({
+      w: "960",
+      q: "70",
+      auto: "format",
+      fit: "max",
+    });
+    expect(
+      imageLoader({ src: "https://res.cloudinary.com/demo/image/upload/v1/a.jpg", width: 640 }),
+    ).toBe("https://res.cloudinary.com/demo/image/upload/c_limit,w_640,q_auto,f_auto/v1/a.jpg");
   });
 
   it("leaves other sources untouched", () => {

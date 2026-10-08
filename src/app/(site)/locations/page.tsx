@@ -24,9 +24,18 @@ export default async function LocationsPage() {
       />
       <div className="container-page space-y-24 pb-[var(--section-y)]">
         {tree.map(({ city, neighbourhoods }) => (
-          <section key={city.id} aria-labelledby={`city-${city.slug}`} className="grid gap-10 lg:grid-cols-12">
+          <section
+            key={city.id}
+            aria-labelledby={`city-${city.slug}`}
+            className="grid gap-10 lg:grid-cols-12"
+          >
             <div className="lg:col-span-5">
-              <LocationCard location={city} count={counts[city.slug] ?? 0} aspect="aspect-[4/5]" sizes="(min-width: 1024px) 40vw, 92vw" />
+              <LocationCard
+                location={city}
+                count={counts[city.slug] ?? 0}
+                aspect="aspect-[4/5]"
+                sizes="(min-width: 1024px) 40vw, 92vw"
+              />
             </div>
             <div className="lg:col-span-6 lg:col-start-7 lg:pt-6">
               <h2 id={`city-${city.slug}`} className="font-display text-heading-1 text-ink-900">
@@ -43,8 +52,10 @@ export default async function LocationsPage() {
                         href={n.href}
                         className="group flex items-baseline justify-between gap-4 border-b border-sand-200 py-5 transition-colors hover:text-harbour-700"
                       >
-                        <span className="font-display text-[1.6rem] text-ink-900 group-hover:text-harbour-700">{n.name}</span>
-                        <span className="text-sm text-stone-600 tabular">
+                        <span className="font-display text-[1.6rem] text-ink-900 group-hover:text-harbour-700">
+                          {n.name}
+                        </span>
+                        <span className="tabular text-sm text-stone-600">
                           {counts[`${city.slug}/${n.slug}`] ?? 0} residences
                         </span>
                       </Link>

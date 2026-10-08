@@ -30,9 +30,17 @@ export function Pagination({
   const itemClass =
     "grid h-11 min-w-11 place-items-center rounded-sm px-3 text-sm tabular transition-colors hover:bg-sand-100";
   return (
-    <nav aria-label="Pagination" className={cn("flex items-center justify-center gap-1", className)}>
+    <nav
+      aria-label="Pagination"
+      className={cn("flex items-center justify-center gap-1", className)}
+    >
       {page > 1 ? (
-        <Link href={hrefForPage(page - 1)} rel="prev" className={cn(itemClass, "gap-2 px-4")} aria-label="Previous page">
+        <Link
+          href={hrefForPage(page - 1)}
+          rel="prev"
+          className={cn(itemClass, "gap-2 px-4")}
+          aria-label="Previous page"
+        >
           <ArrowLeft strokeWidth={1.5} className="size-4" />
         </Link>
       ) : null}
@@ -45,7 +53,10 @@ export function Pagination({
           ) : (
             <li key={entry}>
               {entry === page ? (
-                <span aria-current="page" className={cn(itemClass, "bg-ink-900 text-ivory hover:bg-ink-900")}>
+                <span
+                  aria-current="page"
+                  className={cn(itemClass, "bg-ink-900 text-ivory hover:bg-ink-900")}
+                >
                   {entry}
                 </span>
               ) : (
@@ -58,7 +69,12 @@ export function Pagination({
         )}
       </ul>
       {page < pageCount ? (
-        <Link href={hrefForPage(page + 1)} rel="next" className={cn(itemClass, "gap-2 px-4")} aria-label="Next page">
+        <Link
+          href={hrefForPage(page + 1)}
+          rel="next"
+          className={cn(itemClass, "gap-2 px-4")}
+          aria-label="Next page"
+        >
           <ArrowRight strokeWidth={1.5} className="size-4" />
         </Link>
       ) : null}

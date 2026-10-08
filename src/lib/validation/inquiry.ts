@@ -22,7 +22,11 @@ export const inquirySchema = z
     propertyId: objectId.optional().or(z.literal("").transform(() => undefined)),
     agentId: objectId.optional().or(z.literal("").transform(() => undefined)),
     name: z.string().trim().min(2, "Please enter your name").max(120, "That name is too long"),
-    email: z.string().trim().toLowerCase().pipe(z.email("Please enter a valid email address").max(254)),
+    email: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .pipe(z.email("Please enter a valid email address").max(254)),
     phone: optionalText(40).refine(
       (value) => !value || /^\+?[\d\s()-]{7,20}$/.test(value),
       "Please enter a valid phone number",
@@ -33,7 +37,10 @@ export const inquirySchema = z
       (value) => !value || /^\d{4}-\d{2}-\d{2}$/.test(value),
       "Please choose a valid date",
     ),
-    viewingTimeSlot: z.enum(VIEWING_TIME_SLOTS).optional().or(z.literal("").transform(() => undefined)),
+    viewingTimeSlot: z
+      .enum(VIEWING_TIME_SLOTS)
+      .optional()
+      .or(z.literal("").transform(() => undefined)),
     // A missing checkbox is absent from FormData, so normalise to a boolean before requiring `true`.
     consent: z.preprocess(
       (value) => value === "on" || value === true || value === "true",
@@ -43,8 +50,15 @@ export const inquirySchema = z
     sourcePath: optionalText(500),
   })
   .superRefine((data, ctx) => {
-    if ((data.preferredContact === "phone" || data.preferredContact === "whatsapp") && !data.phone) {
-      ctx.addIssue({ code: "custom", path: ["phone"], message: "Add a phone number so we can call you" });
+    if (
+      (data.preferredContact === "phone" || data.preferredContact === "whatsapp") &&
+      !data.phone
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["phone"],
+        message: "Add a phone number so we can call you",
+      });
     }
     if (data.type === "viewing") {
       if (!data.viewingDate) {
@@ -52,8 +66,16 @@ export const inquirySchema = z
       } else {
         const chosen = new Date(`${data.viewingDate}T00:00:00Z`).getTime();
         const today = new Date(new Date().toISOString().slice(0, 10)).getTime();
-        if (Number.isNaN(chosen) || chosen < today || chosen > today + MAX_VIEWING_DAYS_AHEAD * 86_400_000) {
-          ctx.addIssue({ code: "custom", path: ["viewingDate"], message: "Choose a date within the next six months" });
+        if (
+          Number.isNaN(chosen) ||
+          chosen < today ||
+          chosen > today + MAX_VIEWING_DAYS_AHEAD * 86_400_000
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["viewingDate"],
+            message: "Choose a date within the next six months",
+          });
         }
       }
     }
@@ -61,7 +83,11 @@ export const inquirySchema = z
       ctx.addIssue({ code: "custom", path: ["propertyId"], message: "Missing property reference" });
     }
     if (data.type === "general" && !data.message) {
-      ctx.addIssue({ code: "custom", path: ["message"], message: "Tell us a little about what you are looking for" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["message"],
+        message: "Tell us a little about what you are looking for",
+      });
     }
   });
 

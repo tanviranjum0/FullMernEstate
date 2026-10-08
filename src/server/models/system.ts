@@ -14,7 +14,11 @@ const auditLogSchema = new Schema(
     changes: { type: [String], default: [] },
     ipHash: { type: String, default: "" },
   },
-  { timestamps: { createdAt: true, updatedAt: false }, versionKey: false, collection: "audit_logs" },
+  {
+    timestamps: { createdAt: true, updatedAt: false },
+    versionKey: false,
+    collection: "audit_logs",
+  },
 );
 auditLogSchema.index({ createdAt: -1 });
 auditLogSchema.index({ entityType: 1, entityId: 1, createdAt: -1 });

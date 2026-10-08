@@ -11,7 +11,9 @@ export async function generateStaticParams() {
   return cities.length ? cities.map((city) => ({ city: city.slug })) : [{ city: "__none__" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/locations/[city]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/locations/[city]">): Promise<Metadata> {
   const { city } = await params;
   const location = await getLocation(city);
   if (!location) return { title: "Location not found", robots: { index: false, follow: true } };
@@ -27,7 +29,10 @@ export async function generateMetadata({ params }: PageProps<"/locations/[city]"
 
 async function CityContent({ params }: { params: PageProps<"/locations/[city]">["params"] }) {
   const { city } = await params;
-  const [location, neighbourhoods] = await Promise.all([getLocation(city), getNeighbourhoods(city)]);
+  const [location, neighbourhoods] = await Promise.all([
+    getLocation(city),
+    getNeighbourhoods(city),
+  ]);
   if (!location) notFound();
   return <LocationDetailView location={location} city={null} neighbourhoods={neighbourhoods} />;
 }

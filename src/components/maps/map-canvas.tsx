@@ -1,6 +1,13 @@
 "use client";
 
-import { LngLatBounds, MAP_STYLE_URL, MapLibreMap, Marker, NavigationControl, type GeoJSONSource } from "./maplibre";
+import {
+  LngLatBounds,
+  MAP_STYLE_URL,
+  MapLibreMap,
+  Marker,
+  NavigationControl,
+  type GeoJSONSource,
+} from "./maplibre";
 import { useEffect, useRef } from "react";
 
 export interface MapMarker {
@@ -34,10 +41,18 @@ function circlePolygon(lat: number, lng: number, radiusMeters: number, steps = 6
     const angle = (i / steps) * Math.PI * 2;
     coordinates.push([lng + lngRadius * Math.cos(angle), lat + latRadius * Math.sin(angle)]);
   }
-  return { type: "Feature" as const, properties: {}, geometry: { type: "Polygon" as const, coordinates: [coordinates] } };
+  return {
+    type: "Feature" as const,
+    properties: {},
+    geometry: { type: "Polygon" as const, coordinates: [coordinates] },
+  };
 }
 
-function markerElement(marker: MapMarker, onClick?: (id: string) => void, onHover?: (id: string | null) => void) {
+function markerElement(
+  marker: MapMarker,
+  onClick?: (id: string) => void,
+  onHover?: (id: string | null) => void,
+) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "tdp-map-marker";
@@ -85,7 +100,11 @@ export default function MapCanvas({
     const map = new MapLibreMap({
       container: container.current,
       style: MAP_STYLE_URL,
-      center: center ? [center.lng, center.lat] : first ? [first.lng, first.lat] : [90.4125, 23.8103],
+      center: center
+        ? [center.lng, center.lat]
+        : first
+          ? [first.lng, first.lat]
+          : [90.4125, 23.8103],
       zoom,
       attributionControl: { compact: true },
       cooperativeGestures: true,
@@ -101,7 +120,9 @@ export default function MapCanvas({
     const syncMarkers = () => {
       const visible = new Set<string>();
       if (cluster) {
-        const features = map.querySourceFeatures("homes", { filter: ["!", ["has", "point_count"]] });
+        const features = map.querySourceFeatures("homes", {
+          filter: ["!", ["has", "point_count"]],
+        });
         for (const feature of features) visible.add(String(feature.properties?.id));
       } else {
         for (const marker of markers) visible.add(marker.id);
@@ -127,8 +148,16 @@ export default function MapCanvas({
 
     map.on("load", () => {
       if (approximateRadiusMeters && first) {
-        map.addSource("area", { type: "geojson", data: circlePolygon(first.lat, first.lng, approximateRadiusMeters) });
-        map.addLayer({ id: "area-fill", type: "fill", source: "area", paint: { "fill-color": "#3e5170", "fill-opacity": 0.14 } });
+        map.addSource("area", {
+          type: "geojson",
+          data: circlePolygon(first.lat, first.lng, approximateRadiusMeters),
+        });
+        map.addLayer({
+          id: "area-fill",
+          type: "fill",
+          source: "area",
+          paint: { "fill-color": "#3e5170", "fill-opacity": 0.14 },
+        });
         map.addLayer({
           id: "area-line",
           type: "line",
@@ -171,15 +200,24 @@ export default function MapCanvas({
           type: "symbol",
           source: "homes",
           filter: ["has", "point_count"],
-          layout: { "text-field": "{point_count_abbreviated}", "text-font": ["Noto Sans Bold"], "text-size": 13 },
+          layout: {
+            "text-field": "{point_count_abbreviated}",
+            "text-font": ["Noto Sans Bold"],
+            "text-size": 13,
+          },
           paint: { "text-color": "#f7f4ef" },
         });
         map.on("click", "clusters", async (event) => {
           const feature = event.features?.[0];
           if (!feature) return;
           const source = map.getSource("homes") as GeoJSONSource;
-          const expansion = await source.getClusterExpansionZoom(feature.properties?.cluster_id as number);
-          map.easeTo({ center: (feature.geometry as GeoJSON.Point).coordinates as [number, number], zoom: expansion });
+          const expansion = await source.getClusterExpansionZoom(
+            feature.properties?.cluster_id as number,
+          );
+          map.easeTo({
+            center: (feature.geometry as GeoJSON.Point).coordinates as [number, number],
+            zoom: expansion,
+          });
         });
         map.on("mouseenter", "clusters", () => (map.getCanvas().style.cursor = "pointer"));
         map.on("mouseleave", "clusters", () => (map.getCanvas().style.cursor = ""));

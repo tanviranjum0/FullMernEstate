@@ -32,11 +32,18 @@ const EMPTY_LOCATION: LocationInput = {
   seo: { title: "", description: "" },
 };
 
-async function LocationEditor({ params }: { params: PageProps<"/admin/locations/[id]">["params"] }) {
+async function LocationEditor({
+  params,
+}: {
+  params: PageProps<"/admin/locations/[id]">["params"];
+}) {
   const { id } = await params;
   await requireAdminPermission("locations:manage", `/admin/locations/${id}`);
   const isNew = id === "new";
-  const [location, options] = await Promise.all([isNew ? null : getAdminLocation(id), getAdminOptions()]);
+  const [location, options] = await Promise.all([
+    isNew ? null : getAdminLocation(id),
+    getAdminOptions(),
+  ]);
   if (!isNew && !location) notFound();
   return (
     <>
@@ -45,7 +52,12 @@ async function LocationEditor({ params }: { params: PageProps<"/admin/locations/
         description={isNew ? undefined : location!.href}
         back={{ href: "/admin/locations", label: "Locations" }}
       />
-      <LocationForm key={id} id={isNew ? null : id} initial={location?.input ?? EMPTY_LOCATION} options={options} />
+      <LocationForm
+        key={id}
+        id={isNew ? null : id}
+        initial={location?.input ?? EMPTY_LOCATION}
+        options={options}
+      />
     </>
   );
 }

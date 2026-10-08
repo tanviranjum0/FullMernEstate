@@ -41,7 +41,10 @@ export async function recordMetric(name: MetricName, subject = ""): Promise<void
   }
 }
 
-export async function metricTotals(names: MetricName[], sinceDays: number): Promise<Record<string, number>> {
+export async function metricTotals(
+  names: MetricName[],
+  sinceDays: number,
+): Promise<Record<string, number>> {
   await connectToDatabase();
   const since = utcDay(new Date(Date.now() - sinceDays * 86_400_000));
   const rows = await DailyMetricModel.aggregate<{ _id: string; total: number }>([
@@ -51,7 +54,10 @@ export async function metricTotals(names: MetricName[], sinceDays: number): Prom
   return Object.fromEntries(rows.map((row) => [row._id, row.total]));
 }
 
-export async function metricSeries(name: MetricName, days: number): Promise<{ day: string; count: number }[]> {
+export async function metricSeries(
+  name: MetricName,
+  days: number,
+): Promise<{ day: string; count: number }[]> {
   await connectToDatabase();
   const since = utcDay(new Date(Date.now() - (days - 1) * 86_400_000));
   const rows = await DailyMetricModel.aggregate<{ _id: string; count: number }>([

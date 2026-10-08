@@ -16,7 +16,11 @@ import { parseSearchParams, searchHref } from "@/lib/search/params";
 import { renderMarkdown } from "@/lib/security/markdown";
 import type { LocationDetail, LocationSummary } from "@/server/dto";
 import { getArticlesForLocation } from "@/server/queries/content";
-import { getLocationMarketStats, getMapPoints, getPropertiesInLocation } from "@/server/queries/properties";
+import {
+  getLocationMarketStats,
+  getMapPoints,
+  getPropertiesInLocation,
+} from "@/server/queries/properties";
 
 export async function LocationDetailView({
   location,
@@ -29,7 +33,10 @@ export async function LocationDetailView({
 }) {
   const citySlug = location.kind === "city" ? location.slug : location.parentSlug;
   const neighbourhoodSlug = location.kind === "neighbourhood" ? location.slug : null;
-  const query = parseSearchParams({ city: citySlug, neighbourhood: neighbourhoodSlug ?? undefined });
+  const query = parseSearchParams({
+    city: citySlug,
+    neighbourhood: neighbourhoodSlug ?? undefined,
+  });
 
   const [properties, stats, articles, points] = await Promise.all([
     getPropertiesInLocation(citySlug, neighbourhoodSlug, 6),
@@ -48,23 +55,40 @@ export async function LocationDetailView({
   return (
     <>
       <section className="relative isolate -mt-px flex min-h-[70svh] items-end overflow-hidden bg-ink-950 text-ivory">
-        <ResponsiveImage image={location.heroImage} sizes="100vw" priority className="-z-10 opacity-85" />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/90 via-ink-950/30 to-ink-950/20" />
+        <ResponsiveImage
+          image={location.heroImage}
+          sizes="100vw"
+          priority
+          className="-z-10 opacity-85"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/90 via-ink-950/30 to-ink-950/20"
+        />
         <div className="container-page pt-24 pb-14 sm:pb-20">
           <Breadcrumbs items={crumbs} tone="light" />
           <Eyebrow className="mt-10 text-ivory/75">
             {location.kind === "city" ? "City guide" : `${city?.name ?? ""} neighbourhood guide`}
           </Eyebrow>
           <h1 className="mt-5 font-display text-display-1 text-ivory">{location.name}</h1>
-          {location.headline ? <p className="mt-5 max-w-2xl text-lead text-ivory/85">{location.headline}</p> : null}
+          {location.headline ? (
+            <p className="mt-5 max-w-2xl text-lead text-ivory/85">{location.headline}</p>
+          ) : null}
         </div>
       </section>
 
       <section className="container-page section-y grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-7">
-          {location.intro ? <p className="font-display text-[1.75rem] leading-snug text-ink-900">{location.intro}</p> : null}
+          {location.intro ? (
+            <p className="font-display text-[1.75rem] leading-snug text-ink-900">
+              {location.intro}
+            </p>
+          ) : null}
           {location.body ? (
-            <div className="prose-editorial mt-10" dangerouslySetInnerHTML={{ __html: renderMarkdown(location.body) }} />
+            <div
+              className="prose-editorial mt-10"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(location.body) }}
+            />
           ) : null}
         </div>
         <aside className="lg:col-span-4 lg:col-start-9">
@@ -73,16 +97,16 @@ export async function LocationDetailView({
             <dl className="mt-6 grid grid-cols-2 gap-6">
               <div>
                 <dt className="text-xs text-stone-600">For sale</dt>
-                <dd className="mt-1 font-display text-3xl text-ink-900 tabular">{stats.forSale}</dd>
+                <dd className="tabular mt-1 font-display text-3xl text-ink-900">{stats.forSale}</dd>
               </div>
               <div>
                 <dt className="text-xs text-stone-600">To rent</dt>
-                <dd className="mt-1 font-display text-3xl text-ink-900 tabular">{stats.forRent}</dd>
+                <dd className="tabular mt-1 font-display text-3xl text-ink-900">{stats.forRent}</dd>
               </div>
               {stats.medianSalePrice && stats.currency ? (
                 <div className="col-span-2">
                   <dt className="text-xs text-stone-600">Median asking price (sale)</dt>
-                  <dd className="mt-1 font-display text-2xl text-ink-900 tabular">
+                  <dd className="tabular mt-1 font-display text-2xl text-ink-900">
                     {formatPrice(stats.medianSalePrice, stats.currency, { compact: true })}
                   </dd>
                 </div>
@@ -90,8 +114,11 @@ export async function LocationDetailView({
               {stats.medianRent && stats.currency ? (
                 <div className="col-span-2">
                   <dt className="text-xs text-stone-600">Median asking rent</dt>
-                  <dd className="mt-1 font-display text-2xl text-ink-900 tabular">
-                    {formatPrice(stats.medianRent, stats.currency, { compact: true, period: "month" })}
+                  <dd className="tabular mt-1 font-display text-2xl text-ink-900">
+                    {formatPrice(stats.medianRent, stats.currency, {
+                      compact: true,
+                      period: "month",
+                    })}
                   </dd>
                 </div>
               ) : null}
@@ -100,15 +127,17 @@ export async function LocationDetailView({
               <ul className="mt-6 space-y-1.5 border-t border-sand-200 pt-5 text-sm text-stone-700">
                 {stats.byType.map((row) => (
                   <li key={row.propertyType} className="flex justify-between">
-                    <span>{PROPERTY_TYPE_LABELS[row.propertyType as PropertyType] ?? row.propertyType}</span>
+                    <span>
+                      {PROPERTY_TYPE_LABELS[row.propertyType as PropertyType] ?? row.propertyType}
+                    </span>
                     <span className="tabular">{row.count}</span>
                   </li>
                 ))}
               </ul>
             ) : null}
             <p className="mt-6 text-xs leading-relaxed text-stone-600">
-              Based on residences currently listed on this site — an indication of our portfolio, not of all market
-              transactions.
+              Based on residences currently listed on this site — an indication of our portfolio,
+              not of all market transactions.
             </p>
             <ButtonLink href={searchLink} className="mt-6 w-full">
               Browse {stats.total} {stats.total === 1 ? "residence" : "residences"}
@@ -152,7 +181,10 @@ export async function LocationDetailView({
 
       {neighbourhoods.length ? (
         <section aria-labelledby="loc-neighbourhoods" className="container-page section-y">
-          <SectionHeading eyebrow="Neighbourhoods" title={<span id="loc-neighbourhoods">Explore {location.name}</span>} />
+          <SectionHeading
+            eyebrow="Neighbourhoods"
+            title={<span id="loc-neighbourhoods">Explore {location.name}</span>}
+          />
           <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {neighbourhoods.map((n) => (
               <li key={n.id}>
@@ -177,7 +209,10 @@ export async function LocationDetailView({
               title: point.title,
               label: point.price.onRequest
                 ? "POA"
-                : formatPrice(point.price.amount, point.price.currency, { compact: true }).replace("BDT ", "৳"),
+                : formatPrice(point.price.amount, point.price.currency, { compact: true }).replace(
+                    "BDT ",
+                    "৳",
+                  ),
             }))}
             center={location.center}
             zoom={location.zoom}
@@ -185,7 +220,10 @@ export async function LocationDetailView({
           />
           <p className="mt-3 text-sm text-stone-600">
             Locations are approximate unless the owner has chosen to show the exact address.{" "}
-            <Link href={searchHref(query, "/properties/map")} className="text-ink-900 underline underline-offset-4">
+            <Link
+              href={searchHref(query, "/properties/map")}
+              className="text-ink-900 underline underline-offset-4"
+            >
               Open the full map
             </Link>
           </p>
@@ -199,7 +237,10 @@ export async function LocationDetailView({
               <h2 className="eyebrow text-stone-600">Lifestyle</h2>
               <ul className="mt-5 flex flex-wrap gap-2">
                 {location.lifestyle.map((item) => (
-                  <li key={item} className="rounded-xs border border-sand-300 px-3 py-1.5 text-sm text-ink-800">
+                  <li
+                    key={item}
+                    className="rounded-xs border border-sand-300 px-3 py-1.5 text-sm text-ink-800"
+                  >
                     {item}
                   </li>
                 ))}
@@ -211,7 +252,10 @@ export async function LocationDetailView({
               <h2 className="eyebrow text-stone-600">Nearby</h2>
               <ul className="mt-5 flex flex-wrap gap-2">
                 {location.nearby.map((item) => (
-                  <li key={item} className="rounded-xs border border-sand-300 px-3 py-1.5 text-sm text-ink-800">
+                  <li
+                    key={item}
+                    className="rounded-xs border border-sand-300 px-3 py-1.5 text-sm text-ink-800"
+                  >
                     {item}
                   </li>
                 ))}
@@ -231,7 +275,10 @@ export async function LocationDetailView({
               <details key={faq.id} className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-xl text-ink-900 [&::-webkit-details-marker]:hidden">
                   {faq.question}
-                  <span aria-hidden className="text-2xl text-stone-500 transition-transform duration-300 group-open:rotate-45">
+                  <span
+                    aria-hidden
+                    className="text-2xl text-stone-500 transition-transform duration-300 group-open:rotate-45"
+                  >
                     +
                   </span>
                 </summary>
@@ -256,7 +303,10 @@ export async function LocationDetailView({
       {articles.length ? (
         <section aria-labelledby="loc-insights" className="bg-sand-100 py-[var(--section-y)]">
           <div className="container-page">
-            <SectionHeading eyebrow="Insights" title={<span id="loc-insights">Reading about {location.name}</span>} />
+            <SectionHeading
+              eyebrow="Insights"
+              title={<span id="loc-insights">Reading about {location.name}</span>}
+            />
             <ul className="mt-12 grid gap-x-6 gap-y-14 md:grid-cols-3">
               {articles.map((article) => (
                 <li key={article.id}>
@@ -273,7 +323,8 @@ export async function LocationDetailView({
           <div className="max-w-2xl">
             <h2 className="font-display text-heading-1">Looking in {location.name}?</h2>
             <p className="mt-4 text-lead text-ivory/80">
-              Our advisors know the streets, the buildings and the homes that never reach the open market.
+              Our advisors know the streets, the buildings and the homes that never reach the open
+              market.
             </p>
           </div>
           <ButtonLink href="/contact?type=consultation" variant="light" size="lg">

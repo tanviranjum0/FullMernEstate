@@ -75,7 +75,9 @@ export function HeroSearch({ locations }: { locations: LocationOption[] }) {
             }}
             className={cn(
               "rounded-xs px-4 py-2 text-[0.7rem] font-semibold tracking-[0.16em] uppercase transition-colors duration-300",
-              mode === tab.value ? "bg-ivory text-ink-900" : "text-ivory/80 hover:bg-ivory/10 hover:text-ivory",
+              mode === tab.value
+                ? "bg-ivory text-ink-900"
+                : "text-ivory/80 hover:bg-ivory/10 hover:text-ivory",
             )}
           >
             {tab.label}
@@ -87,7 +89,12 @@ export function HeroSearch({ locations }: { locations: LocationOption[] }) {
           <label htmlFor="hero-location" className="eyebrow block text-stone-600">
             Location
           </label>
-          <select id="hero-location" value={location} onChange={(e) => setLocation(e.target.value)} className={fieldClass}>
+          <select
+            id="hero-location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className={fieldClass}
+          >
             <option value="">All locations</option>
             {locations.map((group) => (
               <optgroup key={group.city.slug} label={group.city.name}>

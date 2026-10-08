@@ -38,7 +38,12 @@ const sections = [
 export default function TermsPage() {
   return (
     <>
-      <PageIntro crumbs={[{ label: "Terms", href: "/terms" }]} eyebrow="Legal" title="Terms of use" lead="Last updated 8 October 2026." />
+      <PageIntro
+        crumbs={[{ label: "Terms", href: "/terms" }]}
+        eyebrow="Legal"
+        title="Terms of use"
+        lead="Last updated 8 October 2026."
+      />
       <div className="container-prose pb-[var(--section-y)]">
         <div className="prose-editorial">
           {sections.map((section) => (

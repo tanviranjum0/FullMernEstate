@@ -81,7 +81,10 @@ export function UserMenu({ user }: { user: UserMenuUser | null }) {
                 Settings
               </Menu.Item>
               {user.canAccessAdmin ? (
-                <Menu.Item className={cn(itemClass, "text-harbour-700")} render={<Link href="/admin" />}>
+                <Menu.Item
+                  className={cn(itemClass, "text-harbour-700")}
+                  render={<Link href="/admin" />}
+                >
                   Administration
                 </Menu.Item>
               ) : null}

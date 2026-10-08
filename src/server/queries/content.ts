@@ -63,11 +63,16 @@ export async function getNeighbourhoods(citySlug?: string): Promise<LocationSumm
   await connectToDatabase();
   const filter: Record<string, unknown> = { kind: "neighbourhood", published: true };
   if (citySlug) filter.parentSlug = citySlug;
-  const docs = await LocationModel.find(filter).sort({ sortOrder: 1, name: 1 }).lean<LocationRecord[]>();
+  const docs = await LocationModel.find(filter)
+    .sort({ sortOrder: 1, name: 1 })
+    .lean<LocationRecord[]>();
   return docs.map(toLocationSummary);
 }
 
-export async function getLocation(citySlug: string, neighbourhoodSlug?: string): Promise<LocationDetail | null> {
+export async function getLocation(
+  citySlug: string,
+  neighbourhoodSlug?: string,
+): Promise<LocationDetail | null> {
   "use cache";
   cacheLife("hours");
   const path = neighbourhoodSlug ? `${citySlug}/${neighbourhoodSlug}` : citySlug;
@@ -82,7 +87,9 @@ export async function getLocation(citySlug: string, neighbourhoodSlug?: string):
 }
 
 /** All published locations, used for search facets and sitemaps. */
-export async function getLocationTree(): Promise<{ city: LocationSummary; neighbourhoods: LocationSummary[] }[]> {
+export async function getLocationTree(): Promise<
+  { city: LocationSummary; neighbourhoods: LocationSummary[] }[]
+> {
   "use cache";
   cacheLife("hours");
   cacheTag(cacheTags.locations);
@@ -95,7 +102,9 @@ export async function getLocationTree(): Promise<{ city: LocationSummary; neighb
     .filter((loc) => loc.kind === "city")
     .map((city) => ({
       city,
-      neighbourhoods: summaries.filter((loc) => loc.kind === "neighbourhood" && loc.parentSlug === city.slug),
+      neighbourhoods: summaries.filter(
+        (loc) => loc.kind === "neighbourhood" && loc.parentSlug === city.slug,
+      ),
     }));
 }
 
@@ -108,7 +117,9 @@ export async function getAgents(): Promise<AgentCard[]> {
   cacheLife("hours");
   cacheTag(cacheTags.agents);
   await connectToDatabase();
-  const docs = await AgentModel.find({ active: true }).sort({ sortOrder: 1, name: 1 }).lean<AgentRecord[]>();
+  const docs = await AgentModel.find({ active: true })
+    .sort({ sortOrder: 1, name: 1 })
+    .lean<AgentRecord[]>();
   return docs.map(toAgentCard);
 }
 
@@ -223,12 +234,18 @@ export async function getRelatedArticles(article: {
   return docs.map(toArticleCard);
 }
 
-export async function getArticlesForLocation(locationSlug: string, limit = 3): Promise<ArticleCard[]> {
+export async function getArticlesForLocation(
+  locationSlug: string,
+  limit = 3,
+): Promise<ArticleCard[]> {
   "use cache";
   cacheLife("hours");
   cacheTag(cacheTags.articles);
   await connectToDatabase();
-  const docs = await ArticleModel.find({ status: "published", relatedLocationSlugs: locationSlug }, { body: 0 })
+  const docs = await ArticleModel.find(
+    { status: "published", relatedLocationSlugs: locationSlug },
+    { body: 0 },
+  )
     .sort({ publishedAt: -1 })
     .limit(limit)
     .populate(AUTHOR_POPULATE)

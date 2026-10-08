@@ -39,7 +39,10 @@ export default function LocationPickerCanvas({
     });
     map.on("click", (event) => {
       marker.setLngLat(event.lngLat).addTo(map);
-      onChangeRef.current({ lat: Number(event.lngLat.lat.toFixed(6)), lng: Number(event.lngLat.lng.toFixed(6)) });
+      onChangeRef.current({
+        lat: Number(event.lngLat.lat.toFixed(6)),
+        lng: Number(event.lngLat.lng.toFixed(6)),
+      });
     });
     mapRef.current = map;
     markerRef.current = marker;
@@ -59,10 +62,18 @@ export default function LocationPickerCanvas({
   }, [value]);
 
   useEffect(() => {
-    if (!value) mapRef.current?.flyTo({ center: [fallbackCenter.lng, fallbackCenter.lat], zoom: 13 });
+    if (!value)
+      mapRef.current?.flyTo({ center: [fallbackCenter.lng, fallbackCenter.lat], zoom: 13 });
     // Re-centre only when the chosen area changes and no pin has been placed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fallbackCenter.lat, fallbackCenter.lng]);
 
-  return <div ref={container} className="h-full w-full" role="application" aria-label="Click the map to place the listing's location" />;
+  return (
+    <div
+      ref={container}
+      className="h-full w-full"
+      role="application"
+      aria-label="Click the map to place the listing's location"
+    />
+  );
 }

@@ -18,11 +18,18 @@ async function main() {
   await mkdir(outDir, { recursive: true });
   for (const variant of processed.variants) {
     await writeFile(path.join(outDir, variantFileName(variant.width)), variant.buffer);
-    console.log(`  ${variantFileName(variant.width)}  ${(variant.buffer.length / 1024).toFixed(0)} KB`);
+    console.log(
+      `  ${variantFileName(variant.width)}  ${(variant.buffer.length / 1024).toFixed(0)} KB`,
+    );
   }
   const src = `/images/${folder}/${variantFileName(processed.width)}`;
   console.log(
-    JSON.stringify({ src, width: processed.width, height: processed.height, blurDataURL: processed.blurDataURL }),
+    JSON.stringify({
+      src,
+      width: processed.width,
+      height: processed.height,
+      blurDataURL: processed.blurDataURL,
+    }),
   );
 }
 

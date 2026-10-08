@@ -3,7 +3,10 @@ import Link from "next/link";
 import { ForgotPasswordForm } from "@/components/forms/auth-forms";
 import { isEmailConfigured } from "@/lib/env";
 
-export const metadata: Metadata = { title: "Reset password", robots: { index: false, follow: false } };
+export const metadata: Metadata = {
+  title: "Reset password",
+  robots: { index: false, follow: false },
+};
 
 export default function ForgotPasswordPage() {
   if (!isEmailConfigured()) {

@@ -4,11 +4,14 @@ import { InsightsListing, parseInsightsParams } from "@/components/content/insig
 import { PageIntro } from "@/components/layout/page-intro";
 import { Skeleton } from "@/components/ui/section";
 
-export async function generateMetadata({ searchParams }: PageProps<"/insights">): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: PageProps<"/insights">): Promise<Metadata> {
   const { page, q } = parseInsightsParams(await searchParams);
   return {
     title: page > 1 ? `Insights — page ${page}` : "Insights",
-    description: "Market analysis, neighbourhood guides, buying advice and notes on architecture and living well.",
+    description:
+      "Market analysis, neighbourhood guides, buying advice and notes on architecture and living well.",
     alternates: { canonical: page > 1 ? `/insights?page=${page}` : "/insights" },
     robots: q ? { index: false, follow: true } : undefined,
   };
@@ -28,7 +31,13 @@ export default function InsightsPage({ searchParams }: PageProps<"/insights">) {
         title="Insights"
         lead="Considered writing on the market, the neighbourhoods we know, and the details that make a home."
       />
-      <Suspense fallback={<div className="container-page"><Skeleton className="h-96 w-full" /></div>}>
+      <Suspense
+        fallback={
+          <div className="container-page">
+            <Skeleton className="h-96 w-full" />
+          </div>
+        }
+      >
         <Listing searchParams={searchParams} />
       </Suspense>
     </>

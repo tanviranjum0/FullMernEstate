@@ -4,7 +4,8 @@ import { connectToDatabase } from "@/lib/db/mongoose";
 import { getClientIp, hashIdentifier } from "@/lib/security/request";
 import { AuditLogModel } from "@/server/models/system";
 
-export type AuditEntity = "property" | "agent" | "location" | "article" | "inquiry" | "user" | "settings" | "media";
+export type AuditEntity =
+  "property" | "agent" | "location" | "article" | "inquiry" | "user" | "settings" | "media";
 
 /**
  * Records a significant administrative action. Audit writes are awaited so that an action is
@@ -31,7 +32,12 @@ export async function recordAudit(
 }
 
 /** Lists the top-level fields whose values differ, for a compact human-readable audit trail. */
-export function changedFields(before: Record<string, unknown>, after: Record<string, unknown>): string[] {
+export function changedFields(
+  before: Record<string, unknown>,
+  after: Record<string, unknown>,
+): string[] {
   const keys = new Set([...Object.keys(before), ...Object.keys(after)]);
-  return [...keys].filter((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key])).sort();
+  return [...keys]
+    .filter((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
+    .sort();
 }

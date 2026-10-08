@@ -18,7 +18,11 @@ const PUBLIC_EVENTS = [
 
 const eventSchema = z.object({
   name: z.enum(PUBLIC_EVENTS),
-  subject: z.string().max(100).regex(/^[a-z0-9-]*$/i).optional(),
+  subject: z
+    .string()
+    .max(100)
+    .regex(/^[a-z0-9-]*$/i)
+    .optional(),
 });
 
 /**
@@ -38,14 +42,20 @@ export async function POST(request: Request) {
   const parsed = eventSchema.safeParse(payload);
   if (!parsed.success) return new Response(null, { status: 400 });
 
-  const limit = await consumeRateLimit(`event:${hashIdentifier(await getClientIp())}`, RATE_LIMITS.analytics);
+  const limit = await consumeRateLimit(
+    `event:${hashIdentifier(await getClientIp())}`,
+    RATE_LIMITS.analytics,
+  );
   if (!limit.allowed) return new Response(null, { status: 204 });
 
   const { name, subject = "" } = parsed.data;
   await recordMetric(name, subject);
   if (name === "property_view" && Types.ObjectId.isValid(subject)) {
     await connectToDatabase();
-    await PropertyModel.updateOne({ _id: subject, status: "published" }, { $inc: { viewCount: 1 } });
+    await PropertyModel.updateOne(
+      { _id: subject, status: "published" },
+      { $inc: { viewCount: 1 } },
+    );
   }
   return new Response(null, { status: 204 });
 }

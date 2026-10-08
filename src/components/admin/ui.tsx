@@ -18,7 +18,10 @@ export function AdminPageHeader({
     <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {back ? (
-          <Link href={back.href} className="mb-3 inline-flex items-center gap-1 text-sm text-stone-600 hover:text-ink-900">
+          <Link
+            href={back.href}
+            className="mb-3 inline-flex items-center gap-1 text-sm text-stone-600 hover:text-ink-900"
+          >
             <ChevronLeft aria-hidden className="size-4" /> {back.label}
           </Link>
         ) : null}
@@ -72,7 +75,12 @@ export type PillTone = keyof typeof PILL_TONES;
 
 export function Pill({ tone = "neutral", children }: { tone?: PillTone; children: ReactNode }) {
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap", PILL_TONES[tone])}>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+        PILL_TONES[tone],
+      )}
+    >
       {children}
     </span>
   );
@@ -107,7 +115,8 @@ export function DataTable({ children, caption }: { children: ReactNode; caption:
   );
 }
 
-export const th = "border-b border-sand-200 bg-sand-100/60 px-4 py-2.5 text-xs font-semibold text-stone-700";
+export const th =
+  "border-b border-sand-200 bg-sand-100/60 px-4 py-2.5 text-xs font-semibold text-stone-700";
 export const td = "border-b border-sand-200 px-4 py-3 align-middle";
 
 /** GET-based filter bar so admin filters are linkable and work without JavaScript. */
@@ -115,7 +124,10 @@ export function FilterForm({ action, children }: { action: string; children: Rea
   return (
     <form action={action} className="mb-4 flex flex-wrap items-end gap-2" role="search">
       {children}
-      <button type="submit" className="h-9 rounded-sm bg-ink-900 px-4 text-xs font-semibold text-ivory hover:bg-harbour-800">
+      <button
+        type="submit"
+        className="h-9 rounded-sm bg-ink-900 px-4 text-xs font-semibold text-ivory hover:bg-harbour-800"
+      >
         Apply
       </button>
     </form>

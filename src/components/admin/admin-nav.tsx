@@ -37,10 +37,11 @@ export function AdminNav({ items }: { items: AdminNavItem[] }) {
   const pathname = usePathname();
   return (
     <nav aria-label="Administration">
-      <ul className="scrollbar-none flex gap-1 overflow-x-auto lg:flex-col">
+      <ul className="flex scrollbar-none gap-1 overflow-x-auto lg:flex-col">
         {items.map((item) => {
           const Icon = ICONS[item.icon];
-          const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
+          const active =
+            item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
           return (
             <li key={item.href}>
               <Link
@@ -48,7 +49,9 @@ export function AdminNav({ items }: { items: AdminNavItem[] }) {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex items-center gap-3 rounded-sm px-3 py-2 text-sm whitespace-nowrap transition-colors",
-                  active ? "bg-ivory/10 text-ivory" : "text-ivory/60 hover:bg-ivory/5 hover:text-ivory",
+                  active
+                    ? "bg-ivory/10 text-ivory"
+                    : "text-ivory/60 hover:bg-ivory/5 hover:text-ivory",
                 )}
               >
                 <Icon aria-hidden strokeWidth={1.5} className="size-4" />

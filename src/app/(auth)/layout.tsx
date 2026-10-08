@@ -13,7 +13,10 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           priority
           className="object-cover opacity-80"
         />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink-950/85 via-ink-950/10 to-ink-950/30" />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-ink-950/85 via-ink-950/10 to-ink-950/30"
+        />
         <div className="absolute inset-x-0 bottom-0 p-12 text-ivory">
           <p className="max-w-md font-display text-[2.4rem] leading-tight">
             Save the homes you love, follow your enquiries, and return to your searches.

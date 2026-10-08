@@ -34,7 +34,12 @@ export function inquiryReference(id: string): string {
 export async function createInquiry(data: InquiryData, context: CreateInquiryContext) {
   await connectToDatabase();
 
-  let property: { _id: Types.ObjectId; title: string; slug: string; agent?: Types.ObjectId | null } | null = null;
+  let property: {
+    _id: Types.ObjectId;
+    title: string;
+    slug: string;
+    agent?: Types.ObjectId | null;
+  } | null = null;
   if (data.propertyId) {
     property = await PropertyModel.findOne(
       { _id: data.propertyId, status: "published" },
@@ -68,7 +73,10 @@ export async function createInquiry(data: InquiryData, context: CreateInquiryCon
     propertySnapshot: property ? { title: property.title, slug: property.slug } : undefined,
     agent: agentId ?? undefined,
     assignedTo: agentId ?? undefined,
-    user: context.userId && Types.ObjectId.isValid(context.userId) ? new Types.ObjectId(context.userId) : undefined,
+    user:
+      context.userId && Types.ObjectId.isValid(context.userId)
+        ? new Types.ObjectId(context.userId)
+        : undefined,
     name: data.name,
     email: data.email,
     phone: data.phone ?? "",
@@ -76,14 +84,20 @@ export async function createInquiry(data: InquiryData, context: CreateInquiryCon
     message: data.message ?? "",
     viewing:
       data.type === "viewing" && data.viewingDate
-        ? { date: new Date(`${data.viewingDate}T00:00:00Z`), timeSlot: data.viewingTimeSlot ?? null }
+        ? {
+            date: new Date(`${data.viewingDate}T00:00:00Z`),
+            timeSlot: data.viewingTimeSlot ?? null,
+          }
         : undefined,
     consent: true,
     source: { path: data.sourcePath ?? "" },
     meta: { ipHash: context.ipHash, userAgent: context.userAgent },
   });
 
-  await recordMetric(data.type === "viewing" ? "viewing_request" : "inquiry", property?._id.toString() ?? "");
+  await recordMetric(
+    data.type === "viewing" ? "viewing_request" : "inquiry",
+    property?._id.toString() ?? "",
+  );
   // Runs after the response is sent; the function stays alive until it finishes.
   after(() => notifyStaff(inquiry._id.toString(), data, property, agentId));
 

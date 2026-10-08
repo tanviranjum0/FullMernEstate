@@ -46,7 +46,11 @@ export function useAdminSave<T, R extends { id: string } | undefined>({
       if (!result.ok) {
         setErrors(result.fieldErrors ?? {});
         setFormError(result.error);
-        requestAnimationFrame(() => document.querySelector("[aria-invalid=true]")?.scrollIntoView({ behavior: "smooth", block: "center" }));
+        requestAnimationFrame(() =>
+          document
+            .querySelector("[aria-invalid=true]")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" }),
+        );
         return;
       }
       setErrors({});

@@ -67,7 +67,13 @@ export function Toggle({
   disabled?: boolean;
 }) {
   return (
-    <label htmlFor={id} className={cn("flex cursor-pointer items-start gap-3", disabled && "cursor-not-allowed opacity-60")}>
+    <label
+      htmlFor={id}
+      className={cn(
+        "flex cursor-pointer items-start gap-3",
+        disabled && "cursor-not-allowed opacity-60",
+      )}
+    >
       <input
         id={id}
         type="checkbox"
@@ -146,16 +152,38 @@ export function Repeater<T>({
       {items.map((item, index) => (
         <div key={index} className="flex gap-3 rounded-sm border border-sand-200 p-3">
           <div className="min-w-0 flex-1 space-y-2">
-            {render(item, (patch) => onChange(items.map((row, i) => (i === index ? { ...row, ...patch } : row))), index)}
+            {render(
+              item,
+              (patch) =>
+                onChange(items.map((row, i) => (i === index ? { ...row, ...patch } : row))),
+              index,
+            )}
           </div>
           <div className="flex shrink-0 flex-col gap-1">
-            <button type="button" aria-label={`Move ${noun} ${index + 1} up`} disabled={index === 0} onClick={() => move(index, index - 1)} className="grid size-7 place-items-center rounded-xs text-stone-600 hover:bg-sand-100 disabled:opacity-30">
+            <button
+              type="button"
+              aria-label={`Move ${noun} ${index + 1} up`}
+              disabled={index === 0}
+              onClick={() => move(index, index - 1)}
+              className="grid size-7 place-items-center rounded-xs text-stone-600 hover:bg-sand-100 disabled:opacity-30"
+            >
               <ArrowUp className="size-4" />
             </button>
-            <button type="button" aria-label={`Move ${noun} ${index + 1} down`} disabled={index === items.length - 1} onClick={() => move(index, index + 1)} className="grid size-7 place-items-center rounded-xs text-stone-600 hover:bg-sand-100 disabled:opacity-30">
+            <button
+              type="button"
+              aria-label={`Move ${noun} ${index + 1} down`}
+              disabled={index === items.length - 1}
+              onClick={() => move(index, index + 1)}
+              className="grid size-7 place-items-center rounded-xs text-stone-600 hover:bg-sand-100 disabled:opacity-30"
+            >
               <ArrowDown className="size-4" />
             </button>
-            <button type="button" aria-label={`Remove ${noun} ${index + 1}`} onClick={() => onChange(items.filter((_, i) => i !== index))} className="grid size-7 place-items-center rounded-xs text-stone-600 hover:bg-danger-50 hover:text-danger-600">
+            <button
+              type="button"
+              aria-label={`Remove ${noun} ${index + 1}`}
+              onClick={() => onChange(items.filter((_, i) => i !== index))}
+              className="grid size-7 place-items-center rounded-xs text-stone-600 hover:bg-danger-50 hover:text-danger-600"
+            >
               <Trash2 className="size-4" />
             </button>
           </div>
@@ -175,9 +203,20 @@ export function Repeater<T>({
 }
 
 /** Sticky footer carrying form-level status and the primary actions. */
-export function SaveBar({ status, error, children }: { status?: ReactNode; error?: string; children: ReactNode }) {
+export function SaveBar({
+  status,
+  error,
+  children,
+}: {
+  status?: ReactNode;
+  error?: string;
+  children: ReactNode;
+}) {
   return (
-    <div data-bottom-bar className="sticky bottom-0 z-20 -mx-4 mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-sand-200 bg-white/95 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8">
+    <div
+      data-bottom-bar
+      className="sticky bottom-0 z-20 -mx-4 mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-sand-200 bg-white/95 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8"
+    >
       <div className="min-w-0 text-sm">
         {error ? (
           <p role="alert" className="text-danger-600">
@@ -195,7 +234,10 @@ export function SaveBar({ status, error, children }: { status?: ReactNode; error
 }
 
 export const adminButton = {
-  primary: "inline-flex h-9 items-center gap-2 rounded-sm bg-ink-900 px-4 text-sm font-medium text-ivory transition-colors hover:bg-harbour-800 disabled:opacity-50",
-  secondary: "inline-flex h-9 items-center gap-2 rounded-sm border border-sand-300 bg-white px-4 text-sm font-medium text-ink-900 transition-colors hover:border-ink-900 disabled:opacity-50",
-  danger: "inline-flex h-9 items-center gap-2 rounded-sm px-4 text-sm font-medium text-danger-600 transition-colors hover:bg-danger-50 disabled:opacity-50",
+  primary:
+    "inline-flex h-9 items-center gap-2 rounded-sm bg-ink-900 px-4 text-sm font-medium text-ivory transition-colors hover:bg-harbour-800 disabled:opacity-50",
+  secondary:
+    "inline-flex h-9 items-center gap-2 rounded-sm border border-sand-300 bg-white px-4 text-sm font-medium text-ink-900 transition-colors hover:border-ink-900 disabled:opacity-50",
+  danger:
+    "inline-flex h-9 items-center gap-2 rounded-sm px-4 text-sm font-medium text-danger-600 transition-colors hover:bg-danger-50 disabled:opacity-50",
 };

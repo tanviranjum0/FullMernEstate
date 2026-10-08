@@ -30,7 +30,10 @@ async function ArticleEditor({ params }: { params: PageProps<"/admin/insights/[i
   const { id } = await params;
   await requireAdminPermission("content:manage", `/admin/insights/${id}`);
   const isNew = id === "new";
-  const [article, options] = await Promise.all([isNew ? null : getAdminArticle(id), getAdminOptions()]);
+  const [article, options] = await Promise.all([
+    isNew ? null : getAdminArticle(id),
+    getAdminOptions(),
+  ]);
   if (!isNew && !article) notFound();
   return (
     <>
@@ -39,7 +42,12 @@ async function ArticleEditor({ params }: { params: PageProps<"/admin/insights/[i
         description={isNew ? undefined : `/insights/${article!.slug}`}
         back={{ href: "/admin/insights", label: "Insights" }}
       />
-      <ArticleForm key={id} id={isNew ? null : id} initial={article?.input ?? EMPTY_ARTICLE} options={options} />
+      <ArticleForm
+        key={id}
+        id={isNew ? null : id}
+        initial={article?.input ?? EMPTY_ARTICLE}
+        options={options}
+      />
     </>
   );
 }

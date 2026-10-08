@@ -18,13 +18,33 @@ export const metadata: Metadata = {
 
 const NAV: (AdminNavItem & { permission: Permission })[] = [
   { href: "/admin", label: "Dashboard", icon: "dashboard", permission: "dashboard:view" },
-  { href: "/admin/properties", label: "Listings", icon: "properties", permission: "properties:manage_own" },
-  { href: "/admin/inquiries", label: "Enquiries", icon: "inquiries", permission: "inquiries:manage_own" },
+  {
+    href: "/admin/properties",
+    label: "Listings",
+    icon: "properties",
+    permission: "properties:manage_own",
+  },
+  {
+    href: "/admin/inquiries",
+    label: "Enquiries",
+    icon: "inquiries",
+    permission: "inquiries:manage_own",
+  },
   { href: "/admin/agents", label: "Advisors", icon: "agents", permission: "agents:manage" },
-  { href: "/admin/locations", label: "Locations", icon: "locations", permission: "locations:manage" },
+  {
+    href: "/admin/locations",
+    label: "Locations",
+    icon: "locations",
+    permission: "locations:manage",
+  },
   { href: "/admin/insights", label: "Insights", icon: "insights", permission: "content:manage" },
   { href: "/admin/users", label: "Users", icon: "users", permission: "users:manage" },
-  { href: "/admin/settings", label: "Site settings", icon: "settings", permission: "settings:manage" },
+  {
+    href: "/admin/settings",
+    label: "Site settings",
+    icon: "settings",
+    permission: "settings:manage",
+  },
   { href: "/admin/audit-log", label: "Audit log", icon: "audit", permission: "audit:read" },
 ];
 
@@ -37,8 +57,13 @@ async function AdminGate({ children }: { children: React.ReactNode }) {
       <main id="main" className="grid min-h-dvh place-items-center bg-ivory px-6">
         <div className="max-w-md text-center">
           <ShieldAlert aria-hidden strokeWidth={1.25} className="mx-auto size-10 text-stone-500" />
-          <h1 className="mt-5 font-display text-heading-2 text-ink-900">No access to administration</h1>
-          <p className="mt-3 text-stone-600">Your account does not have staff permissions. If you think this is a mistake, contact an administrator.</p>
+          <h1 className="mt-5 font-display text-heading-2 text-ink-900">
+            No access to administration
+          </h1>
+          <p className="mt-3 text-stone-600">
+            Your account does not have staff permissions. If you think this is a mistake, contact an
+            administrator.
+          </p>
           <Link href="/" className="mt-8 inline-block text-sm underline underline-offset-4">
             Return to the website
           </Link>
@@ -51,7 +76,11 @@ async function AdminGate({ children }: { children: React.ReactNode }) {
     hasPermission(user.role, permission) ||
     (permission === "properties:manage_own" && hasPermission(user.role, "properties:manage_all")) ||
     (permission === "inquiries:manage_own" && hasPermission(user.role, "inquiries:manage_all"));
-  const items = NAV.filter((item) => can(item.permission)).map(({ href, label, icon }) => ({ href, label, icon }));
+  const items = NAV.filter((item) => can(item.permission)).map(({ href, label, icon }) => ({
+    href,
+    label,
+    icon,
+  }));
 
   return (
     <div className="min-h-dvh bg-[#f4f2ee] lg:grid lg:grid-cols-[15rem_minmax(0,1fr)]">
@@ -61,7 +90,10 @@ async function AdminGate({ children }: { children: React.ReactNode }) {
             <Monogram className="size-8" />
             <span className="text-sm font-semibold tracking-[0.12em] uppercase">Admin</span>
           </Link>
-          <Link href="/" className="flex items-center gap-1 text-xs text-ivory/60 hover:text-ivory lg:hidden">
+          <Link
+            href="/"
+            className="flex items-center gap-1 text-xs text-ivory/60 hover:text-ivory lg:hidden"
+          >
             Site <ArrowUpRight aria-hidden className="size-3" />
           </Link>
         </div>
@@ -71,7 +103,10 @@ async function AdminGate({ children }: { children: React.ReactNode }) {
         <div className="hidden border-t border-ivory/10 px-5 py-4 text-xs lg:block">
           <p className="truncate text-ivory/90">{user.name || user.email}</p>
           <p className="text-ivory/50">{ROLE_LABELS[user.role]}</p>
-          <Link href="/" className="mt-3 inline-flex items-center gap-1 text-ivory/60 hover:text-ivory">
+          <Link
+            href="/"
+            className="mt-3 inline-flex items-center gap-1 text-ivory/60 hover:text-ivory"
+          >
             View website <ArrowUpRight aria-hidden className="size-3" />
           </Link>
         </div>

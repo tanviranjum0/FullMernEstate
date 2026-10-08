@@ -35,12 +35,22 @@ export function AgentContactCard({
       {phone || agent.email || whatsapp ? (
         <div className="mt-5 flex gap-2">
           {phone ? (
-            <TrackedAnchor href={`tel:${phone}`} event="phone_click" subject={propertyId} className={actionClass}>
+            <TrackedAnchor
+              href={`tel:${phone}`}
+              event="phone_click"
+              subject={propertyId}
+              className={actionClass}
+            >
               <Phone aria-hidden strokeWidth={1.5} className="size-4" /> Call
             </TrackedAnchor>
           ) : null}
           {agent.email ? (
-            <TrackedAnchor href={`mailto:${agent.email}`} event="email_click" subject={propertyId} className={actionClass}>
+            <TrackedAnchor
+              href={`mailto:${agent.email}`}
+              event="email_click"
+              subject={propertyId}
+              className={actionClass}
+            >
               <Mail aria-hidden strokeWidth={1.5} className="size-4" /> Email
             </TrackedAnchor>
           ) : null}

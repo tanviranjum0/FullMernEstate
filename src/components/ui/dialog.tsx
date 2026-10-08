@@ -41,9 +41,13 @@ export function DialogContent({
         {...props}
       >
         <div className={cn("mb-6 pr-10", hideTitle && "sr-only")}>
-          <BaseDialog.Title className="font-display text-heading-3 text-ink-900">{title}</BaseDialog.Title>
+          <BaseDialog.Title className="font-display text-heading-3 text-ink-900">
+            {title}
+          </BaseDialog.Title>
           {description ? (
-            <BaseDialog.Description className="mt-2 text-stone-600">{description}</BaseDialog.Description>
+            <BaseDialog.Description className="mt-2 text-stone-600">
+              {description}
+            </BaseDialog.Description>
           ) : null}
         </div>
         {children}
@@ -91,7 +95,7 @@ export function SheetContent({
   return (
     <BaseDrawer.Portal>
       <BaseDrawer.Backdrop className={backdropClass} />
-      <BaseDrawer.Viewport className="fixed inset-0 z-50 pointer-events-none">
+      <BaseDrawer.Viewport className="pointer-events-none fixed inset-0 z-50">
         <BaseDrawer.Popup
           className={cn(
             "pointer-events-auto fixed flex flex-col bg-paper shadow-float outline-none",
@@ -105,9 +109,13 @@ export function SheetContent({
           ) : null}
           <div className="flex shrink-0 items-start justify-between gap-4 border-b border-sand-200 px-6 py-5">
             <div>
-              <BaseDrawer.Title className="font-display text-2xl text-ink-900">{title}</BaseDrawer.Title>
+              <BaseDrawer.Title className="font-display text-2xl text-ink-900">
+                {title}
+              </BaseDrawer.Title>
               {description ? (
-                <BaseDrawer.Description className="mt-1 text-sm text-stone-600">{description}</BaseDrawer.Description>
+                <BaseDrawer.Description className="mt-1 text-sm text-stone-600">
+                  {description}
+                </BaseDrawer.Description>
               ) : null}
             </div>
             <BaseDrawer.Close
@@ -120,7 +128,9 @@ export function SheetContent({
           <BaseDrawer.Content className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6">
             {children}
           </BaseDrawer.Content>
-          {footer ? <div className="shrink-0 border-t border-sand-200 px-6 py-4">{footer}</div> : null}
+          {footer ? (
+            <div className="shrink-0 border-t border-sand-200 px-6 py-4">{footer}</div>
+          ) : null}
         </BaseDrawer.Popup>
       </BaseDrawer.Viewport>
     </BaseDrawer.Portal>

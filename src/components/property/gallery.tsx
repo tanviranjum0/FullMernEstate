@@ -19,7 +19,9 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
   };
 
   if (images.length === 0) {
-    return <div className="aspect-[16/9] bg-gradient-to-br from-sand-100 to-sand-200" aria-hidden />;
+    return (
+      <div className="aspect-[16/9] bg-gradient-to-br from-sand-100 to-sand-200" aria-hidden />
+    );
   }
 
   const [hero, ...rest] = images;
@@ -31,7 +33,7 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
       <div className="relative md:hidden">
         <div
           ref={mobileTrack}
-          className="scrollbar-none flex snap-x snap-mandatory overflow-x-auto"
+          className="flex snap-x snap-mandatory scrollbar-none overflow-x-auto"
           onScroll={(event) => {
             const el = event.currentTarget;
             setMobileIndex(Math.round(el.scrollLeft / el.clientWidth));
@@ -60,7 +62,7 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
             </button>
           ))}
         </div>
-        <span className="absolute right-4 bottom-4 rounded-xs bg-ink-950/70 px-2.5 py-1 text-xs text-ivory tabular backdrop-blur-sm">
+        <span className="tabular absolute right-4 bottom-4 rounded-xs bg-ink-950/70 px-2.5 py-1 text-xs text-ivory backdrop-blur-sm">
           {mobileIndex + 1} / {images.length}
         </span>
       </div>
@@ -69,7 +71,11 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
       <div
         className={cn(
           "relative hidden gap-2 md:grid",
-          tiles.length >= 4 ? "h-[min(72vh,44rem)] grid-cols-4 grid-rows-2" : tiles.length > 0 ? "h-[min(68vh,40rem)] grid-cols-3 grid-rows-2" : "h-[min(72vh,44rem)]",
+          tiles.length >= 4
+            ? "h-[min(72vh,44rem)] grid-cols-4 grid-rows-2"
+            : tiles.length > 0
+              ? "h-[min(68vh,40rem)] grid-cols-3 grid-rows-2"
+              : "h-[min(72vh,44rem)]",
         )}
       >
         <button
@@ -77,7 +83,11 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
           onClick={() => openAt(0)}
           className={cn(
             "group relative overflow-hidden bg-sand-100",
-            tiles.length >= 4 ? "col-span-2 row-span-2" : tiles.length > 0 ? "col-span-2 row-span-2" : "",
+            tiles.length >= 4
+              ? "col-span-2 row-span-2"
+              : tiles.length > 0
+                ? "col-span-2 row-span-2"
+                : "",
           )}
           aria-label={`Open photo 1 of ${images.length}`}
         >
@@ -122,7 +132,14 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
         ) : null}
       </div>
 
-      <Lightbox images={images} title={title} open={open} onOpenChange={setOpen} index={index} onIndexChange={setIndex} />
+      <Lightbox
+        images={images}
+        title={title}
+        open={open}
+        onOpenChange={setOpen}
+        index={index}
+        onIndexChange={setIndex}
+      />
     </>
   );
 }
@@ -183,11 +200,11 @@ function Lightbox({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-ink-950 transition-opacity duration-300 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-        <Dialog.Popup className="fixed inset-0 z-50 flex flex-col text-ivory outline-none transition-opacity duration-300 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+        <Dialog.Popup className="fixed inset-0 z-50 flex flex-col text-ivory transition-opacity duration-300 outline-none data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
           <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
             <Dialog.Title className="truncate text-sm text-ivory/80">{title}</Dialog.Title>
             <div className="flex items-center gap-4">
-              <span className="text-sm tabular text-ivory/70" aria-live="polite">
+              <span className="tabular text-sm text-ivory/70" aria-live="polite">
                 {index + 1} / {images.length}
               </span>
               <Dialog.Close
@@ -202,7 +219,7 @@ function Lightbox({
           <div className="relative min-h-0 flex-1">
             <div
               ref={track}
-              className="scrollbar-none flex h-full snap-x snap-mandatory overflow-x-auto overscroll-contain"
+              className="flex h-full snap-x snap-mandatory scrollbar-none overflow-x-auto overscroll-contain"
               onScroll={(event) => {
                 if (programmatic.current) return;
                 const el = event.currentTarget;
@@ -254,9 +271,11 @@ function Lightbox({
 
           <div className="px-4 pt-3 pb-4 sm:px-6">
             {current?.caption || current?.alt ? (
-              <p className="mb-3 text-center text-sm text-ivory/70">{current.caption || current.alt}</p>
+              <p className="mb-3 text-center text-sm text-ivory/70">
+                {current.caption || current.alt}
+              </p>
             ) : null}
-            <div className="scrollbar-none mx-auto flex max-w-4xl gap-2 overflow-x-auto">
+            <div className="mx-auto flex max-w-4xl scrollbar-none gap-2 overflow-x-auto">
               {images.map((image, i) => (
                 <button
                   key={image.id}

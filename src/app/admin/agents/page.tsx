@@ -27,26 +27,43 @@ async function Agents() {
       <DataTable caption="Advisors">
         <thead>
           <tr>
-            <th scope="col" className={th}>Advisor</th>
-            <th scope="col" className={th}>Email</th>
-            <th scope="col" className={th}>Listings</th>
-            <th scope="col" className={th}>Sign-in</th>
-            <th scope="col" className={th}>Status</th>
+            <th scope="col" className={th}>
+              Advisor
+            </th>
+            <th scope="col" className={th}>
+              Email
+            </th>
+            <th scope="col" className={th}>
+              Listings
+            </th>
+            <th scope="col" className={th}>
+              Sign-in
+            </th>
+            <th scope="col" className={th}>
+              Status
+            </th>
           </tr>
         </thead>
         <tbody>
           {agents.map((agent) => (
             <tr key={agent.id} className="hover:bg-sand-100/40">
               <td className={td}>
-                <Link href={`/admin/agents/${agent.id}`} className="font-medium text-ink-900 hover:underline">
+                <Link
+                  href={`/admin/agents/${agent.id}`}
+                  className="font-medium text-ink-900 hover:underline"
+                >
                   {agent.name}
                 </Link>
                 <p className="text-xs text-stone-600">{agent.title}</p>
               </td>
               <td className={`${td} text-stone-700`}>{agent.email || "—"}</td>
               <td className={`${td} tabular`}>{agent.listings}</td>
-              <td className={td}>{agent.linked ? <Pill tone="blue">Linked</Pill> : <Pill>No account</Pill>}</td>
-              <td className={td}>{agent.active ? <Pill tone="green">Active</Pill> : <Pill>Inactive</Pill>}</td>
+              <td className={td}>
+                {agent.linked ? <Pill tone="blue">Linked</Pill> : <Pill>No account</Pill>}
+              </td>
+              <td className={td}>
+                {agent.active ? <Pill tone="green">Active</Pill> : <Pill>Inactive</Pill>}
+              </td>
             </tr>
           ))}
         </tbody>

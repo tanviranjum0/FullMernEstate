@@ -4,11 +4,20 @@ import { savePropertyAction } from "@/server/actions/admin";
 import { AuditLogModel } from "@/server/models/system";
 import { PropertyModel } from "@/server/models/property";
 import { FavoriteModel } from "@/server/models/user-data";
-import { deleteProperty, saveProperty, setPropertyStatus } from "@/server/services/admin/properties";
+import {
+  deleteProperty,
+  saveProperty,
+  setPropertyStatus,
+} from "@/server/services/admin/properties";
 import { actAs } from "../setup/session-state";
 import { createAgent, createLocations, freshDatabase, staff } from "./fixtures";
 
-const image = { src: "/media/property/abc/w1920.webp", width: 1920, height: 1280, alt: "Living room" };
+const image = {
+  src: "/media/property/abc/w1920.webp",
+  width: 1920,
+  height: 1280,
+  alt: "Living room",
+};
 
 function input(overrides: Partial<Record<keyof PropertyInput, unknown>> = {}): PropertyInput {
   return propertyInput.parse({
@@ -32,7 +41,15 @@ describe("listing management", () => {
   const admin = staff("admin");
 
   beforeAll(async () => {
-    await freshDatabase("properties", "locations", "agents", "auditlogs", "audit_logs", "favorites", "recent_views");
+    await freshDatabase(
+      "properties",
+      "locations",
+      "agents",
+      "auditlogs",
+      "audit_logs",
+      "favorites",
+      "recent_views",
+    );
     await createLocations();
     agentId = (await createAgent())._id.toString();
   });
@@ -50,14 +67,20 @@ describe("listing management", () => {
     expect(stored?.location?.cityName).toBe("Dhaka");
     expect(stored?.location?.neighbourhoodName).toBe("Gulshan");
     expect(stored?.publishedAt).toBeUndefined();
-    expect(await AuditLogModel.countDocuments({ entityId: first.id, action: "property.created" })).toBe(1);
+    expect(
+      await AuditLogModel.countDocuments({ entityId: first.id, action: "property.created" }),
+    ).toBe(1);
   });
 
   it("clears optional fields on update without conflicting paths", async () => {
     const created = await saveProperty(
       admin,
       null,
-      input({ agentId, price: { amount: 80_000_000, previousAmount: 90_000_000, currency: "BDT" }, location: { citySlug: "dhaka", lat: 23.79, lng: 90.41 } }),
+      input({
+        agentId,
+        price: { amount: 80_000_000, previousAmount: 90_000_000, currency: "BDT" },
+        location: { citySlug: "dhaka", lat: 23.79, lng: 90.41 },
+      }),
     );
     await saveProperty(admin, created.id, input({ status: "published", images: [image] }));
 
@@ -71,17 +94,29 @@ describe("listing management", () => {
   });
 
   it("rejects unknown locations and inactive advisors", async () => {
-    await expect(saveProperty(admin, null, input({ location: { citySlug: "atlantis" } }))).rejects.toThrow(/valid city/);
-    await expect(saveProperty(admin, null, input({ location: { citySlug: "chattogram", neighbourhoodSlug: "gulshan" } }))).rejects.toThrow(
-      /neighbourhood/,
-    );
+    await expect(
+      saveProperty(admin, null, input({ location: { citySlug: "atlantis" } })),
+    ).rejects.toThrow(/valid city/);
+    await expect(
+      saveProperty(
+        admin,
+        null,
+        input({ location: { citySlug: "chattogram", neighbourhoodSlug: "gulshan" } }),
+      ),
+    ).rejects.toThrow(/neighbourhood/);
     const inactive = await createAgent({ active: false });
-    await expect(saveProperty(admin, null, input({ agentId: inactive._id.toString() }))).rejects.toThrow(/active advisor/);
+    await expect(
+      saveProperty(admin, null, input({ agentId: inactive._id.toString() })),
+    ).rejects.toThrow(/active advisor/);
   });
 
   it("keeps advisors to their own listings and admin-only placement", async () => {
     const advisor = staff("agent", agentId);
-    const own = await saveProperty(advisor, null, input({ flags: { featured: true, exclusive: true } }));
+    const own = await saveProperty(
+      advisor,
+      null,
+      input({ flags: { featured: true, exclusive: true } }),
+    );
     const ownStored = await PropertyModel.findById(own.id).lean();
     expect(ownStored?.agent?.toString()).toBe(agentId);
     expect(ownStored?.flags?.featured).toBe(false);
@@ -95,7 +130,11 @@ describe("listing management", () => {
   });
 
   it("deletes a listing together with the favourites that point at it", async () => {
-    const created = await saveProperty(admin, null, input({ status: "published", images: [image] }));
+    const created = await saveProperty(
+      admin,
+      null,
+      input({ status: "published", images: [image] }),
+    );
     await FavoriteModel.create({ user: admin.id, property: created.id });
     await deleteProperty(admin, created.id);
     expect(await PropertyModel.exists({ _id: created.id })).toBeNull();
@@ -103,15 +142,25 @@ describe("listing management", () => {
   });
 
   it("checks authentication, permission and validation in the server action", async () => {
-    expect(await savePropertyAction(null, input())).toMatchObject({ ok: false, code: "unauthenticated" });
+    expect(await savePropertyAction(null, input())).toMatchObject({
+      ok: false,
+      code: "unauthenticated",
+    });
 
     actAs(staff("user"));
     expect(await savePropertyAction(null, input())).toMatchObject({ ok: false, code: "forbidden" });
 
     actAs(admin);
-    const invalid = await savePropertyAction(null, { ...input(), title: "", price: { amount: 0, currency: "BDT" } });
+    const invalid = await savePropertyAction(null, {
+      ...input(),
+      title: "",
+      price: { amount: 0, currency: "BDT" },
+    });
     expect(invalid).toMatchObject({ ok: false, code: "validation" });
-    if (!invalid.ok) expect(Object.keys(invalid.fieldErrors ?? {})).toEqual(expect.arrayContaining(["title", "price.amount"]));
+    if (!invalid.ok)
+      expect(Object.keys(invalid.fieldErrors ?? {})).toEqual(
+        expect.arrayContaining(["title", "price.amount"]),
+      );
 
     const injected = await savePropertyAction(null, { ...input(), status: { $ne: "draft" } });
     expect(injected).toMatchObject({ ok: false, code: "validation" });

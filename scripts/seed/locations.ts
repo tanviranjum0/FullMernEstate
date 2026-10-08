@@ -40,11 +40,25 @@ Buyers and tenants usually weigh three things: the daily commute, school runs, a
 Most prime homes are apartments and duplexes in low- to mid-rise buildings with lifts, generators, security and parking. Detached houses with gardens are rare and tend to change hands privately.`,
     heroImage: placeImages.dhaka[0]!,
     highlights: [
-      { title: "Lakeside living", text: "Gulshan, Banani and Dhanmondi are arranged around lakes with walking paths." },
-      { title: "Diplomatic quarter", text: "Baridhara hosts much of the city's diplomatic community." },
-      { title: "International schools", text: "Several international schools operate in the northern neighbourhoods." },
+      {
+        title: "Lakeside living",
+        text: "Gulshan, Banani and Dhanmondi are arranged around lakes with walking paths.",
+      },
+      {
+        title: "Diplomatic quarter",
+        text: "Baridhara hosts much of the city's diplomatic community.",
+      },
+      {
+        title: "International schools",
+        text: "Several international schools operate in the northern neighbourhoods.",
+      },
     ],
-    lifestyle: ["Lakeside walks", "Restaurants and cafés", "Private clubs", "International schools"],
+    lifestyle: [
+      "Lakeside walks",
+      "Restaurants and cafés",
+      "Private clubs",
+      "International schools",
+    ],
     nearby: ["Hazrat Shahjalal International Airport", "Gulshan and Banani lakes", "Hatirjheel"],
     marketNotes:
       "Figures on this page are calculated from listings currently published on this site, not from market-wide transaction data.",
@@ -83,8 +97,14 @@ Most homes are apartments of three to five bedrooms, with a smaller number of du
 Gulshan has a dense concentration of restaurants, cafés, banks and offices, and is close to Baridhara and Banani. The lakeside paths are popular for walking in the early morning and evening.`,
     heroImage: apartmentExteriors[4]!,
     highlights: [
-      { title: "Lake frontage", text: "Several roads back onto Gulshan Lake, with walking paths along the water." },
-      { title: "Central location", text: "Quick access to Banani, Baridhara and the airport road." },
+      {
+        title: "Lake frontage",
+        text: "Several roads back onto Gulshan Lake, with walking paths along the water.",
+      },
+      {
+        title: "Central location",
+        text: "Quick access to Banani, Baridhara and the airport road.",
+      },
     ],
     lifestyle: ["Lakeside paths", "Restaurants", "Gulshan Avenue", "Embassies nearby"],
     nearby: ["Gulshan Lake Park", "Baridhara", "Banani"],
@@ -141,7 +161,10 @@ Expect apartments in mid-rise buildings, a number of duplexes, and penthouses on
 Diplomatic households, senior executives and families who prioritise quiet streets and security. Rental demand from embassies and international organisations is a notable feature of the market.`,
     heroImage: villaExteriors[5]!,
     highlights: [
-      { title: "Diplomatic zone", text: "Many embassies and ambassadorial residences are located here." },
+      {
+        title: "Diplomatic zone",
+        text: "Many embassies and ambassadorial residences are located here.",
+      },
       { title: "Space", text: "Larger apartments and townhouses than in neighbouring areas." },
     ],
     lifestyle: ["Quiet streets", "Embassies", "Proximity to Gulshan"],
@@ -167,8 +190,14 @@ Diplomatic households, senior executives and families who prioritise quiet stree
 A mix of apartments and older houses, some on generous plots. Renovated houses and newer apartment buildings near the lake are the most sought after.`,
     heroImage: placeImages.dhaka[4]!,
     highlights: [
-      { title: "Dhanmondi Lake", text: "Landscaped lakeside paths running through the neighbourhood." },
-      { title: "Established", text: "A long-standing residential community with schools and hospitals nearby." },
+      {
+        title: "Dhanmondi Lake",
+        text: "Landscaped lakeside paths running through the neighbourhood.",
+      },
+      {
+        title: "Established",
+        text: "A long-standing residential community with schools and hospitals nearby.",
+      },
     ],
     lifestyle: ["Lakeside paths", "Schools", "Cultural venues"],
     nearby: ["Dhanmondi Lake", "Science Lab", "Mohammadpur"],
@@ -237,7 +266,8 @@ Khulshi is the best-known hillside residential area, with detached houses and lo
     parentSlug: "chattogram",
     name: "Khulshi",
     headline: "Green hills above the city",
-    intro: "Chattogram's best-known hillside residential area, with detached houses and low-rise apartments.",
+    intro:
+      "Chattogram's best-known hillside residential area, with detached houses and low-rise apartments.",
     body: `Khulshi occupies a series of hills north of the city centre. Roads wind between gardens and low-rise buildings, and many homes look out over the city.
 
 ## Homes in Khulshi
@@ -262,7 +292,9 @@ Detached houses with gardens and low-rise apartment buildings. Homes with views 
     intro: "A residential district close to Chattogram's clubs, schools and commercial centre.",
     body: `Nasirabad combines residential streets with easy access to the city's commercial districts. It is popular with families who want a central location with good access to schools.`,
     heroImage: apartmentExteriors[6]!,
-    highlights: [{ title: "Central", text: "Close to the city's commercial districts and schools." }],
+    highlights: [
+      { title: "Central", text: "Close to the city's commercial districts and schools." },
+    ],
     lifestyle: ["Schools", "Clubs", "Shopping"],
     nearby: ["Khulshi", "GEC Circle"],
     marketNotes: "",
@@ -304,7 +336,8 @@ Apartments in town are bought as holiday homes and for rental income, while vill
     parentSlug: "coxs-bazar",
     name: "Inani",
     headline: "Villas between the hills and the sea",
-    intro: "A quieter stretch of coast south of the town along the Marine Drive, known for its rocky shoreline.",
+    intro:
+      "A quieter stretch of coast south of the town along the Marine Drive, known for its rocky shoreline.",
     body: `Inani lies south of Cox's Bazar town along the Marine Drive. The beach here is broken by rocks that are exposed at low tide, and the coastline is quieter than in town.
 
 ## Homes in Inani
@@ -326,7 +359,8 @@ Villas and resort-style residences, some with direct beach access, and a small n
     parentSlug: "coxs-bazar",
     name: "Kolatoli",
     headline: "Sea-view apartments in town",
-    intro: "The hotel and resort district of Cox's Bazar, with sea-view apartments close to the beach.",
+    intro:
+      "The hotel and resort district of Cox's Bazar, with sea-view apartments close to the beach.",
     body: `Kolatoli is the main hotel and resort district in Cox's Bazar town. Apartments here are popular as holiday homes and short-let investments thanks to their proximity to the beach.`,
     heroImage: placeImages.coxsBazar[0]!,
     highlights: [{ title: "Beach access", text: "A short walk to the main beach." }],

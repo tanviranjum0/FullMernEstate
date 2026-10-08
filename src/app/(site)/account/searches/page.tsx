@@ -20,7 +20,8 @@ async function Searches() {
     <>
       <h1 className="font-display text-heading-1 text-ink-900">Saved searches</h1>
       <p className="mt-3 max-w-xl text-stone-600">
-        Return to a set of filters with one click. Email alerts for new matches are planned and will appear here when available.
+        Return to a set of filters with one click. Email alerts for new matches are planned and will
+        appear here when available.
       </p>
       {searches.length ? (
         <ul className="mt-10 divide-y divide-sand-200 border-y border-sand-200">
@@ -38,7 +39,11 @@ async function Searches() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <ButtonLink href={search.query ? `/properties?${search.query}` : "/properties"} variant="outline" size="sm">
+                <ButtonLink
+                  href={search.query ? `/properties?${search.query}` : "/properties"}
+                  variant="outline"
+                  size="sm"
+                >
                   View results
                 </ButtonLink>
                 <DeleteSavedSearchButton id={search.id} name={search.name} />

@@ -11,7 +11,13 @@ import { searchHref, serializeSearchQuery, type PropertySearchQuery } from "@/li
 import { searchProperties } from "@/server/queries/properties";
 import { SaveSearchButton } from "./save-search-button";
 
-export async function SearchResults({ query, names }: { query: PropertySearchQuery; names: LocationNames }) {
+export async function SearchResults({
+  query,
+  names,
+}: {
+  query: PropertySearchQuery;
+  names: LocationNames;
+}) {
   const results = await searchProperties(query);
   const chips = activeFilterChips(query, names, siteConfig.defaultCurrency);
   const queryString = serializeSearchQuery(query, { includePage: false }).toString();
@@ -21,7 +27,7 @@ export async function SearchResults({ query, names }: { query: PropertySearchQue
       <TrackOnMount name="search" dedupeKey={queryString || "all"} />
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-sand-200 pb-5">
         <p className="text-sm text-stone-600" aria-live="polite">
-          <span className="font-semibold text-ink-900 tabular">{results.total}</span>{" "}
+          <span className="tabular font-semibold text-ink-900">{results.total}</span>{" "}
           {results.total === 1 ? "residence" : "residences"}
           {results.pageCount > 1 ? (
             <>
@@ -44,12 +50,20 @@ export async function SearchResults({ query, names }: { query: PropertySearchQue
                 aria-label={`Remove filter: ${chip.label}`}
               >
                 {chip.label}
-                <X aria-hidden strokeWidth={1.5} className="size-3.5 text-stone-500 group-hover:text-ink-900" />
+                <X
+                  aria-hidden
+                  strokeWidth={1.5}
+                  className="size-3.5 text-stone-500 group-hover:text-ink-900"
+                />
               </Link>
             </li>
           ))}
           <li>
-            <Link href="/properties" scroll={false} className="px-2 text-[0.8rem] text-stone-600 underline underline-offset-4 hover:text-ink-900">
+            <Link
+              href="/properties"
+              scroll={false}
+              className="px-2 text-[0.8rem] text-stone-600 underline underline-offset-4 hover:text-ink-900"
+            >
               Clear all
             </Link>
           </li>

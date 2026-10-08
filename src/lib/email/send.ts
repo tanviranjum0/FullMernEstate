@@ -34,12 +34,18 @@ export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
       replyTo: message.replyTo,
     });
     if (error || !data) {
-      console.error("[email] provider rejected message", { subject: message.subject, error: error?.name });
+      console.error("[email] provider rejected message", {
+        subject: message.subject,
+        error: error?.name,
+      });
       return { sent: false, reason: error?.name ?? "unknown-error" };
     }
     return { sent: true, id: data.id };
   } catch (error) {
-    console.error("[email] send failed", { subject: message.subject, error: (error as Error).message });
+    console.error("[email] send failed", {
+      subject: message.subject,
+      error: (error as Error).message,
+    });
     return { sent: false, reason: "exception" };
   }
 }

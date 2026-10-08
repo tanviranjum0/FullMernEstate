@@ -12,7 +12,12 @@ export function AgentAvatar({
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }) {
-  const sizes = { sm: "size-12 text-base", md: "size-16 text-lg", lg: "size-24 text-2xl", xl: "size-40 text-4xl" };
+  const sizes = {
+    sm: "size-12 text-base",
+    md: "size-16 text-lg",
+    lg: "size-24 text-2xl",
+    xl: "size-40 text-4xl",
+  };
   const pixels = { sm: 48, md: 64, lg: 96, xl: 160 };
   return (
     <span

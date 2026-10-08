@@ -26,10 +26,13 @@ function SliderField({
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <label htmlFor={id} className="text-[0.7rem] font-semibold tracking-[0.14em] text-stone-700 uppercase">
+        <label
+          htmlFor={id}
+          className="text-[0.7rem] font-semibold tracking-[0.14em] text-stone-700 uppercase"
+        >
           {label}
         </label>
-        <output htmlFor={id} className="text-sm font-semibold text-ink-900 tabular">
+        <output htmlFor={id} className="tabular text-sm font-semibold text-ink-900">
           {display}
         </output>
       </div>
@@ -93,7 +96,7 @@ export function MortgageCalculator({ price, currency }: { price: number; currenc
       <div className="flex flex-col justify-between bg-ink-950 p-7 text-ivory">
         <div>
           <p className="eyebrow text-ivory/60">Estimated monthly repayment</p>
-          <p className="mt-3 font-display text-[2.4rem] leading-none tabular" aria-live="polite">
+          <p className="tabular mt-3 font-display text-[2.4rem] leading-none" aria-live="polite">
             {formatPrice(result.monthlyPayment, currency)}
           </p>
         </div>
@@ -108,7 +111,8 @@ export function MortgageCalculator({ price, currency }: { price: number; currenc
           </div>
         </dl>
         <p className="mt-6 text-xs leading-relaxed text-ivory/50">
-          Illustration only, assuming a fixed rate for the full term. Lenders&apos; rates, fees and eligibility vary.
+          Illustration only, assuming a fixed rate for the full term. Lenders&apos; rates, fees and
+          eligibility vary.
         </p>
       </div>
     </div>

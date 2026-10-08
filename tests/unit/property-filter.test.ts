@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { parseSearchParams } from "@/lib/search/params";
-import { buildPropertyFilter, buildPropertySort, escapeRegex } from "@/server/search/property-filter";
+import {
+  buildPropertyFilter,
+  buildPropertySort,
+  escapeRegex,
+} from "@/server/search/property-filter";
 
 const filterFor = (params: Record<string, string>, keywordMode?: "text" | "regex" | "none") =>
   buildPropertyFilter(parseSearchParams(params), { keywordMode });
@@ -8,7 +12,9 @@ const filterFor = (params: Record<string, string>, keywordMode?: "text" | "regex
 describe("buildPropertyFilter", () => {
   it("only ever matches published listings", () => {
     expect(filterFor({})).toEqual({ status: "published" });
-    expect(filterFor({ listing: "rent" })).toEqual({ $and: [{ status: "published" }, { listingType: "rent" }] });
+    expect(filterFor({ listing: "rent" })).toEqual({
+      $and: [{ status: "published" }, { listingType: "rent" }],
+    });
   });
 
   it("maps every filter to a typed condition", () => {
@@ -44,7 +50,9 @@ describe("buildPropertyFilter", () => {
 
   it("keeps price-on-request listings visible under a price filter", () => {
     const filter = filterFor({ minPrice: "100", maxPrice: "200" }) as { $and: unknown[] };
-    expect(filter.$and[1]).toEqual({ $or: [{ "price.amount": { $gte: 100, $lte: 200 } }, { "price.onRequest": true }] });
+    expect(filter.$and[1]).toEqual({
+      $or: [{ "price.amount": { $gte: 100, $lte: 200 } }, { "price.onRequest": true }],
+    });
   });
 
   it("ignores a neighbourhood without a city", () => {
@@ -52,8 +60,12 @@ describe("buildPropertyFilter", () => {
   });
 
   it("uses the text index first and an escaped regex as fallback", () => {
-    expect(filterFor({ q: "lake view" }, "text")).toEqual({ $and: [{ $text: { $search: "lake view" } }, { status: "published" }] });
-    const regex = filterFor({ q: "a.b*(" }, "regex") as { $and: [unknown, { $or: { title: RegExp }[] }] };
+    expect(filterFor({ q: "lake view" }, "text")).toEqual({
+      $and: [{ $text: { $search: "lake view" } }, { status: "published" }],
+    });
+    const regex = filterFor({ q: "a.b*(" }, "regex") as {
+      $and: [unknown, { $or: { title: RegExp }[] }];
+    };
     const pattern = regex.$and[1].$or[0]!.title;
     expect(pattern.source).toBe("a\\.b\\*\\(");
     expect(pattern.flags).toBe("i");
@@ -71,13 +83,29 @@ describe("escapeRegex", () => {
 describe("buildPropertySort", () => {
   it("sorts deterministically with an _id tiebreaker", () => {
     expect(buildPropertySort(parseSearchParams({}), false)).toEqual({ publishedAt: -1, _id: -1 });
-    expect(buildPropertySort(parseSearchParams({ sort: "price-asc" }), false)).toEqual({ "price.amount": 1, _id: 1 });
-    expect(buildPropertySort(parseSearchParams({ sort: "price-desc" }), false)).toEqual({ "price.amount": -1, _id: -1 });
-    expect(buildPropertySort(parseSearchParams({ sort: "area-desc" }), false)).toEqual({ "specs.areaSqft": -1, _id: -1 });
+    expect(buildPropertySort(parseSearchParams({ sort: "price-asc" }), false)).toEqual({
+      "price.amount": 1,
+      _id: 1,
+    });
+    expect(buildPropertySort(parseSearchParams({ sort: "price-desc" }), false)).toEqual({
+      "price.amount": -1,
+      _id: -1,
+    });
+    expect(buildPropertySort(parseSearchParams({ sort: "area-desc" }), false)).toEqual({
+      "specs.areaSqft": -1,
+      _id: -1,
+    });
   });
 
   it("ranks keyword searches by relevance unless another order was chosen", () => {
-    expect(buildPropertySort(parseSearchParams({ q: "x" }), true)).toEqual({ score: { $meta: "textScore" }, publishedAt: -1, _id: -1 });
-    expect(buildPropertySort(parseSearchParams({ q: "x", sort: "price-asc" }), true)).toEqual({ "price.amount": 1, _id: 1 });
+    expect(buildPropertySort(parseSearchParams({ q: "x" }), true)).toEqual({
+      score: { $meta: "textScore" },
+      publishedAt: -1,
+      _id: -1,
+    });
+    expect(buildPropertySort(parseSearchParams({ q: "x", sort: "price-asc" }), true)).toEqual({
+      "price.amount": 1,
+      _id: 1,
+    });
   });
 });

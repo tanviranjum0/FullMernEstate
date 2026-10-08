@@ -11,7 +11,13 @@ const DEFAULT_HERO_IMAGE = {
     "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADwAQCdASoQAAYAA4BaJZQC7AEemXIfagAA4n38GpaanduA/rjV/amjSmtKZulrc0T/yCxc3Tp4GoR0AAA=",
 };
 
-export function HomeHero({ hero, locations }: { hero: SiteSettings["hero"]; locations: LocationOption[] }) {
+export function HomeHero({
+  hero,
+  locations,
+}: {
+  hero: SiteSettings["hero"];
+  locations: LocationOption[];
+}) {
   const headline = hero.headline || "Exceptional homes, thoughtfully represented";
   const image = hero.image ?? DEFAULT_HERO_IMAGE;
   return (
@@ -52,11 +58,7 @@ export function HomeHero({ hero, locations }: { hero: SiteSettings["hero"]; loca
       </div>
 
       <div className="container-page flex flex-1 flex-col justify-end pt-[calc(var(--header-h)+3rem)] pb-10 sm:pb-14">
-        <HeroCopy
-          eyebrow={hero.eyebrow}
-          headline={headline}
-          subheadline={hero.subheadline}
-        />
+        <HeroCopy eyebrow={hero.eyebrow} headline={headline} subheadline={hero.subheadline} />
         <div className="mt-10 max-w-5xl animate-fade-up [animation-delay:700ms] sm:mt-14">
           <HeroSearch locations={locations} />
         </div>

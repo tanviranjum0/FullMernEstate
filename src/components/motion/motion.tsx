@@ -61,7 +61,11 @@ export function StaggerGroup({ children, className }: { children: ReactNode; cla
 
 export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <m.div className={className} variants={revealVariants} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
+    <m.div
+      className={className}
+      variants={revealVariants}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+    >
       {children}
     </m.div>
   );

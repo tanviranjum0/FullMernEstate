@@ -8,7 +8,15 @@ export interface Crumb {
   href: string;
 }
 
-export function Breadcrumbs({ items, className, tone = "dark" }: { items: Crumb[]; className?: string; tone?: "dark" | "light" }) {
+export function Breadcrumbs({
+  items,
+  className,
+  tone = "dark",
+}: {
+  items: Crumb[];
+  className?: string;
+  tone?: "dark" | "light";
+}) {
   const all = [{ label: "Home", href: "/" }, ...items];
   return (
     <>
@@ -24,12 +32,18 @@ export function Breadcrumbs({ items, className, tone = "dark" }: { items: Crumb[
             return (
               <li key={item.href} className="flex items-center gap-2">
                 {last ? (
-                  <span aria-current="page" className={tone === "dark" ? "text-ink-900" : "text-ivory"}>
+                  <span
+                    aria-current="page"
+                    className={tone === "dark" ? "text-ink-900" : "text-ivory"}
+                  >
                     {item.label}
                   </span>
                 ) : (
                   <>
-                    <Link href={item.href} className="transition-colors hover:text-current hocus:underline">
+                    <Link
+                      href={item.href}
+                      className="transition-colors hover:text-current hocus:underline"
+                    >
                       {item.label}
                     </Link>
                     <span aria-hidden className="opacity-50">

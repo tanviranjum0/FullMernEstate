@@ -57,14 +57,19 @@ describe("parseSearchParams", () => {
   });
 
   it("never lets an object or operator through", () => {
-    const query = parseSearchParams({ city: "{\"$ne\":null}", minPrice: "1e9", q: "  gulshan  " });
+    const query = parseSearchParams({ city: '{"$ne":null}', minPrice: "1e9", q: "  gulshan  " });
     expect(query.city).toBeUndefined();
     expect(query.minPrice).toBeUndefined();
     expect(query.q).toBe("gulshan");
   });
 
   it("swaps inverted ranges", () => {
-    const query = parseSearchParams({ minPrice: "900", maxPrice: "100", minArea: "5000", maxArea: "1000" });
+    const query = parseSearchParams({
+      minPrice: "900",
+      maxPrice: "100",
+      minArea: "5000",
+      maxArea: "1000",
+    });
     expect([query.minPrice, query.maxPrice]).toEqual([100, 900]);
     expect([query.minArea, query.maxArea]).toEqual([1000, 5000]);
   });
@@ -77,8 +82,16 @@ describe("parseSearchParams", () => {
 
 describe("serializeSearchQuery", () => {
   it("produces a stable, minimal URL", () => {
-    const query = parseSearchParams({ type: "villa,apartment", listing: "sale", sort: "newest", page: "1", city: "dhaka" });
-    expect(serializeSearchQuery(query).toString()).toBe("listing=sale&type=apartment%2Cvilla&city=dhaka");
+    const query = parseSearchParams({
+      type: "villa,apartment",
+      listing: "sale",
+      sort: "newest",
+      page: "1",
+      city: "dhaka",
+    });
+    expect(serializeSearchQuery(query).toString()).toBe(
+      "listing=sale&type=apartment%2Cvilla&city=dhaka",
+    );
   });
 
   it("drops a neighbourhood without its city", () => {
@@ -86,25 +99,43 @@ describe("serializeSearchQuery", () => {
   });
 
   it("round-trips through parse", () => {
-    const original = parseSearchParams({ listing: "rent", beds: "3", parking: "1", flags: "featured", sort: "price-asc", page: "2" });
+    const original = parseSearchParams({
+      listing: "rent",
+      beds: "3",
+      parking: "1",
+      flags: "featured",
+      sort: "price-asc",
+      page: "2",
+    });
     expect(parseSearchParams(serializeSearchQuery(original))).toEqual(original);
   });
 
   it("can omit the page for filter links", () => {
-    expect(serializeSearchQuery({ page: 4, listing: "sale" }, { includePage: false }).toString()).toBe("listing=sale");
+    expect(
+      serializeSearchQuery({ page: 4, listing: "sale" }, { includePage: false }).toString(),
+    ).toBe("listing=sale");
   });
 });
 
 describe("countActiveFilters", () => {
   it("counts ranges once and ignores sort and page", () => {
-    const query = parseSearchParams({ minPrice: "1", maxPrice: "2", beds: "2", sort: "price-asc", page: "3" });
+    const query = parseSearchParams({
+      minPrice: "1",
+      maxPrice: "2",
+      beds: "2",
+      sort: "price-asc",
+      page: "3",
+    });
     expect(countActiveFilters(query)).toBe(2);
   });
 });
 
 describe("getSearchIndexability", () => {
   it("indexes the catalogue and the buy/rent splits", () => {
-    expect(getSearchIndexability(parseSearchParams({}))).toEqual({ indexable: true, canonicalPath: "/properties" });
+    expect(getSearchIndexability(parseSearchParams({}))).toEqual({
+      indexable: true,
+      canonicalPath: "/properties",
+    });
     expect(getSearchIndexability(parseSearchParams({ listing: "rent" }))).toEqual({
       indexable: true,
       canonicalPath: "/properties?listing=rent",
@@ -112,7 +143,9 @@ describe("getSearchIndexability", () => {
   });
 
   it("keeps pagination of indexable pages self-canonical", () => {
-    expect(getSearchIndexability(parseSearchParams({ listing: "sale", page: "2" })).canonicalPath).toBe("/properties?listing=sale&page=2");
+    expect(
+      getSearchIndexability(parseSearchParams({ listing: "sale", page: "2" })).canonicalPath,
+    ).toBe("/properties?listing=sale&page=2");
   });
 
   it("noindexes filtered permutations and points them at their parent", () => {

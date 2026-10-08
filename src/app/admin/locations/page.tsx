@@ -31,8 +31,15 @@ async function Locations() {
             title={city.name}
             actions={
               <span className="flex items-center gap-2">
-                {city.published ? <Pill tone="green">Published</Pill> : <Pill tone="amber">Hidden</Pill>}
-                <Link href={`/admin/locations/${city.id}`} className="text-sm underline underline-offset-2">
+                {city.published ? (
+                  <Pill tone="green">Published</Pill>
+                ) : (
+                  <Pill tone="amber">Hidden</Pill>
+                )}
+                <Link
+                  href={`/admin/locations/${city.id}`}
+                  className="text-sm underline underline-offset-2"
+                >
                   Edit
                 </Link>
               </span>
@@ -42,10 +49,17 @@ async function Locations() {
               <ul className="divide-y divide-sand-200 text-sm">
                 {city.neighbourhoods.map((n) => (
                   <li key={n.id} className="flex items-center justify-between py-2">
-                    <Link href={`/admin/locations/${n.id}`} className="text-ink-900 hover:underline">
+                    <Link
+                      href={`/admin/locations/${n.id}`}
+                      className="text-ink-900 hover:underline"
+                    >
                       {n.name}
                     </Link>
-                    {n.published ? <Pill tone="green">Published</Pill> : <Pill tone="amber">Hidden</Pill>}
+                    {n.published ? (
+                      <Pill tone="green">Published</Pill>
+                    ) : (
+                      <Pill tone="amber">Hidden</Pill>
+                    )}
                   </li>
                 ))}
               </ul>

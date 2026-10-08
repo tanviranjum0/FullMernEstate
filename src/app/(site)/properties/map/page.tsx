@@ -14,13 +14,23 @@ export const metadata: Metadata = {
   alternates: { canonical: "/properties" },
 };
 
-async function MapContent({ searchParams }: { searchParams: PageProps<"/properties/map">["searchParams"] }) {
+async function MapContent({
+  searchParams,
+}: {
+  searchParams: PageProps<"/properties/map">["searchParams"];
+}) {
   const query = parseSearchParams(await searchParams);
   const [{ options }, points] = await Promise.all([getLocationOptions(), getMapPoints(query)]);
   return (
     <>
       <div className="border-b border-sand-200 px-[var(--gutter)] py-3">
-        <SearchControls key={JSON.stringify(query)} query={query} locations={options} basePath="/properties/map" view="map" />
+        <SearchControls
+          key={JSON.stringify(query)}
+          query={query}
+          locations={options}
+          basePath="/properties/map"
+          view="map"
+        />
       </div>
       <MapSearch points={points} />
     </>

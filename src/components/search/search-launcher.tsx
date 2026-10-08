@@ -32,7 +32,10 @@ export function SearchLauncher({ shortcuts }: { shortcuts: SearchShortcut[] }) {
       >
         <Search strokeWidth={1.5} className="size-5" />
       </DialogTrigger>
-      <DialogContent title="Search residences" className="top-[18%] w-[min(100vw-2rem,44rem)] translate-y-0">
+      <DialogContent
+        title="Search residences"
+        className="top-[18%] w-[min(100vw-2rem,44rem)] translate-y-0"
+      >
         <form onSubmit={submit} role="search">
           <label htmlFor="global-search" className="sr-only">
             Search by neighbourhood, city or property name

@@ -9,7 +9,8 @@ import { getFavoriteIdsForUser } from "@/server/services/favorites";
 import { actAs, testSession } from "../setup/session-state";
 import { createAgent, createLocations, createProperty, freshDatabase, staff } from "./fixtures";
 
-const day = (offset: number) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
+const day = (offset: number) =>
+  new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
 
 function form(fields: Record<string, string>) {
   const data = new FormData();
@@ -24,7 +25,16 @@ describe("client features", () => {
   const client = staff("user");
 
   beforeAll(async () => {
-    await freshDatabase("properties", "locations", "agents", "favorites", "saved_searches", "inquiries", "rate_limits", "daily_metrics");
+    await freshDatabase(
+      "properties",
+      "locations",
+      "agents",
+      "favorites",
+      "saved_searches",
+      "inquiries",
+      "rate_limits",
+      "daily_metrics",
+    );
     await createLocations();
     agentId = (await createAgent())._id.toString();
     published = (await createProperty({ agent: agentId }))._id.toString();
@@ -38,34 +48,55 @@ describe("client features", () => {
 
   describe("favourites", () => {
     it("requires an account", async () => {
-      expect(await toggleFavoriteAction(published)).toMatchObject({ ok: false, code: "unauthenticated" });
+      expect(await toggleFavoriteAction(published)).toMatchObject({
+        ok: false,
+        code: "unauthenticated",
+      });
     });
 
     it("toggles a saved home in the database", async () => {
       actAs(client);
-      expect(await toggleFavoriteAction(published)).toEqual({ ok: true, data: { favorited: true } });
+      expect(await toggleFavoriteAction(published)).toEqual({
+        ok: true,
+        data: { favorited: true },
+      });
       expect(await getFavoriteIdsForUser(client.id)).toEqual([published]);
-      expect(await toggleFavoriteAction(published)).toEqual({ ok: true, data: { favorited: false } });
+      expect(await toggleFavoriteAction(published)).toEqual({
+        ok: true,
+        data: { favorited: false },
+      });
       expect(await FavoriteModel.countDocuments({ user: client.id })).toBe(0);
     });
 
     it("rejects unpublished, unknown and malformed ids", async () => {
       actAs(client);
       expect(await toggleFavoriteAction(draft)).toMatchObject({ ok: false, code: "not_found" });
-      expect(await toggleFavoriteAction(new Types.ObjectId().toString())).toMatchObject({ ok: false, code: "not_found" });
-      expect(await toggleFavoriteAction({ $ne: null })).toMatchObject({ ok: false, code: "validation" });
+      expect(await toggleFavoriteAction(new Types.ObjectId().toString())).toMatchObject({
+        ok: false,
+        code: "not_found",
+      });
+      expect(await toggleFavoriteAction({ $ne: null })).toMatchObject({
+        ok: false,
+        code: "validation",
+      });
     });
   });
 
   describe("saved searches", () => {
     it("stores only the canonical, validated query and de-duplicates", async () => {
       actAs(client);
-      const first = await saveSearchAction({ name: "Gulshan rentals", query: "city=dhaka&listing=rent&evil=%24where&page=4" });
+      const first = await saveSearchAction({
+        name: "Gulshan rentals",
+        query: "city=dhaka&listing=rent&evil=%24where&page=4",
+      });
       expect(first.ok).toBe(true);
       const stored = await SavedSearchModel.findOne({ user: client.id }).lean();
       expect(stored?.query).toBe("listing=rent&city=dhaka");
 
-      const again = await saveSearchAction({ name: "Same search", query: "listing=rent&city=dhaka" });
+      const again = await saveSearchAction({
+        name: "Same search",
+        query: "listing=rent&city=dhaka",
+      });
       expect(again).toMatchObject({ ok: true, message: "This search is already saved." });
       expect(await SavedSearchModel.countDocuments({ user: client.id })).toBe(1);
     });
@@ -100,7 +131,10 @@ describe("client features", () => {
       actAs(client);
       const fields = viewing();
       const result = await submitInquiryAction(null, form(fields));
-      expect(result).toMatchObject({ ok: true, data: { reference: expect.stringMatching(/^[A-F0-9]{6}$/) } });
+      expect(result).toMatchObject({
+        ok: true,
+        data: { reference: expect.stringMatching(/^[A-F0-9]{6}$/) },
+      });
 
       const stored = await InquiryModel.findOne({ email: fields.email }).lean();
       expect(stored?.status).toBe("new");
@@ -123,14 +157,21 @@ describe("client features", () => {
 
     it("validates input and refuses unpublished listings", async () => {
       const missingConsent = await submitInquiryAction(null, form({ ...viewing(), consent: "" }));
-      expect(missingConsent).toMatchObject({ ok: false, code: "validation", fieldErrors: { consent: expect.any(String) } });
-      expect(await submitInquiryAction(null, form({ ...viewing(), propertyId: draft }))).toMatchObject({ ok: false, code: "not_found" });
+      expect(missingConsent).toMatchObject({
+        ok: false,
+        code: "validation",
+        fieldErrors: { consent: expect.any(String) },
+      });
+      expect(
+        await submitInquiryAction(null, form({ ...viewing(), propertyId: draft })),
+      ).toMatchObject({ ok: false, code: "not_found" });
     });
 
     it("rate-limits repeated submissions from one address", async () => {
       testSession.ip = "198.51.100.77";
       const outcomes = [];
-      for (let attempt = 0; attempt < 6; attempt += 1) outcomes.push(await submitInquiryAction(null, form(viewing())));
+      for (let attempt = 0; attempt < 6; attempt += 1)
+        outcomes.push(await submitInquiryAction(null, form(viewing())));
       expect(outcomes.slice(0, 5).every((outcome) => outcome?.ok)).toBe(true);
       expect(outcomes[5]).toMatchObject({ ok: false, code: "rate_limited" });
     });

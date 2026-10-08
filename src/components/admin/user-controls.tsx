@@ -9,7 +9,19 @@ import { DialogContent, DialogRoot } from "@/components/ui/dialog";
 import { adminButton, adminInput } from "./form-kit";
 
 /** Role selector and enable/disable control for one row of the users table. */
-export function UserControls({ id, email, role, disabled, isSelf }: { id: string; email: string; role: UserRole; disabled: boolean; isSelf: boolean }) {
+export function UserControls({
+  id,
+  email,
+  role,
+  disabled,
+  isSelf,
+}: {
+  id: string;
+  email: string;
+  role: UserRole;
+  disabled: boolean;
+  isSelf: boolean;
+}) {
   const router = useRouter();
   const { notify } = useToast();
   const [pending, startTransition] = useTransition();
@@ -49,22 +61,45 @@ export function UserControls({ id, email, role, disabled, isSelf }: { id: string
         ))}
       </select>
       {nextRole !== role ? (
-        <button type="button" disabled={pending} onClick={() => submit({ role: nextRole }, `Role changed to ${ROLE_LABELS[nextRole]}`)} className={`${adminButton.primary} h-8 px-3 text-xs`}>
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => submit({ role: nextRole }, `Role changed to ${ROLE_LABELS[nextRole]}`)}
+          className={`${adminButton.primary} h-8 px-3 text-xs`}
+        >
           Save role
         </button>
       ) : null}
       {disabled ? (
-        <button type="button" disabled={pending} onClick={() => submit({ disabled: false }, "Account re-enabled")} className={`${adminButton.secondary} h-8 px-3 text-xs`}>
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => submit({ disabled: false }, "Account re-enabled")}
+          className={`${adminButton.secondary} h-8 px-3 text-xs`}
+        >
           Re-enable
         </button>
       ) : (
         <DialogRoot open={confirmDisable} onOpenChange={setConfirmDisable}>
-          <button type="button" disabled={pending} onClick={() => setConfirmDisable(true)} className={`${adminButton.danger} h-8 px-3 text-xs`}>
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => setConfirmDisable(true)}
+            className={`${adminButton.danger} h-8 px-3 text-xs`}
+          >
             Disable
           </button>
-          <DialogContent title="Disable this account?" description={`${email} will be signed out everywhere and cannot sign in until re-enabled.`} className="w-[min(100vw-2rem,28rem)]">
+          <DialogContent
+            title="Disable this account?"
+            description={`${email} will be signed out everywhere and cannot sign in until re-enabled.`}
+            className="w-[min(100vw-2rem,28rem)]"
+          >
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setConfirmDisable(false)} className={adminButton.secondary}>
+              <button
+                type="button"
+                onClick={() => setConfirmDisable(false)}
+                className={adminButton.secondary}
+              >
                 Cancel
               </button>
               <button

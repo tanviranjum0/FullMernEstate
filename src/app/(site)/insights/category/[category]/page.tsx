@@ -10,7 +10,10 @@ export function generateStaticParams() {
   return ARTICLE_CATEGORIES.map((category) => ({ category: category.slug }));
 }
 
-export async function generateMetadata({ params, searchParams }: PageProps<"/insights/category/[category]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: PageProps<"/insights/category/[category]">): Promise<Metadata> {
   const { category } = await params;
   const definition = getArticleCategory(category);
   if (!definition) return { title: "Not found", robots: { index: false } };
@@ -24,7 +27,10 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/ins
   };
 }
 
-async function CategoryContent({ params, searchParams }: PageProps<"/insights/category/[category]">) {
+async function CategoryContent({
+  params,
+  searchParams,
+}: PageProps<"/insights/category/[category]">) {
   const { category } = await params;
   const definition = getArticleCategory(category);
   if (!definition) notFound();
@@ -47,7 +53,13 @@ async function CategoryContent({ params, searchParams }: PageProps<"/insights/ca
 
 export default function CategoryPage(props: PageProps<"/insights/category/[category]">) {
   return (
-    <Suspense fallback={<div className="container-page pt-14"><Skeleton className="h-96 w-full" /></div>}>
+    <Suspense
+      fallback={
+        <div className="container-page pt-14">
+          <Skeleton className="h-96 w-full" />
+        </div>
+      }
+    >
       <CategoryContent {...props} />
     </Suspense>
   );

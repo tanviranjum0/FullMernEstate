@@ -40,7 +40,10 @@ interface RawImage {
   blurDataURL?: string | null;
 }
 
-export function toMediaImage(image: RawImage | null | undefined, fallbackAlt = ""): MediaImage | null {
+export function toMediaImage(
+  image: RawImage | null | undefined,
+  fallbackAlt = "",
+): MediaImage | null {
   if (!image?.src || !image.width || !image.height) return null;
   return {
     id: image._id?.toString() ?? image.src,
@@ -253,11 +256,19 @@ export function toLocationDetail(doc: LocationRecord): LocationDetail {
   return {
     ...toLocationSummary(doc),
     body: doc.body ?? "",
-    highlights: (doc.highlights ?? []).map((h) => ({ id: h._id.toString(), title: h.title, text: h.text })),
+    highlights: (doc.highlights ?? []).map((h) => ({
+      id: h._id.toString(),
+      title: h.title,
+      text: h.text,
+    })),
     lifestyle: doc.lifestyle ?? [],
     nearby: doc.nearby ?? [],
     marketNotes: doc.marketNotes ?? "",
-    faqs: (doc.faqs ?? []).map((f) => ({ id: f._id.toString(), question: f.question, answer: f.answer })),
+    faqs: (doc.faqs ?? []).map((f) => ({
+      id: f._id.toString(),
+      question: f.question,
+      answer: f.answer,
+    })),
     center,
     zoom: doc.zoom ?? 12,
     seo: { title: doc.seo?.title ?? "", description: doc.seo?.description ?? "" },
@@ -339,12 +350,25 @@ export function toSiteSettings(doc: SiteSettingsRecord | null): SiteSettings {
     },
     about: {
       story: doc.about?.story ?? "",
-      values: (doc.about?.values ?? []).map((v) => ({ id: v._id.toString(), title: v.title, text: v.text })),
+      values: (doc.about?.values ?? []).map((v) => ({
+        id: v._id.toString(),
+        title: v.title,
+        text: v.text,
+      })),
     },
     testimonials: (doc.testimonials ?? [])
       .filter((t) => t.published)
-      .map((t) => ({ id: t._id.toString(), quote: t.quote, author: t.author, context: t.context ?? "" })),
-    faqs: (doc.faqs ?? []).map((f) => ({ id: f._id.toString(), question: f.question, answer: f.answer })),
+      .map((t) => ({
+        id: t._id.toString(),
+        quote: t.quote,
+        author: t.author,
+        context: t.context ?? "",
+      })),
+    faqs: (doc.faqs ?? []).map((f) => ({
+      id: f._id.toString(),
+      question: f.question,
+      answer: f.answer,
+    })),
     featuredPropertyIds: (doc.featuredPropertyIds ?? []).map((id) => id.toString()),
     announcement: doc.announcement ?? "",
   };

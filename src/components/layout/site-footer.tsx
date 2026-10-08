@@ -6,14 +6,23 @@ import { cacheTags } from "@/server/cache-tags";
 import { getCities, getSiteSettings } from "@/server/queries/content";
 import { Wordmark } from "./wordmark";
 
-function FooterColumn({ title, links }: { title: string; links: readonly { href: string; label: string }[] }) {
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: readonly { href: string; label: string }[];
+}) {
   return (
     <div>
       <h2 className="eyebrow mb-5 text-ivory/50">{title}</h2>
       <ul className="space-y-3">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className="text-[0.95rem] text-ivory/85 transition-colors hover:text-ivory">
+            <Link
+              href={link.href}
+              className="text-[0.95rem] text-ivory/85 transition-colors hover:text-ivory"
+            >
               {link.label}
             </Link>
           </li>
@@ -44,14 +53,20 @@ export async function SiteFooter() {
               {settings.contact.address ? <p>{settings.contact.address}</p> : null}
               {settings.contact.email ? (
                 <p>
-                  <a href={`mailto:${settings.contact.email}`} className="transition-colors hover:text-ivory">
+                  <a
+                    href={`mailto:${settings.contact.email}`}
+                    className="transition-colors hover:text-ivory"
+                  >
                     {settings.contact.email}
                   </a>
                 </p>
               ) : null}
               {settings.contact.phone ? (
                 <p>
-                  <a href={`tel:${settings.contact.phone.replace(/\s+/g, "")}`} className="transition-colors hover:text-ivory">
+                  <a
+                    href={`tel:${settings.contact.phone.replace(/\s+/g, "")}`}
+                    className="transition-colors hover:text-ivory"
+                  >
                     {settings.contact.phone}
                   </a>
                 </p>
@@ -63,7 +78,10 @@ export async function SiteFooter() {
             <FooterColumn title="Discover" links={footerNavigation.discover} />
             <FooterColumn
               title="Locations"
-              links={[...cities.map((city) => ({ href: city.href, label: city.name })), { href: "/locations", label: "All locations" }]}
+              links={[
+                ...cities.map((city) => ({ href: city.href, label: city.name })),
+                { href: "/locations", label: "All locations" },
+              ]}
             />
             <FooterColumn title="Company" links={footerNavigation.company} />
             <div>

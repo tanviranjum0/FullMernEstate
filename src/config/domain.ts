@@ -7,7 +7,14 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   admin: "Administrator",
 };
 
-export const INQUIRY_TYPES = ["property", "viewing", "general", "agent", "valuation", "consultation"] as const;
+export const INQUIRY_TYPES = [
+  "property",
+  "viewing",
+  "general",
+  "agent",
+  "valuation",
+  "consultation",
+] as const;
 export type InquiryType = (typeof INQUIRY_TYPES)[number];
 export const INQUIRY_TYPE_LABELS: Record<InquiryType, string> = {
   property: "Property enquiry",
@@ -96,7 +103,9 @@ export const ARTICLE_CATEGORIES = [
   },
 ] as const;
 export type ArticleCategorySlug = (typeof ARTICLE_CATEGORIES)[number]["slug"];
-export const ARTICLE_CATEGORY_SLUGS = ARTICLE_CATEGORIES.map((c) => c.slug) as ArticleCategorySlug[];
+export const ARTICLE_CATEGORY_SLUGS = ARTICLE_CATEGORIES.map(
+  (c) => c.slug,
+) as ArticleCategorySlug[];
 export function getArticleCategory(slug: string) {
   return ARTICLE_CATEGORIES.find((category) => category.slug === slug);
 }

@@ -16,7 +16,9 @@ async function Saved() {
     <>
       <h1 className="font-display text-heading-1 text-ink-900">Saved homes</h1>
       <p className="mt-3 text-stone-600">
-        {properties.length ? `${properties.length} ${properties.length === 1 ? "home" : "homes"} on your shortlist.` : null}
+        {properties.length
+          ? `${properties.length} ${properties.length === 1 ? "home" : "homes"} on your shortlist.`
+          : null}
       </p>
       {properties.length ? (
         <ul className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-3">

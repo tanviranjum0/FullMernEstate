@@ -70,7 +70,10 @@ export const villaExteriors = [
 
 export const apartmentExteriors = [
   unsplash("1515263487990-61b07816b324", "Concrete residential tower photographed from below"),
-  unsplash("1784853879843-f3c5aacf2569", "Apartment building with deep balconies and large windows"),
+  unsplash(
+    "1784853879843-f3c5aacf2569",
+    "Apartment building with deep balconies and large windows",
+  ),
   unsplash("1545324418-cc1a3fa10c00", "High-rise apartment building against the sky"),
   unsplash("1775733924031-521cd86c69cc", "Apartment building with planted balconies"),
   unsplash("1624204386084-dd8c05e32226", "Glass balconies reflecting a pink evening sky"),
@@ -84,7 +87,10 @@ export const livingRooms = [
   unsplash("1758448511322-8bfc73daf606", "Living room with a sectional sofa and wide window"),
   unsplash("1564078516393-cf04bd966897", "Grey chaise beside a tall window"),
   unsplash("1758565811176-ccd94357a844", "Living room with large windows and a view"),
-  unsplash("1598928506311-c55ded91a20c", "Living room with marble fireplace and dark timber shelving"),
+  unsplash(
+    "1598928506311-c55ded91a20c",
+    "Living room with marble fireplace and dark timber shelving",
+  ),
   unsplash("1618221195710-dd6b41faaea6", "Neutral living room with layered textures"),
   unsplash("1757524503555-b62633f47670", "Living room with fireplace and floor-to-ceiling glass"),
   unsplash("1560448204-e02f11c3d0e2", "Beige sofa and armchair in a calm sitting room"),

@@ -25,14 +25,20 @@ export interface ProcessedImage {
  * orientation, strips all metadata including GPS EXIF, and produces responsive WebP variants
  * plus a tiny blurred placeholder.
  */
-export async function processImage(input: Buffer, { quality = 80 }: { quality?: number } = {}): Promise<ProcessedImage> {
+export async function processImage(
+  input: Buffer,
+  { quality = 80 }: { quality?: number } = {},
+): Promise<ProcessedImage> {
   let metadata: Metadata;
   try {
     metadata = await sharp(input, { limitInputPixels: MAX_INPUT_PIXELS }).metadata();
   } catch {
     throw new ImageValidationError("The file is not a readable image.");
   }
-  if (!metadata.format || !(ACCEPTED_IMAGE_FORMATS as readonly string[]).includes(metadata.format)) {
+  if (
+    !metadata.format ||
+    !(ACCEPTED_IMAGE_FORMATS as readonly string[]).includes(metadata.format)
+  ) {
     throw new ImageValidationError("Only JPEG, PNG, WebP, AVIF and HEIC images are accepted.");
   }
 

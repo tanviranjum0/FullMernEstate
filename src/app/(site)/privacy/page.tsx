@@ -64,7 +64,12 @@ const sections = [
 export default function PrivacyPage() {
   return (
     <>
-      <PageIntro crumbs={[{ label: "Privacy", href: "/privacy" }]} eyebrow="Legal" title="Privacy notice" lead="Last updated 8 October 2026." />
+      <PageIntro
+        crumbs={[{ label: "Privacy", href: "/privacy" }]}
+        eyebrow="Legal"
+        title="Privacy notice"
+        lead="Last updated 8 October 2026."
+      />
       <div className="container-prose pb-[var(--section-y)]">
         <div className="prose-editorial">
           {sections.map((section) => (

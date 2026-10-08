@@ -20,7 +20,9 @@ export async function generateStaticParams() {
   return slugs.length ? slugs.map(({ slug }) => ({ slug })) : [{ slug: "__none__" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/insights/[slug]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/insights/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Article not found", robots: { index: false, follow: true } };
@@ -67,7 +69,11 @@ async function ArticleContent({ params }: { params: PageProps<"/insights/[slug]"
           datePublished: article.publishedAt ?? undefined,
           dateModified: article.updatedAt,
           author: article.authorSlug
-            ? { "@type": "Person", name: article.authorName, url: absoluteUrl(`/agents/${article.authorSlug}`) }
+            ? {
+                "@type": "Person",
+                name: article.authorName,
+                url: absoluteUrl(`/agents/${article.authorSlug}`),
+              }
             : { "@type": "Organization", name: siteConfig.name },
           publisher: { "@type": "Organization", name: siteConfig.name, url: siteConfig.url },
           mainEntityOfPage: absoluteUrl(`/insights/${article.slug}`),
@@ -77,15 +83,22 @@ async function ArticleContent({ params }: { params: PageProps<"/insights/[slug]"
         <Breadcrumbs
           items={[
             { label: "Insights", href: "/insights" },
-            ...(category ? [{ label: category.name, href: `/insights/category/${category.slug}` }] : []),
+            ...(category
+              ? [{ label: category.name, href: `/insights/category/${category.slug}` }]
+              : []),
             { label: article.title, href: `/insights/${article.slug}` },
           ]}
         />
         <h1 className="mt-10 font-display text-display-2 text-ink-900">{article.title}</h1>
-        {article.excerpt ? <p className="mt-6 text-lead text-stone-600">{article.excerpt}</p> : null}
+        {article.excerpt ? (
+          <p className="mt-6 text-lead text-stone-600">{article.excerpt}</p>
+        ) : null}
         <p className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-stone-600">
           {article.authorSlug ? (
-            <Link href={`/agents/${article.authorSlug}`} className="font-semibold text-ink-900 hover:underline">
+            <Link
+              href={`/agents/${article.authorSlug}`}
+              className="font-semibold text-ink-900 hover:underline"
+            >
               {article.authorName}
             </Link>
           ) : (
@@ -104,16 +117,26 @@ async function ArticleContent({ params }: { params: PageProps<"/insights/[slug]"
       {article.coverImage ? (
         <div className="container-page mt-12">
           <div className="relative aspect-[16/9] overflow-hidden bg-sand-100 lg:aspect-[21/9]">
-            <ResponsiveImage image={article.coverImage} sizes="(min-width: 1440px) 1340px, 100vw" priority />
+            <ResponsiveImage
+              image={article.coverImage}
+              sizes="(min-width: 1440px) 1340px, 100vw"
+              priority
+            />
           </div>
         </div>
       ) : null}
       <div className="container-prose py-16">
-        <div className="prose-editorial" dangerouslySetInnerHTML={{ __html: renderMarkdown(article.body) }} />
+        <div
+          className="prose-editorial"
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(article.body) }}
+        />
         {article.tags.length ? (
           <ul className="mt-14 flex flex-wrap gap-2 border-t border-sand-200 pt-8">
             {article.tags.map((tag) => (
-              <li key={tag} className="rounded-full border border-sand-300 px-3 py-1 text-sm text-stone-700">
+              <li
+                key={tag}
+                className="rounded-full border border-sand-300 px-3 py-1 text-sm text-stone-700"
+              >
                 {tag}
               </li>
             ))}
@@ -121,7 +144,9 @@ async function ArticleContent({ params }: { params: PageProps<"/insights/[slug]"
         ) : null}
         <div className="mt-14 bg-ink-950 p-8 text-ivory sm:p-10">
           <h2 className="font-display text-heading-3">Considering a move?</h2>
-          <p className="mt-3 text-ivory/75">An advisor can talk you through the market and the homes available now.</p>
+          <p className="mt-3 text-ivory/75">
+            An advisor can talk you through the market and the homes available now.
+          </p>
           <ButtonLink href="/contact?type=consultation" variant="light" className="mt-6">
             Arrange a conversation
           </ButtonLink>

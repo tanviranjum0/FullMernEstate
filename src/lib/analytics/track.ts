@@ -12,11 +12,15 @@ export function track(name: TrackedEvent, subject?: string): void {
   if (typeof window === "undefined") return;
   const body = JSON.stringify(subject ? { name, subject } : { name });
   try {
-    if (navigator.sendBeacon?.("/api/events", new Blob([body], { type: "application/json" }))) return;
+    if (navigator.sendBeacon?.("/api/events", new Blob([body], { type: "application/json" })))
+      return;
   } catch {
     /* fall through to fetch */
   }
-  void fetch("/api/events", { method: "POST", body, keepalive: true, headers: { "Content-Type": "application/json" } }).catch(
-    () => undefined,
-  );
+  void fetch("/api/events", {
+    method: "POST",
+    body,
+    keepalive: true,
+    headers: { "Content-Type": "application/json" },
+  }).catch(() => undefined);
 }

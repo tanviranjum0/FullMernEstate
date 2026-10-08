@@ -13,7 +13,10 @@ export function ogImageUrl(image: Pick<MediaImage, "src">): string {
     return `${image.src}?w=1200&h=630&fit=crop&q=80&auto=format`;
   }
   const variant = parseVariantSrc(image.src);
-  if (variant) return absoluteUrl(`${variant.base}/${variantFileName(pickVariantWidth(1200, variant.maxWidth))}`);
+  if (variant)
+    return absoluteUrl(
+      `${variant.base}/${variantFileName(pickVariantWidth(1200, variant.maxWidth))}`,
+    );
   return absoluteUrl(image.src);
 }
 

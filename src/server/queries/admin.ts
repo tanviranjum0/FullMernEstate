@@ -1,6 +1,11 @@
 import "server-only";
 import { Types } from "mongoose";
-import { OPEN_INQUIRY_STATUSES, type InquiryStatus, type InquiryType, type UserRole } from "@/config/domain";
+import {
+  OPEN_INQUIRY_STATUSES,
+  type InquiryStatus,
+  type InquiryType,
+  type UserRole,
+} from "@/config/domain";
 import type { CurrentUser } from "@/lib/auth/session";
 import { canManageInquiry, canManageProperty, hasPermission } from "@/lib/auth/permissions";
 import { connectToDatabase } from "@/lib/db/mongoose";
@@ -55,12 +60,20 @@ function toImageInput(image: unknown): MediaImageInput | null {
 /** Restricts property queries to the actor's own listings unless they can manage all. */
 function propertyScope(actor: CurrentUser): Record<string, unknown> {
   if (hasPermission(actor.role, "properties:manage_all")) return {};
-  return { agent: actor.agentId ? new Types.ObjectId(actor.agentId) : new Types.ObjectId("000000000000000000000000") };
+  return {
+    agent: actor.agentId
+      ? new Types.ObjectId(actor.agentId)
+      : new Types.ObjectId("000000000000000000000000"),
+  };
 }
 
 function inquiryScope(actor: CurrentUser): Record<string, unknown> {
   if (hasPermission(actor.role, "inquiries:manage_all")) return {};
-  return { assignedTo: actor.agentId ? new Types.ObjectId(actor.agentId) : new Types.ObjectId("000000000000000000000000") };
+  return {
+    assignedTo: actor.agentId
+      ? new Types.ObjectId(actor.agentId)
+      : new Types.ObjectId("000000000000000000000000"),
+  };
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -72,37 +85,86 @@ export async function getDashboardData(actor: CurrentUser) {
   const pScope = propertyScope(actor);
   const iScope = inquiryScope(actor);
   const since30 = new Date(Date.now() - 30 * 86_400_000);
-  const canSeeProperties = hasPermission(actor.role, "properties:manage_all") || hasPermission(actor.role, "properties:manage_own");
-  const canSeeInquiries = hasPermission(actor.role, "inquiries:manage_all") || hasPermission(actor.role, "inquiries:manage_own");
+  const canSeeProperties =
+    hasPermission(actor.role, "properties:manage_all") ||
+    hasPermission(actor.role, "properties:manage_own");
+  const canSeeInquiries =
+    hasPermission(actor.role, "inquiries:manage_all") ||
+    hasPermission(actor.role, "inquiries:manage_own");
 
-  const [statusCounts, inquiryCounts, newInquiries, recentInquiries, users, agents, metrics, series, activity, topViewed] =
-    await Promise.all([
-      canSeeProperties
-        ? PropertyModel.aggregate<{ _id: string; count: number }>([{ $match: pScope }, { $group: { _id: "$status", count: { $sum: 1 } } }])
-        : Promise.resolve([]),
-      canSeeInquiries
-        ? InquiryModel.aggregate<{ _id: string; count: number }>([
-            { $match: { ...iScope, createdAt: { $gte: since30 } } },
-            { $group: { _id: "$type", count: { $sum: 1 } } },
-          ])
-        : Promise.resolve([]),
-      canSeeInquiries ? InquiryModel.countDocuments({ ...iScope, status: "new" }) : Promise.resolve(0),
-      canSeeInquiries
-        ? InquiryModel.find(iScope, { name: 1, type: 1, status: 1, propertySnapshot: 1, createdAt: 1 }).sort({ createdAt: -1 }).limit(6).lean()
-        : Promise.resolve([]),
-      hasPermission(actor.role, "users:manage") ? UserModel.estimatedDocumentCount() : Promise.resolve(null),
-      AgentModel.countDocuments({ active: true }),
-      hasPermission(actor.role, "properties:manage_all")
-        ? metricTotals(["property_view", "inquiry", "viewing_request", "favorite_add", "share", "phone_click", "email_click", "whatsapp_click", "saved_search"], 30)
-        : Promise.resolve({} as Record<string, number>),
-      canSeeInquiries ? inquirySeries(iScope, 30) : Promise.resolve([]),
-      hasPermission(actor.role, "audit:read")
-        ? AuditLogModel.find({}, { actor: 1, summary: 1, createdAt: 1, action: 1 }).sort({ createdAt: -1 }).limit(8).lean()
-        : Promise.resolve([]),
-      canSeeProperties
-        ? PropertyModel.find({ ...pScope, status: "published" }, { title: 1, slug: 1, viewCount: 1 }).sort({ viewCount: -1 }).limit(5).lean()
-        : Promise.resolve([]),
-    ]);
+  const [
+    statusCounts,
+    inquiryCounts,
+    newInquiries,
+    recentInquiries,
+    users,
+    agents,
+    metrics,
+    series,
+    activity,
+    topViewed,
+  ] = await Promise.all([
+    canSeeProperties
+      ? PropertyModel.aggregate<{ _id: string; count: number }>([
+          { $match: pScope },
+          { $group: { _id: "$status", count: { $sum: 1 } } },
+        ])
+      : Promise.resolve([]),
+    canSeeInquiries
+      ? InquiryModel.aggregate<{ _id: string; count: number }>([
+          { $match: { ...iScope, createdAt: { $gte: since30 } } },
+          { $group: { _id: "$type", count: { $sum: 1 } } },
+        ])
+      : Promise.resolve([]),
+    canSeeInquiries
+      ? InquiryModel.countDocuments({ ...iScope, status: "new" })
+      : Promise.resolve(0),
+    canSeeInquiries
+      ? InquiryModel.find(iScope, {
+          name: 1,
+          type: 1,
+          status: 1,
+          propertySnapshot: 1,
+          createdAt: 1,
+        })
+          .sort({ createdAt: -1 })
+          .limit(6)
+          .lean()
+      : Promise.resolve([]),
+    hasPermission(actor.role, "users:manage")
+      ? UserModel.estimatedDocumentCount()
+      : Promise.resolve(null),
+    AgentModel.countDocuments({ active: true }),
+    hasPermission(actor.role, "properties:manage_all")
+      ? metricTotals(
+          [
+            "property_view",
+            "inquiry",
+            "viewing_request",
+            "favorite_add",
+            "share",
+            "phone_click",
+            "email_click",
+            "whatsapp_click",
+            "saved_search",
+          ],
+          30,
+        )
+      : Promise.resolve({} as Record<string, number>),
+    canSeeInquiries ? inquirySeries(iScope, 30) : Promise.resolve([]),
+    hasPermission(actor.role, "audit:read")
+      ? AuditLogModel.find({}, { actor: 1, summary: 1, createdAt: 1, action: 1 })
+          .sort({ createdAt: -1 })
+          .limit(8)
+          .lean()
+      : Promise.resolve([]),
+    canSeeProperties
+      ? PropertyModel.find({ ...pScope, status: "published" }, { title: 1, slug: 1, viewCount: 1 })
+          .sort({ viewCount: -1 })
+          .limit(5)
+          .lean()
+      : Promise.resolve([]),
+  ]);
 
   const byStatus = Object.fromEntries(statusCounts.map((row) => [row._id, row.count]));
   return {
@@ -136,7 +198,12 @@ export async function getDashboardData(actor: CurrentUser) {
       action: row.action,
       createdAt: new Date(row.createdAt).toISOString(),
     })),
-    topViewed: topViewed.map((row) => ({ id: row._id.toString(), title: row.title, slug: row.slug, views: row.viewCount ?? 0 })),
+    topViewed: topViewed.map((row) => ({
+      id: row._id.toString(),
+      title: row.title,
+      slug: row.slug,
+      views: row.viewCount ?? 0,
+    })),
     canSeeProperties,
     canSeeInquiries,
   };
@@ -147,7 +214,12 @@ async function inquirySeries(scope: Record<string, unknown>, days: number) {
   since.setUTCHours(0, 0, 0, 0);
   const rows = await InquiryModel.aggregate<{ _id: string; count: number }>([
     { $match: { ...scope, createdAt: { $gte: since } } },
-    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, count: { $sum: 1 } } },
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        count: { $sum: 1 },
+      },
+    },
   ]);
   const byDay = new Map(rows.map((row) => [row._id, row.count]));
   return Array.from({ length: days }, (_, index) => {
@@ -183,7 +255,12 @@ export interface AdminPropertyRow {
 
 export async function listAdminProperties(
   actor: CurrentUser,
-  { q, status, listing, page = 1 }: { q?: string; status?: string; listing?: string; page?: number },
+  {
+    q,
+    status,
+    listing,
+    page = 1,
+  }: { q?: string; status?: string; listing?: string; page?: number },
 ): Promise<AdminPage<AdminPropertyRow>> {
   await connectToDatabase();
   const filter: Record<string, unknown> = { ...propertyScope(actor) };
@@ -191,7 +268,12 @@ export async function listAdminProperties(
   if (listing && ["sale", "rent"].includes(listing)) filter.listingType = listing;
   if (q) {
     const pattern = new RegExp(escapeRegex(q.slice(0, 80)), "i");
-    filter.$or = [{ title: pattern }, { slug: pattern }, { "location.neighbourhoodName": pattern }, { "location.cityName": pattern }];
+    filter.$or = [
+      { title: pattern },
+      { slug: pattern },
+      { "location.neighbourhoodName": pattern },
+      { "location.cityName": pattern },
+    ];
   }
   const { page: current, skip, limit } = paginate(page);
   const [rows, total] = await Promise.all([
@@ -230,7 +312,9 @@ export async function listAdminProperties(
       price: row.price?.amount ?? 0,
       currency: row.price?.currency ?? "BDT",
       onRequest: Boolean(row.price?.onRequest),
-      location: [row.location?.neighbourhoodName, row.location?.cityName].filter(Boolean).join(", "),
+      location: [row.location?.neighbourhoodName, row.location?.cityName]
+        .filter(Boolean)
+        .join(", "),
       image: row.images?.[0]?.src ?? null,
       agentName: row.agent?.name ?? "",
       featured: Boolean(row.flags?.featured),
@@ -267,7 +351,15 @@ export function emptyPropertyInput(actor: CurrentUser): PropertyInput {
     },
     amenities: [],
     flags: { featured: false, exclusive: false, newConstruction: false },
-    location: { citySlug: "", neighbourhoodSlug: "", displayAddress: "", addressLine: "", showExactLocation: false, lat: undefined, lng: undefined },
+    location: {
+      citySlug: "",
+      neighbourhoodSlug: "",
+      displayAddress: "",
+      addressLine: "",
+      showExactLocation: false,
+      lat: undefined,
+      lng: undefined,
+    },
     images: [],
     floorPlans: [],
     videoUrl: "",
@@ -277,7 +369,10 @@ export function emptyPropertyInput(actor: CurrentUser): PropertyInput {
   };
 }
 
-export async function getAdminProperty(actor: CurrentUser, id: string): Promise<{ input: PropertyInput; slug: string; status: string } | null> {
+export async function getAdminProperty(
+  actor: CurrentUser,
+  id: string,
+): Promise<{ input: PropertyInput; slug: string; status: string } | null> {
   if (!Types.ObjectId.isValid(id)) return null;
   await connectToDatabase();
   const doc = await PropertyModel.findById(id).lean<PropertyRecord>();
@@ -335,7 +430,10 @@ export async function getAdminProperty(actor: CurrentUser, id: string): Promise<
         })
         .filter((p): p is MediaImageInput & { label: string } => Boolean(p)),
       videoUrl: doc.video?.url ?? "",
-      virtualTour: { url: doc.virtualTour?.url ?? "", kind: (doc.virtualTour?.kind ?? "tour360") as PropertyInput["virtualTour"]["kind"] },
+      virtualTour: {
+        url: doc.virtualTour?.url ?? "",
+        kind: (doc.virtualTour?.kind ?? "tour360") as PropertyInput["virtualTour"]["kind"],
+      },
       agentId: doc.agent?.toString() ?? "",
       seo: { title: doc.seo?.title ?? "", description: doc.seo?.description ?? "" },
     },
@@ -350,7 +448,9 @@ export async function getAdminOptions() {
   await connectToDatabase();
   const [agents, locations] = await Promise.all([
     AgentModel.find({}, { name: 1, active: 1 }).sort({ sortOrder: 1, name: 1 }).lean(),
-    LocationModel.find({}, { kind: 1, slug: 1, parentSlug: 1, name: 1, center: 1 }).sort({ sortOrder: 1, name: 1 }).lean(),
+    LocationModel.find({}, { kind: 1, slug: 1, parentSlug: 1, name: 1, center: 1 })
+      .sort({ sortOrder: 1, name: 1 })
+      .lean(),
   ]);
   return {
     agents: agents.map((a) => ({ id: a._id.toString(), name: a.name, active: a.active })),
@@ -359,13 +459,19 @@ export async function getAdminOptions() {
       .map((city) => ({
         slug: city.slug,
         name: city.name,
-        center: city.center?.lat !== undefined && city.center?.lat !== null ? { lat: city.center.lat, lng: city.center.lng as number } : null,
+        center:
+          city.center?.lat !== undefined && city.center?.lat !== null
+            ? { lat: city.center.lat, lng: city.center.lng as number }
+            : null,
         neighbourhoods: locations
           .filter((l) => l.kind === "neighbourhood" && l.parentSlug === city.slug)
           .map((n) => ({
             slug: n.slug,
             name: n.name,
-            center: n.center?.lat !== undefined && n.center?.lat !== null ? { lat: n.center.lat, lng: n.center.lng as number } : null,
+            center:
+              n.center?.lat !== undefined && n.center?.lat !== null
+                ? { lat: n.center.lat, lng: n.center.lng as number }
+                : null,
           })),
       })),
   };
@@ -403,7 +509,15 @@ export async function listAdminInquiries(
   }
   const { page: current, skip, limit } = paginate(page);
   const [rows, total] = await Promise.all([
-    InquiryModel.find(filter, { type: 1, status: 1, name: 1, email: 1, propertySnapshot: 1, assignedTo: 1, createdAt: 1 })
+    InquiryModel.find(filter, {
+      type: 1,
+      status: 1,
+      name: 1,
+      email: 1,
+      propertySnapshot: 1,
+      assignedTo: 1,
+      createdAt: 1,
+    })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -433,10 +547,17 @@ export async function getAdminInquiry(actor: CurrentUser, id: string) {
   if (!Types.ObjectId.isValid(id)) return null;
   await connectToDatabase();
   const doc = await InquiryModel.findById(id).lean<InquiryRecord>();
-  if (!doc || !canManageInquiry(actor, { assignedAgentId: doc.assignedTo?.toString() ?? null })) return null;
+  if (!doc || !canManageInquiry(actor, { assignedAgentId: doc.assignedTo?.toString() ?? null }))
+    return null;
   const [assigned, audit] = await Promise.all([
     doc.assignedTo ? AgentModel.findById(doc.assignedTo, { name: 1 }).lean() : null,
-    AuditLogModel.find({ entityType: "inquiry", entityId: id }, { summary: 1, actor: 1, createdAt: 1 }).sort({ createdAt: -1 }).limit(20).lean(),
+    AuditLogModel.find(
+      { entityType: "inquiry", entityId: id },
+      { summary: 1, actor: 1, createdAt: 1 },
+    )
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean(),
   ]);
   return {
     id,
@@ -448,8 +569,12 @@ export async function getAdminInquiry(actor: CurrentUser, id: string) {
     phone: doc.phone ?? "",
     preferredContact: doc.preferredContact ?? "email",
     message: doc.message ?? "",
-    property: doc.propertySnapshot?.slug ? { title: doc.propertySnapshot.title, slug: doc.propertySnapshot.slug } : null,
-    viewing: doc.viewing?.date ? { date: new Date(doc.viewing.date).toISOString(), timeSlot: doc.viewing.timeSlot ?? null } : null,
+    property: doc.propertySnapshot?.slug
+      ? { title: doc.propertySnapshot.title, slug: doc.propertySnapshot.slug }
+      : null,
+    viewing: doc.viewing?.date
+      ? { date: new Date(doc.viewing.date).toISOString(), timeSlot: doc.viewing.timeSlot ?? null }
+      : null,
     source: doc.source?.path ?? "",
     assignedTo: doc.assignedTo?.toString() ?? "",
     assignedName: assigned?.name ?? "",
@@ -460,7 +585,12 @@ export async function getAdminInquiry(actor: CurrentUser, id: string) {
       body: note.body,
       createdAt: new Date(note.createdAt).toISOString(),
     })),
-    history: audit.map((row) => ({ id: row._id.toString(), summary: row.summary, actor: row.actor?.email ?? "", createdAt: new Date(row.createdAt).toISOString() })),
+    history: audit.map((row) => ({
+      id: row._id.toString(),
+      summary: row.summary,
+      actor: row.actor?.email ?? "",
+      createdAt: new Date(row.createdAt).toISOString(),
+    })),
     createdAt: new Date(doc.createdAt).toISOString(),
   };
 }
@@ -491,7 +621,9 @@ export async function listAdminAgents() {
   }));
 }
 
-export async function getAdminAgent(id: string): Promise<{ input: AgentInput; slug: string } | null> {
+export async function getAdminAgent(
+  id: string,
+): Promise<{ input: AgentInput; slug: string } | null> {
   if (!Types.ObjectId.isValid(id)) return null;
   await connectToDatabase();
   const doc = await AgentModel.findById(id).lean<AgentRecord>();
@@ -511,7 +643,11 @@ export async function getAdminAgent(id: string): Promise<{ input: AgentInput; sl
       languages: doc.languages ?? [],
       specialties: doc.specialties ?? [],
       areas: doc.areas ?? [],
-      socials: { linkedin: doc.socials?.linkedin ?? "", instagram: doc.socials?.instagram ?? "", website: doc.socials?.website ?? "" },
+      socials: {
+        linkedin: doc.socials?.linkedin ?? "",
+        instagram: doc.socials?.instagram ?? "",
+        website: doc.socials?.website ?? "",
+      },
       active: doc.active,
       sortOrder: doc.sortOrder ?? 100,
       userEmail: user?.email ?? "",
@@ -520,7 +656,15 @@ export async function getAdminAgent(id: string): Promise<{ input: AgentInput; sl
   };
 }
 
-export async function listAdminUsers({ q, role, page = 1 }: { q?: string; role?: string; page?: number }) {
+export async function listAdminUsers({
+  q,
+  role,
+  page = 1,
+}: {
+  q?: string;
+  role?: string;
+  page?: number;
+}) {
   await connectToDatabase();
   const filter: Record<string, unknown> = {};
   if (role && ["user", "agent", "editor", "admin"].includes(role)) filter.role = role;
@@ -530,7 +674,11 @@ export async function listAdminUsers({ q, role, page = 1 }: { q?: string; role?:
   }
   const { page: current, skip, limit } = paginate(page);
   const [rows, total] = await Promise.all([
-    UserModel.find(filter, { name: 1, email: 1, role: 1, disabled: 1, createdAt: 1 }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+    UserModel.find(filter, { name: 1, email: 1, role: 1, disabled: 1, createdAt: 1 })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
     UserModel.countDocuments(filter),
   ]);
   return {
@@ -550,7 +698,10 @@ export async function listAdminUsers({ q, role, page = 1 }: { q?: string; role?:
 
 export async function listAdminLocations() {
   await connectToDatabase();
-  const rows = await LocationModel.find({}, { kind: 1, slug: 1, parentSlug: 1, name: 1, published: 1, updatedAt: 1, sortOrder: 1 })
+  const rows = await LocationModel.find(
+    {},
+    { kind: 1, slug: 1, parentSlug: 1, name: 1, published: 1, updatedAt: 1, sortOrder: 1 },
+  )
     .sort({ sortOrder: 1, name: 1 })
     .lean();
   const cities = rows.filter((row) => row.kind === "city");
@@ -565,13 +716,16 @@ export async function listAdminLocations() {
   }));
 }
 
-export async function getAdminLocation(id: string): Promise<{ input: LocationInput; href: string } | null> {
+export async function getAdminLocation(
+  id: string,
+): Promise<{ input: LocationInput; href: string } | null> {
   if (!Types.ObjectId.isValid(id)) return null;
   await connectToDatabase();
   const doc = await LocationModel.findById(id).lean<LocationRecord>();
   if (!doc) return null;
   return {
-    href: doc.kind === "city" ? `/locations/${doc.slug}` : `/locations/${doc.parentSlug}/${doc.slug}`,
+    href:
+      doc.kind === "city" ? `/locations/${doc.slug}` : `/locations/${doc.parentSlug}/${doc.slug}`,
     input: {
       kind: doc.kind as LocationInput["kind"],
       name: doc.name,
@@ -596,14 +750,30 @@ export async function getAdminLocation(id: string): Promise<{ input: LocationInp
   };
 }
 
-export async function listAdminArticles({ q, status, page = 1 }: { q?: string; status?: string; page?: number }) {
+export async function listAdminArticles({
+  q,
+  status,
+  page = 1,
+}: {
+  q?: string;
+  status?: string;
+  page?: number;
+}) {
   await connectToDatabase();
   const filter: Record<string, unknown> = {};
   if (status === "draft" || status === "published") filter.status = status;
   if (q) filter.title = new RegExp(escapeRegex(q.slice(0, 80)), "i");
   const { page: current, skip, limit } = paginate(page);
   const [rows, total] = await Promise.all([
-    ArticleModel.find(filter, { title: 1, slug: 1, status: 1, category: 1, featured: 1, publishedAt: 1, updatedAt: 1 })
+    ArticleModel.find(filter, {
+      title: 1,
+      slug: 1,
+      status: 1,
+      category: 1,
+      featured: 1,
+      publishedAt: 1,
+      updatedAt: 1,
+    })
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -627,7 +797,9 @@ export async function listAdminArticles({ q, status, page = 1 }: { q?: string; s
   };
 }
 
-export async function getAdminArticle(id: string): Promise<{ input: ArticleInput; slug: string; status: string } | null> {
+export async function getAdminArticle(
+  id: string,
+): Promise<{ input: ArticleInput; slug: string; status: string } | null> {
   if (!Types.ObjectId.isValid(id)) return null;
   await connectToDatabase();
   const doc = await ArticleModel.findById(id).lean<ArticleRecord>();
@@ -681,13 +853,24 @@ export async function getAdminSettings(): Promise<SiteSettingsInput> {
       story: doc?.about?.story ?? "",
       values: (doc?.about?.values ?? []).map((v) => ({ title: v.title, text: v.text })),
     },
-    testimonials: (doc?.testimonials ?? []).map((t) => ({ quote: t.quote, author: t.author, context: t.context ?? "", published: Boolean(t.published) })),
+    testimonials: (doc?.testimonials ?? []).map((t) => ({
+      quote: t.quote,
+      author: t.author,
+      context: t.context ?? "",
+      published: Boolean(t.published),
+    })),
     faqs: (doc?.faqs ?? []).map((f) => ({ question: f.question, answer: f.answer })),
     announcement: doc?.announcement ?? "",
   };
 }
 
-export async function listAuditLog({ entityType, page = 1 }: { entityType?: string; page?: number }) {
+export async function listAuditLog({
+  entityType,
+  page = 1,
+}: {
+  entityType?: string;
+  page?: number;
+}) {
   await connectToDatabase();
   const filter: Record<string, unknown> = {};
   if (entityType) filter.entityType = entityType;

@@ -36,7 +36,8 @@ async function main() {
   const client = new MongoClient(uri);
   await client.connect();
   const db = client.db();
-  const baseURL = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const baseURL =
+    process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const auth = betterAuth(
     createAuthOptions({
       client,
@@ -67,7 +68,11 @@ async function main() {
     const result = await db
       .collection("agents")
       .updateOne({ slug: agentSlug }, { $set: { userId: user._id.toString() } });
-    console.log(result.matchedCount ? `Linked to advisor profile "${agentSlug}"` : `No advisor "${agentSlug}" found`);
+    console.log(
+      result.matchedCount
+        ? `Linked to advisor profile "${agentSlug}"`
+        : `No advisor "${agentSlug}" found`,
+    );
   }
 
   if (generatedPassword) {

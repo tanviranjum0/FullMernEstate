@@ -17,10 +17,12 @@ export const buttonVariants = cva(
       variant: {
         primary: "bg-ink-900 text-ivory hover:bg-harbour-800",
         accent: "bg-harbour-700 text-ivory hover:bg-harbour-800",
-        outline: "border border-ink-900/25 bg-transparent text-ink-900 hover:border-ink-900 hover:bg-ink-900 hover:text-ivory",
+        outline:
+          "border border-ink-900/25 bg-transparent text-ink-900 hover:border-ink-900 hover:bg-ink-900 hover:text-ivory",
         ghost: "bg-transparent text-ink-900 hover:bg-sand-100",
         light: "bg-ivory text-ink-900 hover:bg-white",
-        "outline-light": "border border-ivory/40 bg-transparent text-ivory hover:border-ivory hover:bg-ivory hover:text-ink-900",
+        "outline-light":
+          "border border-ivory/40 bg-transparent text-ivory hover:border-ivory hover:bg-ivory hover:text-ink-900",
         danger: "bg-danger-600 text-white hover:bg-danger-600/90",
         link: "h-auto px-0 tracking-[0.12em] text-ink-900 underline decoration-ink-900/25 underline-offset-[6px] hover:decoration-ink-900",
       },
@@ -45,7 +47,9 @@ export function Button({
   type = "button",
   ...props
 }: ComponentProps<"button"> & ButtonVariantProps) {
-  return <button type={type} className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+  return (
+    <button type={type} className={cn(buttonVariants({ variant, size }), className)} {...props} />
+  );
 }
 
 export function ButtonLink({

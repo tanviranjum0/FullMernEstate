@@ -27,7 +27,10 @@ export const RATE_LIMITS = {
  * Each window is a separate document keyed by its start time, so the increment is a single
  * atomic upsert and expired windows are reclaimed by a TTL index.
  */
-export async function consumeRateLimit(key: string, rule: RateLimitRule): Promise<RateLimitOutcome> {
+export async function consumeRateLimit(
+  key: string,
+  rule: RateLimitRule,
+): Promise<RateLimitOutcome> {
   await connectToDatabase();
   const windowMs = rule.windowSeconds * 1000;
   const windowStart = Math.floor(Date.now() / windowMs) * windowMs;

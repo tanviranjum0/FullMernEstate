@@ -37,7 +37,10 @@ const profileSchema = z.object({
     .string()
     .trim()
     .max(40)
-    .refine((value) => !value || /^\+?[\d\s()-]{7,20}$/.test(value), "Please enter a valid phone number")
+    .refine(
+      (value) => !value || /^\+?[\d\s()-]{7,20}$/.test(value),
+      "Please enter a valid phone number",
+    )
     .optional()
     .transform((value) => value || ""),
 });
@@ -45,15 +48,24 @@ const profileSchema = z.object({
 export type ProfileActionState = ActionResult | null;
 
 /** Only name and phone are user-editable; role, email and status can never be set here. */
-export async function updateProfileAction(_previous: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
+export async function updateProfileAction(
+  _previous: ProfileActionState,
+  formData: FormData,
+): Promise<ProfileActionState> {
   const user = await getCurrentUser();
   if (!user) return actionError("Please sign in again.", "unauthenticated");
 
   const limit = await consumeRateLimit(`account:${user.id}`, RATE_LIMITS.accountUpdate);
-  if (!limit.allowed) return actionError("Too many updates. Please wait a few minutes.", "rate_limited");
+  if (!limit.allowed)
+    return actionError("Too many updates. Please wait a few minutes.", "rate_limited");
 
   const parsed = profileSchema.safeParse(formDataToObject(formData));
-  if (!parsed.success) return actionError("Please check the highlighted fields.", "validation", fieldErrorsFrom(parsed.error));
+  if (!parsed.success)
+    return actionError(
+      "Please check the highlighted fields.",
+      "validation",
+      fieldErrorsFrom(parsed.error),
+    );
 
   await connectToDatabase();
   await UserModel.updateOne(

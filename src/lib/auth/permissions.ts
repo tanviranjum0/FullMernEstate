@@ -29,13 +29,7 @@ const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
     "inquiries:manage_own",
     "media:upload",
   ],
-  editor: [
-    "admin:access",
-    "dashboard:view",
-    "content:manage",
-    "locations:manage",
-    "media:upload",
-  ],
+  editor: ["admin:access", "dashboard:view", "content:manage", "locations:manage", "media:upload"],
   admin: PERMISSIONS,
 };
 

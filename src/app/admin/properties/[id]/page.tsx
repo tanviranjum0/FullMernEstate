@@ -12,13 +12,20 @@ export const metadata: Metadata = { title: "Edit listing" };
 
 async function EditListing({ params }: { params: PageProps<"/admin/properties/[id]">["params"] }) {
   const { id } = await params;
-  const user = await requireAdminPermission(["properties:manage_all", "properties:manage_own"], `/admin/properties/${id}`);
+  const user = await requireAdminPermission(
+    ["properties:manage_all", "properties:manage_own"],
+    `/admin/properties/${id}`,
+  );
   const [property, options] = await Promise.all([getAdminProperty(user, id), getAdminOptions()]);
   // Missing and not-yours are indistinguishable to the requester.
   if (!property) notFound();
   return (
     <>
-      <AdminPageHeader title={property.input.title} description={`/properties/${property.slug}`} back={{ href: "/admin/properties", label: "Listings" }} />
+      <AdminPageHeader
+        title={property.input.title}
+        description={`/properties/${property.slug}`}
+        back={{ href: "/admin/properties", label: "Listings" }}
+      />
       <PropertyForm
         key={id}
         id={id}

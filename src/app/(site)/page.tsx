@@ -12,7 +12,12 @@ import { SectionHeading } from "@/components/ui/section";
 import { services } from "@/config/services";
 import { siteConfig } from "@/config/site";
 import { renderMarkdown } from "@/lib/security/markdown";
-import { getCities, getFeaturedArticles, getLocationTree, getSiteSettings } from "@/server/queries/content";
+import {
+  getCities,
+  getFeaturedArticles,
+  getLocationTree,
+  getSiteSettings,
+} from "@/server/queries/content";
 import {
   getFeaturedProperties,
   getLatestProperties,
@@ -49,7 +54,10 @@ export default async function HomePage() {
             url: siteConfig.url,
             potentialAction: {
               "@type": "SearchAction",
-              target: { "@type": "EntryPoint", urlTemplate: `${siteConfig.url}/properties?q={search_term_string}` },
+              target: {
+                "@type": "EntryPoint",
+                urlTemplate: `${siteConfig.url}/properties?q={search_term_string}`,
+              },
               "query-input": "required name=search_term_string",
             },
           },
@@ -94,7 +102,11 @@ export default async function HomePage() {
               <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
                 {supporting.slice(0, 2).map((property, index) => (
                   <Reveal key={property.id} delay={0.1 * (index + 1)}>
-                    <PropertyCard property={property} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 38vw, (min-width: 640px) 45vw, 92vw" />
+                    <PropertyCard
+                      property={property}
+                      aspect="aspect-[4/3]"
+                      sizes="(min-width: 1024px) 38vw, (min-width: 640px) 45vw, 92vw"
+                    />
                   </Reveal>
                 ))}
               </div>
@@ -103,7 +115,11 @@ export default async function HomePage() {
               <StaggerGroup className="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2">
                 {supporting.slice(2).map((property) => (
                   <StaggerItem key={property.id}>
-                    <PropertyCard property={property} aspect="aspect-[16/10]" sizes="(min-width: 640px) 45vw, 92vw" />
+                    <PropertyCard
+                      property={property}
+                      aspect="aspect-[16/10]"
+                      sizes="(min-width: 640px) 45vw, 92vw"
+                    />
                   </StaggerItem>
                 ))}
               </StaggerGroup>
@@ -129,9 +145,12 @@ export default async function HomePage() {
                 }
               />
             </Reveal>
-            <StaggerGroup className="scrollbar-none -mx-[var(--gutter)] mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--gutter)] pb-2 lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0">
+            <StaggerGroup className="-mx-[var(--gutter)] mt-14 flex snap-x snap-mandatory scrollbar-none gap-4 overflow-x-auto px-[var(--gutter)] pb-2 lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0">
               {cities.map((city) => (
-                <StaggerItem key={city.id} className="w-[72vw] shrink-0 snap-start sm:w-[42vw] lg:w-auto">
+                <StaggerItem
+                  key={city.id}
+                  className="w-[72vw] shrink-0 snap-start sm:w-[42vw] lg:w-auto"
+                >
                   <LocationCard location={city} count={counts[city.slug] ?? 0} />
                 </StaggerItem>
               ))}
@@ -219,14 +238,28 @@ export default async function HomePage() {
           </Reveal>
           <ul className="mt-14 grid border-t border-sand-200 sm:grid-cols-2 lg:grid-cols-4">
             {services.slice(0, 4).map((service, index) => (
-              <Reveal as="li" key={service.slug} delay={index * 0.06} className="border-b border-sand-200 sm:[&:nth-child(odd)]:border-r lg:border-r lg:last:border-r-0">
-                <Link href={`/services#${service.slug}`} className="group block h-full p-8 transition-colors hover:bg-sand-100">
-                  <span className="text-xs tracking-[0.2em] text-stone-500 tabular">0{index + 1}</span>
+              <Reveal
+                as="li"
+                key={service.slug}
+                delay={index * 0.06}
+                className="border-b border-sand-200 lg:border-r lg:last:border-r-0 sm:[&:nth-child(odd)]:border-r"
+              >
+                <Link
+                  href={`/services#${service.slug}`}
+                  className="group block h-full p-8 transition-colors hover:bg-sand-100"
+                >
+                  <span className="tabular text-xs tracking-[0.2em] text-stone-500">
+                    0{index + 1}
+                  </span>
                   <h3 className="mt-8 font-display text-[1.75rem] text-ink-900">{service.title}</h3>
                   <p className="mt-3 text-stone-600">{service.summary}</p>
                   <span className="mt-8 inline-flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.16em] text-ink-900 uppercase">
                     Learn more
-                    <ArrowRight aria-hidden strokeWidth={1.5} className="size-4 transition-transform duration-500 ease-luxe group-hover:translate-x-1" />
+                    <ArrowRight
+                      aria-hidden
+                      strokeWidth={1.5}
+                      className="size-4 transition-transform duration-500 ease-luxe group-hover:translate-x-1"
+                    />
                   </span>
                 </Link>
               </Reveal>
@@ -263,7 +296,11 @@ export default async function HomePage() {
       {settings.testimonials.length ? (
         <section aria-labelledby="testimonials-heading" className="section-y">
           <div className="container-page">
-            <SectionHeading eyebrow="Clients" title={<span id="testimonials-heading">In their words</span>} align="center" />
+            <SectionHeading
+              eyebrow="Clients"
+              title={<span id="testimonials-heading">In their words</span>}
+              align="center"
+            />
             <ul className="mt-14 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
               {settings.testimonials.map((testimonial) => (
                 <li key={testimonial.id}>
@@ -283,13 +320,20 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      <section aria-labelledby="cta-heading" className="relative isolate overflow-hidden bg-harbour-900 text-ivory">
+      <section
+        aria-labelledby="cta-heading"
+        className="relative isolate overflow-hidden bg-harbour-900 text-ivory"
+      >
         <div className="container-page section-y grid items-end gap-10 lg:grid-cols-[1.4fr_1fr]">
           <Reveal>
             <SectionHeading
               tone="light"
               eyebrow="Private consultation"
-              title={<span id="cta-heading">Tell us how you want to live. We will do the searching.</span>}
+              title={
+                <span id="cta-heading">
+                  Tell us how you want to live. We will do the searching.
+                </span>
+              }
               intro="Arrange a conversation with an advisor — in person, by phone or by video — with no obligation."
             />
           </Reveal>

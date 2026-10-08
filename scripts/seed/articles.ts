@@ -1,6 +1,13 @@
 import type { ArticleCategorySlug } from "../../src/config/domain";
 import type { SeedAgentSlug } from "./agents";
-import { legacyImages, livingRooms, placeImages, villaExteriors, kitchens, type SeedImage } from "./images";
+import {
+  legacyImages,
+  livingRooms,
+  placeImages,
+  villaExteriors,
+  kitchens,
+  type SeedImage,
+} from "./images";
 
 export interface SeedArticle {
   slug: string;
@@ -243,19 +250,30 @@ export const seedSiteSettings = {
 
 Our work is guided by a simple idea: the right home is about how you want to live, not only what you can find. We listen first, show selectively, and handle every stage — from the first viewing to registration and handover — with discretion.`,
     values: [
-      { title: "Discretion", text: "Many of our clients prefer privacy. We share details only with qualified, introduced buyers." },
-      { title: "Accuracy", text: "We describe homes as they are, with clear information about documents, services and costs." },
-      { title: "Continuity", text: "One advisor stays with you from the first conversation to the day you receive the keys." },
+      {
+        title: "Discretion",
+        text: "Many of our clients prefer privacy. We share details only with qualified, introduced buyers.",
+      },
+      {
+        title: "Accuracy",
+        text: "We describe homes as they are, with clear information about documents, services and costs.",
+      },
+      {
+        title: "Continuity",
+        text: "One advisor stays with you from the first conversation to the day you receive the keys.",
+      },
     ],
   },
   faqs: [
     {
       question: "How do I arrange a viewing?",
-      answer: "Request a viewing from any property page or contact an advisor directly. We will confirm a time that suits you.",
+      answer:
+        "Request a viewing from any property page or contact an advisor directly. We will confirm a time that suits you.",
     },
     {
       question: "Do you charge buyers a fee?",
-      answer: "Fees depend on the service you need. Your advisor will explain any fees in writing before you commit.",
+      answer:
+        "Fees depend on the service you need. Your advisor will explain any fees in writing before you commit.",
     },
   ],
   announcement:
