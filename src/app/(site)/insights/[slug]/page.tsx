@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { ArticleCard } from "@/components/content/article-card";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ResponsiveImage } from "@/components/media/responsive-image";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ButtonLink } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/section";
 import { getArticleCategory } from "@/config/domain";
 import { siteConfig } from "@/config/site";
 import { formatDate } from "@/lib/format";
@@ -172,17 +170,9 @@ async function ArticleContent({ params }: { params: PageProps<"/insights/[slug]"
   );
 }
 
+// Resolved before anything streams so unknown slugs answer with a real 404 status.
+export const instant = false;
+
 export default function ArticlePage({ params }: PageProps<"/insights/[slug]">) {
-  return (
-    <Suspense
-      fallback={
-        <div className="container-prose pt-14">
-          <Skeleton className="h-14 w-full" />
-          <Skeleton className="mt-6 h-6 w-2/3" />
-        </div>
-      }
-    >
-      <ArticleContent params={params} />
-    </Suspense>
-  );
+  return <ArticleContent params={params} />;
 }

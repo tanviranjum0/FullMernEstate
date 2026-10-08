@@ -21,11 +21,15 @@ export interface CurrentUser {
 }
 
 /**
- * Resolves the signed-in user for this request. The session only proves identity; role and
- * disabled state are always re-read from the database so permission changes apply immediately.
+ * Resolves the signed-in user for this request. The session is checked against the database
+ * (bypassing Better Auth's signed cookie cache) so sign-out and revoked sessions take effect
+ * immediately; role and disabled state are likewise always re-read from the database.
  */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
-  const session = await getAuth().api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({
+    headers: await headers(),
+    query: { disableCookieCache: true },
+  });
   if (!session?.user?.id || !Types.ObjectId.isValid(session.user.id)) return null;
 
   await connectToDatabase();

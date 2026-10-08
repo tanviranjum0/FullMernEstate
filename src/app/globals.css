@@ -36,7 +36,7 @@
   --color-sand-200: #e5ded3;
   --color-sand-300: #d8cfc1;
   --color-stone-400: #a39a8d;
-  --color-stone-500: #857e73;
+  --color-stone-500: #6e675e; /* ≥4.5:1 for text on paper, ivory and sand-100 */
   --color-stone-600: #645e56;
   --color-stone-700: #4a4540;
   --color-ink-700: #34312d;

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { InsightsListing, parseInsightsParams } from "@/components/content/insights-listing";
 import { PageIntro } from "@/components/layout/page-intro";
 import { Skeleton } from "@/components/ui/section";
-import { ARTICLE_CATEGORIES, getArticleCategory } from "@/config/domain";
+import { ARTICLE_CATEGORIES, getArticleCategory, type ArticleCategorySlug } from "@/config/domain";
 
 export function generateStaticParams() {
   return ARTICLE_CATEGORIES.map((category) => ({ category: category.slug }));
@@ -27,14 +27,27 @@ export async function generateMetadata({
   };
 }
 
-async function CategoryContent({
+async function CategoryListing({
+  category,
+  searchParams,
+}: {
+  category: ArticleCategorySlug;
+  searchParams: PageProps<"/insights/category/[category]">["searchParams"];
+}) {
+  const { page, q } = parseInsightsParams(await searchParams);
+  return <InsightsListing category={category} page={page} q={q} />;
+}
+
+// Resolved before anything streams so unknown slugs answer with a real 404 status.
+export const instant = false;
+
+export default async function CategoryPage({
   params,
   searchParams,
 }: PageProps<"/insights/category/[category]">) {
   const { category } = await params;
   const definition = getArticleCategory(category);
   if (!definition) notFound();
-  const { page, q } = parseInsightsParams(await searchParams);
   return (
     <>
       <PageIntro
@@ -46,21 +59,15 @@ async function CategoryContent({
         title={definition.name}
         lead={definition.description}
       />
-      <InsightsListing category={definition.slug} page={page} q={q} />
+      <Suspense
+        fallback={
+          <div className="container-page pt-14">
+            <Skeleton className="h-96 w-full" />
+          </div>
+        }
+      >
+        <CategoryListing category={definition.slug} searchParams={searchParams} />
+      </Suspense>
     </>
-  );
-}
-
-export default function CategoryPage(props: PageProps<"/insights/category/[category]">) {
-  return (
-    <Suspense
-      fallback={
-        <div className="container-page pt-14">
-          <Skeleton className="h-96 w-full" />
-        </div>
-      }
-    >
-      <CategoryContent {...props} />
-    </Suspense>
   );
 }

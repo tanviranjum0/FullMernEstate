@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { LocationDetailView } from "@/components/content/location-detail-view";
-import { Skeleton } from "@/components/ui/section";
 import { ogImage } from "@/lib/seo/url";
 import { getCities, getLocation, getNeighbourhoods } from "@/server/queries/content";
 
@@ -37,10 +35,9 @@ async function CityContent({ params }: { params: PageProps<"/locations/[city]">[
   return <LocationDetailView location={location} city={null} neighbourhoods={neighbourhoods} />;
 }
 
+// Resolved before anything streams so unknown slugs answer with a real 404 status.
+export const instant = false;
+
 export default function CityPage({ params }: PageProps<"/locations/[city]">) {
-  return (
-    <Suspense fallback={<Skeleton className="h-[70svh] w-full" />}>
-      <CityContent params={params} />
-    </Suspense>
-  );
+  return <CityContent params={params} />;
 }

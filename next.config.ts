@@ -53,7 +53,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
-  partialPrefetching: true,
+  // With Partial Prefetching, a slug that was not prerendered is answered with the route's
+  // App Shell (HTTP 200) before the page can call notFound(). Without it, detail pages behave
+  // like `fallback: 'blocking'`: unknown listings, guides and articles return a real 404, and
+  // the first request for a newly published one waits for its full, crawlable HTML.
+  partialPrefetching: false,
   reactCompiler: true,
   poweredByHeader: false,
   images: {

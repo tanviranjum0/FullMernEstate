@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { AgentAvatar } from "@/components/agents/agent-avatar";
 import { AgentContactCard } from "@/components/agents/agent-contact-card";
 import { ArticleCard } from "@/components/content/article-card";
@@ -9,7 +8,6 @@ import { InquiryForm } from "@/components/forms/inquiry-form";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { PropertyCard } from "@/components/property/property-card";
 import { JsonLd } from "@/components/seo/json-ld";
-import { Skeleton } from "@/components/ui/section";
 import { siteConfig } from "@/config/site";
 import {
   getAgentBySlug,
@@ -209,17 +207,9 @@ async function AgentProfile({ params }: { params: PageProps<"/agents/[slug]">["p
   );
 }
 
+// Resolved before anything streams so unknown slugs answer with a real 404 status.
+export const instant = false;
+
 export default function AgentPage({ params }: PageProps<"/agents/[slug]">) {
-  return (
-    <Suspense
-      fallback={
-        <div className="container-page pt-14">
-          <Skeleton className="size-40 rounded-full" />
-          <Skeleton className="mt-8 h-14 w-1/2" />
-        </div>
-      }
-    >
-      <AgentProfile params={params} />
-    </Suspense>
-  );
+  return <AgentProfile params={params} />;
 }

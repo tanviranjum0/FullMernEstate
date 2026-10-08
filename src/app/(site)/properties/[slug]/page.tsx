@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/section";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { AgentContactCard } from "@/components/agents/agent-contact-card";
 import { InquiryForm } from "@/components/forms/inquiry-form";
@@ -106,45 +104,19 @@ function Section({
   );
 }
 
-export default function PropertyPage({ params }: PageProps<"/properties/[slug]">) {
-  return (
-    <Suspense fallback={<PropertySkeleton />}>
-      <PropertyDetailView params={params} />
-    </Suspense>
-  );
-}
+// Unknown or unpublished listings must answer with a real 404, so the listing is resolved before
+// anything streams. Published listings are prerendered from generateStaticParams; a listing
+// published after the build renders on its first request and is cached from then on.
+export const instant = false;
 
-function PropertySkeleton() {
-  return (
-    <div
-      aria-busy="true"
-      aria-label="Loading residence"
-      className="container-page pt-6 pb-[var(--section-y)]"
-    >
-      <Skeleton className="mb-6 h-3 w-64" />
-      <Skeleton className="aspect-[4/3] w-full md:aspect-auto md:h-[min(72vh,44rem)]" />
-      <div className="grid gap-x-16 pt-12 lg:grid-cols-[minmax(0,1fr)_25rem]">
-        <div className="space-y-5">
-          <Skeleton className="h-3 w-40" />
-          <Skeleton className="h-12 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-          <Skeleton className="mt-10 h-24 w-full" />
-        </div>
-        <Skeleton className="mt-10 h-[28rem] w-full lg:mt-0" />
-      </div>
-    </div>
-  );
-}
-
-async function PropertyDetailView({
-  params,
-}: {
-  params: PageProps<"/properties/[slug]">["params"];
-}) {
+export default async function PropertyPage({ params }: PageProps<"/properties/[slug]">) {
   const { slug } = await params;
   const property = await getPropertyBySlug(slug);
   if (!property) notFound();
+  return <PropertyDetailView property={property} />;
+}
 
+async function PropertyDetailView({ property }: { property: PropertyDetail }) {
   const [agent, similar] = await Promise.all([
     property.agentId ? getAgentById(property.agentId) : Promise.resolve(null),
     getSimilarProperties(property.id, 3),

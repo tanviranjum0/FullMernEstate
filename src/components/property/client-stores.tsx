@@ -7,13 +7,14 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   useTransition,
   type ReactNode,
 } from "react";
 import { useToast } from "@/components/ui/toast";
-import { toggleFavoriteAction } from "@/server/actions/favorites";
+import { setFavoriteAction } from "@/server/actions/favorites";
 
 /* ----------------------------------------------------------------------------------------------
  * Favourites — persisted in MongoDB; this store only mirrors server state for instant UI.
@@ -36,9 +37,16 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [, startTransition] = useTransition();
   const router = useRouter();
   const { notify } = useToast();
+  // Changes confirmed by the server, re-applied if session data streams in after a click.
+  const confirmed = useRef(new Map<string, boolean>());
 
   const hydrate = useCallback((initial: string[], isSignedIn: boolean) => {
-    setIds(new Set(initial));
+    const next = new Set(initial);
+    for (const [id, favorited] of confirmed.current) {
+      if (favorited) next.add(id);
+      else next.delete(id);
+    }
+    setIds(next);
     setSignedIn(isSignedIn);
     setReady(true);
   }, []);
@@ -53,26 +61,25 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const toggle = useCallback(
     (propertyId: string, title: string) => {
-      if (!signedIn) {
+      // Until the session state has streamed in, let the server decide instead of assuming the
+      // visitor is signed out.
+      if (ready && !signedIn) {
         signInToSave();
         return;
       }
       const wasSaved = ids.has(propertyId);
-      setIds((current) => {
-        const next = new Set(current);
-        if (wasSaved) next.delete(propertyId);
-        else next.add(propertyId);
-        return next;
-      });
+      const apply = (favorited: boolean) =>
+        setIds((current) => {
+          const next = new Set(current);
+          if (favorited) next.add(propertyId);
+          else next.delete(propertyId);
+          return next;
+        });
+      apply(!wasSaved);
       startTransition(async () => {
-        const result = await toggleFavoriteAction(propertyId);
+        const result = await setFavoriteAction(propertyId, !wasSaved);
         if (!result.ok) {
-          setIds((current) => {
-            const reverted = new Set(current);
-            if (wasSaved) reverted.add(propertyId);
-            else reverted.delete(propertyId);
-            return reverted;
-          });
+          apply(wasSaved);
           if (result.code === "unauthenticated") {
             signInToSave();
           } else {
@@ -80,13 +87,15 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
           }
           return;
         }
+        confirmed.current.set(propertyId, result.data.favorited);
+        apply(result.data.favorited);
         notify(result.data.favorited ? "Saved to your shortlist" : "Removed from your shortlist", {
           description: title,
           tone: "success",
         });
       });
     },
-    [ids, signedIn, signInToSave, notify],
+    [ids, ready, signedIn, signInToSave, notify],
   );
 
   const value = useMemo(

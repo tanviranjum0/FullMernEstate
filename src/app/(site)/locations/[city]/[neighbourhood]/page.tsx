@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { LocationDetailView } from "@/components/content/location-detail-view";
-import { Skeleton } from "@/components/ui/section";
 import { ogImage } from "@/lib/seo/url";
 import { getLocation, getLocationTree } from "@/server/queries/content";
 
@@ -48,12 +46,11 @@ async function NeighbourhoodContent({
   return <LocationDetailView location={location} city={parent} neighbourhoods={[]} />;
 }
 
+// Resolved before anything streams so unknown slugs answer with a real 404 status.
+export const instant = false;
+
 export default function NeighbourhoodPage({
   params,
 }: PageProps<"/locations/[city]/[neighbourhood]">) {
-  return (
-    <Suspense fallback={<Skeleton className="h-[70svh] w-full" />}>
-      <NeighbourhoodContent params={params} />
-    </Suspense>
-  );
+  return <NeighbourhoodContent params={params} />;
 }

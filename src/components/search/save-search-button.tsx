@@ -17,7 +17,7 @@ export function SaveSearchButton({
   queryString: string;
   suggestedName: string;
 }) {
-  const { signedIn } = useFavorites();
+  const { ready, signedIn } = useFavorites();
   const router = useRouter();
   const pathname = usePathname();
   const { notify } = useToast();
@@ -32,7 +32,8 @@ export function SaveSearchButton({
     <DialogRoot
       open={open}
       onOpenChange={(next) => {
-        if (next && !signedIn) {
+        // Before session state has loaded, open the dialog; the save action re-checks sign-in.
+        if (next && ready && !signedIn) {
           router.push(`/sign-in?next=${encodeURIComponent(returnTo)}&reason=save-search`);
           return;
         }

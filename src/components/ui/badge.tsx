@@ -9,7 +9,7 @@ const badgeVariants = cva(
       tone: {
         light: "bg-ivory/95 text-ink-900 backdrop-blur-sm",
         dark: "bg-ink-900/85 text-ivory backdrop-blur-sm",
-        bronze: "bg-bronze-500 text-white",
+        bronze: "bg-bronze-600 text-white",
         harbour: "bg-harbour-700 text-ivory",
         neutral: "bg-sand-100 text-stone-700",
         outline: "border border-sand-300 text-stone-700",

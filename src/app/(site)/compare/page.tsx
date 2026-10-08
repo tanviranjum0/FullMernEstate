@@ -182,7 +182,7 @@ async function Comparison({
                         className="size-5 text-success-600"
                       />
                     ) : (
-                      <Minus aria-label="No" strokeWidth={1.5} className="size-5 text-stone-400" />
+                      <Minus aria-label="No" strokeWidth={1.5} className="size-5 text-stone-500" />
                     )}
                   </td>
                 ))}

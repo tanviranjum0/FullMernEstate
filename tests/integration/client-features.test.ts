@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { submitInquiryAction } from "@/server/actions/inquiries";
-import { toggleFavoriteAction } from "@/server/actions/favorites";
+import { setFavoriteAction } from "@/server/actions/favorites";
 import { deleteSavedSearchAction, saveSearchAction } from "@/server/actions/saved-searches";
 import { InquiryModel } from "@/server/models/inquiry";
 import { FavoriteModel, SavedSearchModel } from "@/server/models/user-data";
@@ -48,37 +48,50 @@ describe("client features", () => {
 
   describe("favourites", () => {
     it("requires an account", async () => {
-      expect(await toggleFavoriteAction(published)).toMatchObject({
+      expect(await setFavoriteAction(published, true)).toMatchObject({
         ok: false,
         code: "unauthenticated",
       });
     });
 
-    it("toggles a saved home in the database", async () => {
+    it("saves and removes a home idempotently", async () => {
       actAs(client);
-      expect(await toggleFavoriteAction(published)).toEqual({
-        ok: true,
-        data: { favorited: true },
-      });
+      const saved = { ok: true, data: { favorited: true } };
+      expect(await setFavoriteAction(published, true)).toEqual(saved);
+      expect(await setFavoriteAction(published, true)).toEqual(saved);
       expect(await getFavoriteIdsForUser(client.id)).toEqual([published]);
-      expect(await toggleFavoriteAction(published)).toEqual({
+      expect(await setFavoriteAction(published, false)).toEqual({
         ok: true,
         data: { favorited: false },
       });
       expect(await FavoriteModel.countDocuments({ user: client.id })).toBe(0);
     });
 
-    it("rejects unpublished, unknown and malformed ids", async () => {
+    it("rejects unpublished, unknown and malformed input", async () => {
       actAs(client);
-      expect(await toggleFavoriteAction(draft)).toMatchObject({ ok: false, code: "not_found" });
-      expect(await toggleFavoriteAction(new Types.ObjectId().toString())).toMatchObject({
+      expect(await setFavoriteAction(draft, true)).toMatchObject({ ok: false, code: "not_found" });
+      expect(await setFavoriteAction(new Types.ObjectId().toString(), true)).toMatchObject({
         ok: false,
         code: "not_found",
       });
-      expect(await toggleFavoriteAction({ $ne: null })).toMatchObject({
+      expect(await setFavoriteAction({ $ne: null }, true)).toMatchObject({
         ok: false,
         code: "validation",
       });
+      expect(await setFavoriteAction(published, "yes")).toMatchObject({
+        ok: false,
+        code: "validation",
+      });
+    });
+
+    it("lets a client remove a home that has since been unpublished", async () => {
+      actAs(client);
+      await FavoriteModel.create({ user: client.id, property: draft });
+      expect(await setFavoriteAction(draft, false)).toEqual({
+        ok: true,
+        data: { favorited: false },
+      });
+      expect(await FavoriteModel.countDocuments({ user: client.id, property: draft })).toBe(0);
     });
   });
 
