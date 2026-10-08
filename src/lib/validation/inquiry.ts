@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { CONTACT_METHODS, INQUIRY_TYPES, VIEWING_TIME_SLOTS } from "@/config/domain";
+import {
+  CONTACT_METHODS,
+  INQUIRY_TYPES,
+  MAX_VIEWING_DAYS_AHEAD,
+  VIEWING_TIME_SLOTS,
+} from "@/config/domain";
 
 const objectId = z.string().regex(/^[a-f0-9]{24}$/i, "Invalid reference");
 const optionalText = (max: number) =>
@@ -9,8 +14,6 @@ const optionalText = (max: number) =>
     .max(max)
     .optional()
     .transform((value) => value || undefined);
-
-export const MAX_VIEWING_DAYS_AHEAD = 180;
 
 /**
  * Shared by the client form (instant feedback) and the server action (authoritative check).

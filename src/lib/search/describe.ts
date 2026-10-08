@@ -37,7 +37,11 @@ export function describeSearch(query: PropertySearchQuery, names: LocationNames 
         ? "Homes"
         : "Homes";
   const transaction =
-    query.listing === "sale" ? " for sale" : query.listing === "rent" ? " to rent" : "";
+    query.listing === "sale"
+      ? " for sale"
+      : query.listing === "rent"
+        ? " to rent"
+        : " for sale and to rent";
   const place = placeName(query, names);
   const base = `${subject}${transaction}${place ? ` in ${place}` : ""}`;
   return query.q ? `“${query.q}” — ${base.charAt(0).toLowerCase()}${base.slice(1)}` : base;

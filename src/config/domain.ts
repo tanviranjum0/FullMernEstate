@@ -63,6 +63,8 @@ export const CONTACT_METHOD_LABELS: Record<ContactMethod, string> = {
 };
 
 export const VIEWING_TIME_SLOTS = ["morning", "afternoon", "evening"] as const;
+/** How far ahead a viewing can be requested. */
+export const MAX_VIEWING_DAYS_AHEAD = 180;
 export type ViewingTimeSlot = (typeof VIEWING_TIME_SLOTS)[number];
 export const VIEWING_TIME_SLOT_LABELS: Record<ViewingTimeSlot, string> = {
   morning: "Morning (9–12)",

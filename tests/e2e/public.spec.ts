@@ -87,7 +87,7 @@ test("residences can be compared side by side", async ({ page }) => {
   await page.evaluate(() => localStorage.clear());
   for (const listing of [LISTING, SECOND_LISTING]) {
     await page.goto(`/properties/${listing.slug}`);
-    await page.getByRole("button", { name: `Add ${listing.title} to comparison` }).click();
+    await page.getByRole("button", { name: `Compare ${listing.title}`, pressed: false }).click();
   }
   const tray = page.getByRole("region", { name: "Comparison" });
   await expect(tray).toContainText("2");

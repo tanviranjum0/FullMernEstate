@@ -43,7 +43,7 @@ export function HomeHero({
           src={image.src}
           alt={image.alt}
           fill
-          priority
+          loading="eager"
           fetchPriority="high"
           sizes="100vw"
           quality={80}

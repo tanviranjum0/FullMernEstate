@@ -12,12 +12,13 @@ import {
   INQUIRY_TYPE_LABELS,
   VIEWING_TIME_SLOT_LABELS,
   VIEWING_TIME_SLOTS,
+  MAX_VIEWING_DAYS_AHEAD,
   type InquiryType,
 } from "@/config/domain";
 import { fieldErrorsFrom } from "@/lib/actions";
 import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils/cn";
-import { inquirySchema, MAX_VIEWING_DAYS_AHEAD } from "@/lib/validation/inquiry";
+import type { inquirySchema as InquirySchema } from "@/lib/validation/inquiry";
 import { submitInquiryAction, type InquiryActionState } from "@/server/actions/inquiries";
 
 interface InquiryFormProps {
@@ -49,6 +50,15 @@ export function InquiryForm({
   const id = useId();
   const pathname = usePathname();
   const formRef = useRef<HTMLFormElement>(null);
+  // The validation schema (and Zod) loads once the visitor starts filling in the form, keeping
+  // it out of every listing page's initial JavaScript. The server action always re-validates.
+  const schemaRef = useRef<typeof InquirySchema | null>(null);
+  const loadSchema = () => {
+    if (schemaRef.current) return;
+    void import("@/lib/validation/inquiry").then((module) => {
+      schemaRef.current = module.inquirySchema;
+    });
+  };
   // Listing pages are statically cached, so signed-in details are filled in on the client.
   const { data: session } = authClient.useSession();
   const prefillName = defaultName || session?.user.name || "";
@@ -106,9 +116,12 @@ export function InquiryForm({
       ref={formRef}
       action={formAction}
       noValidate
+      onFocusCapture={loadSchema}
       onSubmit={(event) => {
+        const schema = schemaRef.current;
+        if (!schema) return;
         const data = Object.fromEntries(new FormData(event.currentTarget).entries());
-        const result = inquirySchema.safeParse(data);
+        const result = schema.safeParse(data);
         if (!result.success) {
           event.preventDefault();
           const fieldErrors = fieldErrorsFrom(result.error);

@@ -62,8 +62,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <FavoritesLoader />
           </Suspense>
         </Providers>
-        <Analytics />
-        <SpeedInsights />
+        {/* The collection endpoints only exist on Vercel; elsewhere the scripts would 404. */}
+        {process.env.VERCEL ? (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        ) : null}
       </body>
     </html>
   );

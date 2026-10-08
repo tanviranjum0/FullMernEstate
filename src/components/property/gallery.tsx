@@ -54,7 +54,8 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
                 alt={image.alt}
                 fill
                 sizes="100vw"
-                priority={i === 0}
+                loading={i === 0 ? "eager" : undefined}
+                fetchPriority={i === 0 ? "high" : undefined}
                 placeholder={image.blurDataURL ? "blur" : "empty"}
                 blurDataURL={image.blurDataURL || undefined}
                 className="object-cover"
@@ -95,7 +96,7 @@ export function PropertyGallery({ images, title }: { images: MediaImage[]; title
             src={hero!.src}
             alt={hero!.alt}
             fill
-            priority
+            loading="eager"
             fetchPriority="high"
             sizes="(min-width: 768px) 60vw, 100vw"
             placeholder={hero!.blurDataURL ? "blur" : "empty"}

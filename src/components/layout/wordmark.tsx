@@ -24,7 +24,6 @@ export function Wordmark({ className, onDark = false }: { className?: string; on
   return (
     <Link
       href="/"
-      aria-label={`${siteConfig.name} — home`}
       className={cn(
         "group inline-flex items-center gap-3 transition-colors",
         onDark ? "text-ivory" : "text-ink-900",
@@ -35,11 +34,13 @@ export function Wordmark({ className, onDark = false }: { className?: string; on
       <span className="flex flex-col leading-none">
         <span className="font-display text-[1.45rem] tracking-[0.01em]">
           {siteConfig.wordmark.primary}
-        </span>
+        </span>{" "}
         <span className="mt-1 text-[0.58rem] font-semibold tracking-[0.42em] uppercase opacity-80">
           {siteConfig.wordmark.secondary}
         </span>
       </span>
+      {/* The accessible name keeps the visible words first (WCAG 2.5.3) and adds the destination. */}
+      <span className="sr-only"> (home)</span>
     </Link>
   );
 }

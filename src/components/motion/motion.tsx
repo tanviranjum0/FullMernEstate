@@ -1,12 +1,17 @@
 "use client";
 
-import { LazyMotion, MotionConfig, domAnimation, m, type Variants } from "motion/react";
+import { LazyMotion, MotionConfig, m, type Variants } from "motion/react";
 import type { ReactNode } from "react";
 
-/** Loads only the DOM animation feature set (~15 kB) and honours reduced-motion preferences. */
+const loadFeatures = () => import("./features").then((module) => module.default);
+
+/**
+ * Loads only the DOM animation feature set, asynchronously after hydration, and honours
+ * reduced-motion preferences.
+ */
 export function MotionProvider({ children }: { children: ReactNode }) {
   return (
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={loadFeatures} strict>
       <MotionConfig reducedMotion="user" transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
         {children}
       </MotionConfig>

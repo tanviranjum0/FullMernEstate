@@ -27,7 +27,8 @@ export function FavoriteButton({
         toggle(propertyId, title);
       }}
       aria-pressed={saved}
-      aria-label={saved ? `Remove ${title} from saved homes` : `Save ${title}`}
+      // A toggle keeps one name; aria-pressed announces whether the home is saved.
+      aria-label={`Save ${title}`}
       className={cn(
         "group/fav grid place-items-center transition-[background-color,color,transform] duration-300 ease-luxe active:scale-90",
         variant === "overlay"
@@ -43,7 +44,7 @@ export function FavoriteButton({
           saved ? "fill-danger-600 text-danger-600" : "fill-transparent",
         )}
       />
-      {variant === "inline" ? <span>{saved ? "Saved" : "Save"}</span> : null}
+      {variant === "inline" ? <span>Save</span> : null}
     </button>
   );
 }
@@ -78,7 +79,7 @@ export function CompareButton({
         compareList.toggle(propertyId);
       }}
       aria-pressed={selected}
-      aria-label={selected ? `Remove ${title} from comparison` : `Add ${title} to comparison`}
+      aria-label={`Compare ${title}`}
       className={cn(
         "grid place-items-center transition-colors duration-300",
         variant === "overlay"
@@ -96,7 +97,7 @@ export function CompareButton({
       )}
     >
       <Scale strokeWidth={1.5} className="size-[18px]" />
-      {variant === "inline" ? <span>{selected ? "Comparing" : "Compare"}</span> : null}
+      {variant === "inline" ? <span>Compare</span> : null}
     </button>
   );
 }

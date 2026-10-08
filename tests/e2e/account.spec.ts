@@ -53,19 +53,23 @@ test.describe("signed-in clients", () => {
       .first()
       .click();
     await expect(
-      page.getByRole("button", { name: `Remove ${LISTING.title} from saved homes` }).first(),
+      page.getByRole("button", { name: `Save ${LISTING.title}`, pressed: true }).first(),
     ).toBeVisible();
+    // The pressed state is optimistic; the toast confirms the server saved it.
+    await expect(page.getByText("Saved to your shortlist")).toBeVisible();
 
     await page.goto("/account/saved");
     await expect(page.getByRole("heading", { level: 1, name: "Saved homes" })).toBeVisible();
     await expect(page.getByText(LISTING.title).first()).toBeVisible();
 
     await page
-      .getByRole("button", { name: `Remove ${LISTING.title} from saved homes` })
+      .getByRole("button", { name: `Save ${LISTING.title}`, pressed: true })
       .first()
       .click();
+    await expect(page.getByText("Removed from your shortlist")).toBeVisible();
     await page.reload();
-    await expect(page.getByText("Your shortlist is empty")).toBeVisible();
+    // Role queries skip the hidden container React streams content into before swapping it in.
+    await expect(page.getByRole("heading", { name: "Your shortlist is empty" })).toBeVisible();
   });
 
   test("save a search and see it in their account", async ({ page }) => {
@@ -75,7 +79,7 @@ test.describe("signed-in clients", () => {
     await page.getByRole("dialog").getByRole("button", { name: "Save search" }).click();
 
     await page.goto("/account/searches");
-    await expect(page.getByText("Dhaka rentals")).toBeVisible();
+    await expect(page.getByRole("listitem").filter({ hasText: "Dhaka rentals" })).toBeVisible();
   });
 
   test("request a viewing and receive a reference", async ({ page }) => {

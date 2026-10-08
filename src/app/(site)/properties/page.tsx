@@ -16,7 +16,7 @@ export async function generateMetadata({
   const { names } = await getLocationOptions();
   const title = describeSearch(query, names);
   const { indexable, canonicalPath } = getSearchIndexability(query);
-  const description = `${title}. Browse curated residences with detailed photography, floor areas and advisor support from ${siteConfig.name}.`;
+  const description = `${title}, presented by ${siteConfig.name} with detailed photography, floor areas and pricing.`;
   return {
     title: query.page > 1 ? `${title} — page ${query.page}` : title,
     description,

@@ -37,7 +37,8 @@ export function ResponsiveImage({
       fill
       sizes={sizes}
       quality={quality}
-      priority={priority}
+      loading={priority ? "eager" : undefined}
+      fetchPriority={priority ? "high" : undefined}
       placeholder={image.blurDataURL ? "blur" : "empty"}
       blurDataURL={image.blurDataURL || undefined}
       className={cn("object-cover", className, imageClassName)}

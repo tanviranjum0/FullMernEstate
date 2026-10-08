@@ -10,7 +10,8 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           alt=""
           fill
           sizes="55vw"
-          priority
+          loading="eager"
+          fetchPriority="high"
           className="object-cover opacity-80"
         />
         <div
