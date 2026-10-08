@@ -53,7 +53,7 @@ const savedSearchSchema = new Schema(
     alertsEnabled: { type: Boolean, default: false },
     lastNotifiedAt: { type: Date },
   },
-  { timestamps: true },
+  { timestamps: true, collection: "saved_searches" },
 );
 savedSearchSchema.index({ user: 1, createdAt: -1 });
 savedSearchSchema.index({ user: 1, query: 1 }, { unique: true });
@@ -75,7 +75,7 @@ const recentViewSchema = new Schema(
     property: { type: Schema.Types.ObjectId, ref: "Property", required: true },
     viewedAt: { type: Date, required: true, default: () => new Date() },
   },
-  { versionKey: false },
+  { versionKey: false, collection: "recent_views" },
 );
 recentViewSchema.index({ user: 1, property: 1 }, { unique: true });
 recentViewSchema.index({ user: 1, viewedAt: -1 });

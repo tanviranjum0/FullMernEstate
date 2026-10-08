@@ -54,6 +54,9 @@
   --color-harbour-800: #243247;
   --color-harbour-900: #1b2638;
 
+  /* Data-visualisation mark colour (validated: lightness band, chroma floor, 3:1 vs surface) */
+  --color-chart-1: #2f5f94;
+
   --color-bronze-300: #cdb894;
   --color-bronze-500: #9a7b55;
   --color-bronze-600: #7f6443;
@@ -139,6 +142,18 @@
     --gutter: clamp(1rem, 0.4rem + 2.6vw, 3rem);
     --section-y: clamp(4.5rem, 3rem + 6vw, 9.5rem);
     --header-h: 4.5rem;
+    /* Toasts sit above fixed bottom bars (admin save bar, comparison tray) instead of covering them. */
+    --toast-bottom: 1rem;
+  }
+
+  @media (width >= 40rem) {
+    :root {
+      --toast-bottom: 1.5rem;
+    }
+  }
+
+  :root:has([data-bottom-bar]) {
+    --toast-bottom: 5.5rem;
   }
 
   html {

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -35,7 +35,6 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [, startTransition] = useTransition();
   const router = useRouter();
-  const pathname = usePathname();
   const { notify } = useToast();
 
   const hydrate = useCallback((initial: string[], isSignedIn: boolean) => {
@@ -44,10 +43,16 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
 
+  // The return path is read when the visitor acts rather than during render: this provider wraps
+  // every route, and reading the pathname while rendering would make all of them request-bound.
+  const signInToSave = useCallback(() => {
+    router.push(`/sign-in?next=${encodeURIComponent(window.location.pathname + window.location.search)}&reason=save`);
+  }, [router]);
+
   const toggle = useCallback(
     (propertyId: string, title: string) => {
       if (!signedIn) {
-        router.push(`/sign-in?next=${encodeURIComponent(pathname)}&reason=save`);
+        signInToSave();
         return;
       }
       const wasSaved = ids.has(propertyId);
@@ -67,7 +72,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
             return reverted;
           });
           if (result.code === "unauthenticated") {
-            router.push(`/sign-in?next=${encodeURIComponent(pathname)}&reason=save`);
+            signInToSave();
           } else {
             notify("Could not update saved homes", { description: result.error, tone: "error" });
           }
@@ -79,7 +84,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         });
       });
     },
-    [ids, signedIn, router, pathname, notify],
+    [ids, signedIn, signInToSave, notify],
   );
 
   const value = useMemo(() => ({ ready, signedIn, ids, hydrate, toggle }), [ready, signedIn, ids, hydrate, toggle]);

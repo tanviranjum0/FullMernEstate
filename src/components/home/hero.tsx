@@ -3,8 +3,17 @@ import { HeroSearch, type LocationOption } from "@/components/search/hero-search
 import { HeroCopy } from "./hero-copy";
 import type { SiteSettings } from "@/server/dto";
 
+/** Bundled photograph used until an administrator uploads a hero image in site settings. */
+const DEFAULT_HERO_IMAGE = {
+  src: "/images/hero/coastal-villa/w2560.webp",
+  alt: "Stone-and-glass villa on a hillside above a calm bay at sunset",
+  blurDataURL:
+    "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADwAQCdASoQAAYAA4BaJZQC7AEemXIfagAA4n38GpaanduA/rjV/amjSmtKZulrc0T/yCxc3Tp4GoR0AAA=",
+};
+
 export function HomeHero({ hero, locations }: { hero: SiteSettings["hero"]; locations: LocationOption[] }) {
   const headline = hero.headline || "Exceptional homes, thoughtfully represented";
+  const image = hero.image ?? DEFAULT_HERO_IMAGE;
   return (
     <section
       aria-labelledby="hero-heading"
@@ -15,7 +24,7 @@ export function HomeHero({ hero, locations }: { hero: SiteSettings["hero"]; loca
           <video
             className="size-full object-cover motion-reduce:hidden"
             src={hero.videoUrl}
-            poster={hero.image?.src}
+            poster={image.src}
             autoPlay
             muted
             loop
@@ -24,20 +33,18 @@ export function HomeHero({ hero, locations }: { hero: SiteSettings["hero"]; loca
             aria-hidden
           />
         ) : null}
-        {hero.image ? (
-          <Image
-            src={hero.image.src}
-            alt={hero.image.alt}
-            fill
-            priority
-            fetchPriority="high"
-            sizes="100vw"
-            quality={80}
-            placeholder={hero.image.blurDataURL ? "blur" : "empty"}
-            blurDataURL={hero.image.blurDataURL || undefined}
-            className={`animate-hero-zoom object-cover motion-reduce:animate-none ${hero.videoUrl ? "hidden motion-reduce:block" : ""}`}
-          />
-        ) : null}
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          quality={80}
+          placeholder={image.blurDataURL ? "blur" : "empty"}
+          blurDataURL={image.blurDataURL || undefined}
+          className={`animate-hero-zoom object-cover motion-reduce:animate-none ${hero.videoUrl ? "hidden motion-reduce:block" : ""}`}
+        />
         <div
           aria-hidden
           className="absolute inset-0 bg-[linear-gradient(180deg,rgb(15_14_13/0.55)_0%,rgb(15_14_13/0.1)_35%,rgb(15_14_13/0.25)_60%,rgb(15_14_13/0.82)_100%)]"

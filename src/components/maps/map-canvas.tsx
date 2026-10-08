@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  LngLatBounds,
-  Map as MapLibreMap,
-  Marker,
-  NavigationControl,
-  type GeoJSONSource,
-} from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import { LngLatBounds, MAP_STYLE_URL, MapLibreMap, Marker, NavigationControl, type GeoJSONSource } from "./maplibre";
 import { useEffect, useRef } from "react";
 
 export interface MapMarker {
@@ -31,7 +24,6 @@ export interface MapCanvasProps {
   className?: string;
 }
 
-const STYLE_URL = process.env.NEXT_PUBLIC_MAP_STYLE_URL || "https://tiles.openfreemap.org/styles/positron";
 const INK = "#171614";
 
 function circlePolygon(lat: number, lng: number, radiusMeters: number, steps = 64) {
@@ -92,7 +84,7 @@ export default function MapCanvas({
     const first = markers[0];
     const map = new MapLibreMap({
       container: container.current,
-      style: STYLE_URL,
+      style: MAP_STYLE_URL,
       center: center ? [center.lng, center.lat] : first ? [first.lng, first.lat] : [90.4125, 23.8103],
       zoom,
       attributionControl: { compact: true },

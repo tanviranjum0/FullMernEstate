@@ -13,7 +13,7 @@ import { PropertyModel } from "@/server/models/property";
 import { SiteSettingsModel } from "@/server/models/site-settings";
 import { UserModel } from "@/server/models/user-data";
 import { recordAudit } from "@/server/services/audit";
-import { AdminActionError, uniqueSlug } from "./shared";
+import { AdminActionError, replaceFields, uniqueSlug } from "./shared";
 
 /* ----------------------------------------------------------------------------------------------
  * Advisors
@@ -56,7 +56,7 @@ export async function saveAgent(actor: CurrentUser, id: string | null, input: Ag
     seo: input.seo,
   };
   const saved = existing
-    ? (await AgentModel.findByIdAndUpdate(id, { $set: document, ...(input.photo ? {} : { $unset: { photo: 1 } }) }, { returnDocument: "after", lean: true }))!
+    ? (await AgentModel.findByIdAndUpdate(id, replaceFields(document), { returnDocument: "after", lean: true }))!
     : (await AgentModel.create(document)).toObject();
 
   await recordAudit(actor, existing ? "agent.updated" : "agent.created", "agent", saved._id.toString(), `${existing ? "Updated" : "Created"} advisor ${saved.name}${input.active ? "" : " (inactive)"}`);
@@ -110,7 +110,7 @@ export async function saveLocation(actor: CurrentUser, id: string | null, input:
     seo: input.seo,
   };
   const saved = existing
-    ? (await LocationModel.findByIdAndUpdate(id, { $set: document }, { returnDocument: "after", lean: true }))!
+    ? (await LocationModel.findByIdAndUpdate(id, replaceFields(document), { returnDocument: "after", lean: true }))!
     : (await LocationModel.create(document)).toObject();
 
   // Keep denormalised names on listings in sync when a location is renamed.
@@ -157,11 +157,8 @@ export async function saveArticle(actor: CurrentUser, id: string | null, input: 
     seo: input.seo,
     updatedBy: actor.id,
   };
-  const unset: Record<string, 1> = {};
-  if (!document.author) unset.author = 1;
-  if (!document.coverImage) unset.coverImage = 1;
   const saved = existing
-    ? (await ArticleModel.findByIdAndUpdate(id, { $set: document, ...(Object.keys(unset).length ? { $unset: unset } : {}) }, { returnDocument: "after", lean: true }))!
+    ? (await ArticleModel.findByIdAndUpdate(id, replaceFields(document), { returnDocument: "after", lean: true }))!
     : (await ArticleModel.create({ ...document, createdBy: actor.id })).toObject();
 
   await recordAudit(actor, existing ? "article.updated" : "article.created", "article", saved._id.toString(), `${existing ? "Updated" : "Created"} “${input.title}” (${input.status})`);
@@ -197,11 +194,7 @@ export async function saveSiteSettings(actor: CurrentUser, input: SiteSettingsIn
     announcement: input.announcement,
     updatedBy: actor.id,
   };
-  await SiteSettingsModel.findOneAndUpdate(
-    { key: "global" },
-    { $set: document, ...(input.hero.image ? {} : { $unset: { "hero.image": 1 } }) },
-    { upsert: true },
-  );
+  await SiteSettingsModel.findOneAndUpdate({ key: "global" }, replaceFields(document), { upsert: true });
   await recordAudit(actor, "settings.updated", "settings", "global", "Updated site settings");
   updateTag(cacheTags.settings);
 }

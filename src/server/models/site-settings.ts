@@ -52,7 +52,7 @@ const siteSettingsSchema = new Schema(
     announcement: { type: String, default: "", maxlength: 240, trim: true },
     updatedBy: { type: String, default: "" },
   },
-  { timestamps: true },
+  { timestamps: true, collection: "site_settings" },
 );
 
 export type SiteSettingsRecord = InferSchemaType<typeof siteSettingsSchema> & {

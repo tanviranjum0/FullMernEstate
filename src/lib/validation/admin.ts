@@ -123,6 +123,9 @@ export const propertyInput = z
     if ((data.location.lat === undefined) !== (data.location.lng === undefined)) {
       ctx.addIssue({ code: "custom", path: ["location", "lat"], message: "Provide both latitude and longitude" });
     }
+    if (data.price.amount <= 0) {
+      ctx.addIssue({ code: "custom", path: ["price", "amount"], message: "Enter the price — it is still used for search when shown as “on request”" });
+    }
     if (data.status === "published" && data.images.length === 0) {
       ctx.addIssue({ code: "custom", path: ["images"], message: "Add at least one photograph before publishing" });
     }

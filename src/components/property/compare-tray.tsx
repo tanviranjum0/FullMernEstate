@@ -16,6 +16,7 @@ export function CompareTray() {
     <div
       role="region"
       aria-label="Comparison"
+      data-bottom-bar
       className="fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 animate-fade-up items-center gap-3 rounded-sm bg-ink-900 py-2 pr-2 pl-4 text-ivory shadow-float sm:bottom-6"
     >
       <Scale aria-hidden strokeWidth={1.5} className="size-4" />

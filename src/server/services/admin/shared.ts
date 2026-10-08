@@ -20,6 +20,33 @@ export async function uniqueSlug<T>(
   throw new Error("Could not allocate a unique slug");
 }
 
+function withoutUndefined(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(withoutUndefined);
+  if (value !== null && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, member]) => member !== undefined)
+        .map(([key, member]) => [key, withoutUndefined(member)]),
+    );
+  }
+  return value;
+}
+
+/**
+ * Builds an update that replaces an editor-owned document: top-level fields that are `undefined`
+ * are removed and everything else is set. Nested objects are replaced as a whole, so their
+ * `undefined` members drop out too, and `$set`/`$unset` never target overlapping paths.
+ */
+export function replaceFields(document: Record<string, unknown>) {
+  const $set: Record<string, unknown> = {};
+  const $unset: Record<string, 1> = {};
+  for (const [key, value] of Object.entries(document)) {
+    if (value === undefined) $unset[key] = 1;
+    else $set[key] = withoutUndefined(value);
+  }
+  return Object.keys($unset).length ? { $set, $unset } : { $set };
+}
+
 export function storageKeysOf(images: { storageKey?: string | null }[] | undefined | null): Set<string> {
   return new Set((images ?? []).map((image) => image.storageKey).filter((key): key is string => Boolean(key)));
 }

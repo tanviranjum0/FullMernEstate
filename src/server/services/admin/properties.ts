@@ -13,7 +13,7 @@ import { LocationModel } from "@/server/models/location";
 import { PropertyModel, type PropertyRecord } from "@/server/models/property";
 import { FavoriteModel, RecentViewModel } from "@/server/models/user-data";
 import { recordAudit } from "@/server/services/audit";
-import { AdminActionError, storageKeysOf, uniqueSlug } from "./shared";
+import { AdminActionError, replaceFields, storageKeysOf, uniqueSlug } from "./shared";
 
 function invalidate(...slugs: string[]) {
   updateTag(cacheTags.properties);
@@ -135,15 +135,11 @@ export async function saveProperty(actor: CurrentUser, id: string | null, input:
 
   let saved: PropertyRecord;
   if (existing) {
-    const unset: Record<string, 1> = {};
-    if (!location.geo) unset["location.geo"] = 1;
-    if (document.price.previousAmount === undefined) unset["price.previousAmount"] = 1;
-    if (!agent) unset.agent = 1;
-    saved = (await PropertyModel.findByIdAndUpdate(
-      id,
-      { $set: document, ...(Object.keys(unset).length ? { $unset: unset } : {}) },
-      { returnDocument: "after", runValidators: true, lean: true },
-    ))!;
+    saved = (await PropertyModel.findByIdAndUpdate(id, replaceFields(document), {
+      returnDocument: "after",
+      runValidators: true,
+      lean: true,
+    }))!;
   } else {
     saved = (await PropertyModel.create({ ...document, createdBy: actor.id })).toObject();
   }
