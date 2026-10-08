@@ -6,6 +6,8 @@ import type { SiteSettings } from "@/server/dto";
 /** Bundled photograph used until an administrator uploads a hero image in site settings. */
 const DEFAULT_HERO_IMAGE = {
   src: "/images/hero/coastal-villa/w2560.webp",
+  width: 2560,
+  height: 989,
   alt: "Stone-and-glass villa on a hillside above a calm bay at sunset",
   blurDataURL:
     "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADwAQCdASoQAAYAA4BaJZQC7AEemXIfagAA4n38GpaanduA/rjV/amjSmtKZulrc0T/yCxc3Tp4GoR0AAA=",
@@ -20,6 +22,9 @@ export function HomeHero({
 }) {
   const headline = hero.headline || "Exceptional homes, thoughtfully represented";
   const image = hero.image ?? DEFAULT_HERO_IMAGE;
+  // The hero fills the full screen height with object-cover, so on tall screens a wide photo is
+  // drawn wider than the viewport. Size the request for whichever dimension drives the crop.
+  const coverWidth = Math.ceil((image.width / image.height) * 100);
   return (
     <section
       aria-labelledby="hero-heading"
@@ -45,7 +50,7 @@ export function HomeHero({
           fill
           loading="eager"
           fetchPriority="high"
-          sizes="100vw"
+          sizes={`max(100vw, ${coverWidth}vh)`}
           quality={80}
           placeholder={image.blurDataURL ? "blur" : "empty"}
           blurDataURL={image.blurDataURL || undefined}
@@ -53,7 +58,7 @@ export function HomeHero({
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgb(15_14_13/0.55)_0%,rgb(15_14_13/0.1)_35%,rgb(15_14_13/0.25)_60%,rgb(15_14_13/0.82)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgb(15_14_13/0.62)_0%,rgb(15_14_13/0.55)_40%,rgb(15_14_13/0.6)_70%,rgb(15_14_13/0.85)_100%)]"
         />
       </div>
 

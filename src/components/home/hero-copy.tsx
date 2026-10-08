@@ -15,7 +15,7 @@ export function HeroCopy({
   return (
     <div className="max-w-5xl">
       {eyebrow ? (
-        <p className="eyebrow mb-6 flex animate-fade-up items-center gap-3 text-ivory/80 [animation-delay:150ms]">
+        <p className="eyebrow mb-6 flex animate-fade-up items-center gap-3 text-ivory [animation-delay:150ms]">
           <span aria-hidden className="h-px w-10 bg-ivory/60" />
           {eyebrow}
         </p>
@@ -37,7 +37,7 @@ export function HeroCopy({
         ))}
       </h1>
       {subheadline ? (
-        <p className="mt-6 max-w-xl animate-fade-up text-lead text-ivory/85 [animation-delay:550ms]">
+        <p className="mt-6 max-w-xl animate-fade-up text-lead text-ivory [animation-delay:550ms]">
           {subheadline}
         </p>
       ) : null}

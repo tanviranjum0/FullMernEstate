@@ -77,7 +77,7 @@ export function HeroSearch({ locations }: { locations: LocationOption[] }) {
               "rounded-xs px-4 py-2 text-[0.7rem] font-semibold tracking-[0.16em] uppercase transition-colors duration-300",
               mode === tab.value
                 ? "bg-ivory text-ink-900"
-                : "text-ivory/80 hover:bg-ivory/10 hover:text-ivory",
+                : "text-ivory/90 hover:bg-ivory/10 hover:text-ivory",
             )}
           >
             {tab.label}
