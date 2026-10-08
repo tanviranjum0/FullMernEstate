@@ -1,6 +1,17 @@
+/**
+ * Turns "example.com", "https://example.com/" or "localhost:3000" into a bare origin such as
+ * "https://example.com", so a URL entered without its scheme cannot break metadata or auth.
+ */
+export function normalizeOrigin(value: string): string {
+  const trimmed = value.trim().replace(/\/+$/, "");
+  const hasScheme = /^[a-z][a-z\d+.-]*:\/\//i.test(trimmed);
+  const isLocal = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(trimmed);
+  return new URL(hasScheme ? trimmed : `${isLocal ? "http" : "https"}://${trimmed}`).origin;
+}
+
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/+$/, "");
+  if (explicit) return normalizeOrigin(explicit);
   const vercelProduction = process.env.VERCEL_PROJECT_PRODUCTION_URL;
   if (vercelProduction) return `https://${vercelProduction}`;
   return "http://localhost:3000";

@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { normalizeOrigin } from "@/config/site";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -8,11 +9,23 @@ const serverEnvSchema = z
     MONGODB_URI: z
       .string()
       .min(1, "MONGODB_URI is required (MongoDB connection string including the database name)")
-      .regex(/^mongodb(\+srv)?:\/\//, "MONGODB_URI must start with mongodb:// or mongodb+srv://"),
+      .regex(/^mongodb(\+srv)?:\/\//, "MONGODB_URI must start with mongodb:// or mongodb+srv://")
+      // Without a database name the driver silently falls back to a database called "test".
+      .regex(
+        /^mongodb(\+srv)?:\/\/[^/]+\/[^/?]+/,
+        "MONGODB_URI must include the database name, e.g. …mongodb.net/tanvirdev_property?retryWrites=true",
+      ),
     BETTER_AUTH_SECRET: z
       .string()
       .min(32, "BETTER_AUTH_SECRET must be at least 32 characters (use `openssl rand -base64 48`)"),
-    BETTER_AUTH_URL: z.url().optional(),
+    BETTER_AUTH_URL: z.preprocess((value) => {
+      if (typeof value !== "string" || !value.trim()) return undefined;
+      try {
+        return normalizeOrigin(value);
+      } catch {
+        return value; // left as-is so validation reports it
+      }
+    }, z.url().optional()),
     BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
     MEDIA_STORAGE: z.enum(["blob", "local"]).optional(),
     RESEND_API_KEY: z.string().min(1).optional(),
