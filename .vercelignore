@@ -1,0 +1,16 @@
+# Never upload secrets or local data when deploying from a working copy with the Vercel CLI.
+.env*
+!.env.example
+.admin-credentials*
+*.credentials.local
+.data/
+
+# Local tooling and test artefacts
+node_modules/
+.next/
+.git/
+.vercel/
+test-results/
+playwright-report/
+tests/e2e/.auth/
+*.log
