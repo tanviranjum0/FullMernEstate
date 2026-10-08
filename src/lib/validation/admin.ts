@@ -159,6 +159,14 @@ export const propertyInput = z
         message: "Enter the price — it is still used for search when shown as “on request”",
       });
     }
+    const missingAlt = data.images.findIndex((image) => !image.alt.trim());
+    if (data.status === "published" && missingAlt >= 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["images"],
+        message: `Describe photograph ${missingAlt + 1} (alt text) before publishing`,
+      });
+    }
     if (data.status === "published" && data.images.length === 0) {
       ctx.addIssue({
         code: "custom",

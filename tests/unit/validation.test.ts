@@ -91,6 +91,10 @@ describe("propertyInput", () => {
     expect(issues({ ...valid, price: { amount: 0, currency: "BDT" } })).toContain("price.amount");
     expect(issues({ ...valid, status: "published" })).toContain("images");
     expect(issues({ ...valid, status: "published", images: [image] })).toEqual([]);
+    expect(
+      issues({ ...valid, status: "published", images: [image, { ...image, alt: " " }] }),
+    ).toEqual(["images"]);
+    expect(issues({ ...valid, images: [{ ...image, alt: "" }] })).toEqual([]);
   });
 
   it("checks coordinates, previous price and slugs", () => {
