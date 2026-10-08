@@ -2,6 +2,13 @@
 
 Audit date: 2026-10-08. Audited commit: `5bb60a9` (branch `main`).
 
+> The legacy source has since been removed from the working tree. It is preserved in git history
+> under `legacy/` at commit `d2190ce` (tag `legacy-app`):
+>
+> ```bash
+> git show legacy-app:legacy/back/app.js
+> ```
+
 This document records what the legacy "MERN Estate" application was, how it behaved when actually run, and why it is being replaced rather than refactored. Every security finding marked **verified** was reproduced against a locally running copy of the legacy server (MongoDB 8 in Docker, throwaway local secrets). Nothing was run against any production system.
 
 ## How the audit was performed
