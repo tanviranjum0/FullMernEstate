@@ -112,15 +112,36 @@ test("location guides, advisors and insights are reachable", async ({ page }) =>
 });
 
 test("crawlers get robots rules and a sitemap of public pages only", async ({ request }) => {
-  const robots = await (await request.get("/robots.txt")).text();
+  const robotsResponse = await request.get("/robots.txt");
+  expect(robotsResponse.status()).toBe(200);
+  const robots = await robotsResponse.text();
   expect(robots).toContain("Disallow: /admin");
   expect(robots).toContain("Sitemap:");
 
-  const sitemap = await (await request.get("/sitemap.xml")).text();
+  const sitemapUrl = robots.match(/^Sitemap:\s*(\S+)/m)?.[1];
+  expect(sitemapUrl).toBeTruthy();
+  if (!sitemapUrl) throw new Error("robots.txt does not declare a sitemap URL.");
+  const sitemapOrigin = new URL(sitemapUrl).origin;
+  const sitemapResponse = await request.get("/sitemap.xml");
+  expect(sitemapResponse.status()).toBe(200);
+  const sitemap = await sitemapResponse.text();
+  const urls = Array.from(sitemap.matchAll(/<loc>(.*?)<\/loc>/g), (match) => {
+    const url = match[1];
+    if (!url) throw new Error("Sitemap contains an empty <loc> entry.");
+    return url;
+  });
+
+  expect(urls.length).toBeGreaterThan(0);
+  expect(new Set(urls).size).toBe(urls.length);
+  expect(urls.every((url) => new URL(url).origin === sitemapOrigin)).toBe(true);
+  expect(urls).toContain(`${sitemapOrigin}/properties?listing=sale`);
+  expect(urls).toContain(`${sitemapOrigin}/properties?listing=rent`);
   expect(sitemap).toContain(`/properties/${LISTING.slug}</loc>`);
   expect(sitemap).toContain("/locations/dhaka</loc>");
   expect(sitemap).not.toContain("/admin");
   expect(sitemap).not.toContain("/account");
+  expect(sitemap).not.toContain("/sign-in");
+  expect(sitemap).not.toContain("/compare");
 });
 
 test("security headers are sent", async ({ request }) => {

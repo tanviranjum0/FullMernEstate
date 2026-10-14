@@ -9,12 +9,45 @@ export function normalizeOrigin(value: string): string {
   return new URL(hasScheme ? trimmed : `${isLocal ? "http" : "https"}://${trimmed}`).origin;
 }
 
-function resolveSiteUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return normalizeOrigin(explicit);
-  const vercelProduction = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercelProduction) return `https://${vercelProduction}`;
-  return "http://localhost:3000";
+export function resolveSiteUrl({
+  siteUrl,
+  vercelProductionUrl,
+  production,
+}: {
+  siteUrl?: string;
+  vercelProductionUrl?: string;
+  production: boolean;
+}): string {
+  const configured = siteUrl?.trim()
+    ? siteUrl
+    : vercelProductionUrl?.trim()
+      ? `https://${vercelProductionUrl}`
+      : undefined;
+
+  if (!configured) {
+    if (production) {
+      throw new Error(
+        "Set NEXT_PUBLIC_SITE_URL to the public HTTPS origin before building for production.",
+      );
+    }
+    return "http://localhost:3000";
+  }
+
+  const origin = normalizeOrigin(configured);
+  if (production) {
+    const { hostname, protocol } = new URL(origin);
+    const localHost =
+      hostname === "localhost" ||
+      hostname.endsWith(".localhost") ||
+      hostname === "127.0.0.1" ||
+      hostname === "[::1]";
+    if (protocol !== "https:" || localHost) {
+      throw new Error(
+        "The production site URL must be a public HTTPS origin; check NEXT_PUBLIC_SITE_URL.",
+      );
+    }
+  }
+  return origin;
 }
 
 export const siteConfig = {
@@ -23,7 +56,15 @@ export const siteConfig = {
   tagline: "Residences of distinction",
   description:
     "Curated luxury residences, penthouses and estates. Search exceptional homes, explore neighbourhoods, and arrange private viewings with dedicated advisors.",
-  url: resolveSiteUrl(),
+  // Client components import this shared config for other public values; resolve the URL only
+  // where server-rendered metadata, canonicals, robots or the sitemap actually need it.
+  get url() {
+    return resolveSiteUrl({
+      siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+      vercelProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+      production: process.env.NODE_ENV === "production",
+    });
+  },
   locale: "en",
   defaultCurrency: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY || "BDT",
   areaUnit: "sq ft",

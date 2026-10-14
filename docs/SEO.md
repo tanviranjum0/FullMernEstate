@@ -63,11 +63,24 @@
 
 ## After launch
 
-1. Set `NEXT_PUBLIC_SITE_URL` to the final domain and redeploy (canonicals and the sitemap are
-   built from it).
-2. Verify the domain in Google Search Console and Bing Webmaster Tools, then submit
-   `https://<domain>/sitemap.xml`.
-3. Use Search Console's Page indexing report to confirm filtered search URLs are excluded as
-   intended ("Excluded by 'noindex' tag").
-4. Write location guides and insights for the neighbourhoods you actually serve; they are the
-   main organic landing pages.
+1. Choose the canonical hostname (for example, `https://www.example.com`) and set
+   `NEXT_PUBLIC_SITE_URL` to that HTTPS origin without a path or trailing slash. It is inlined
+   during the build, so redeploy after changing it. Production builds fail rather than emitting
+   localhost or non-HTTPS canonical and sitemap URLs when no valid public origin is configured.
+   Vercel uses `VERCEL_PROJECT_PRODUCTION_URL` as a fallback when the explicit setting is absent.
+2. In your DNS provider, add the TXT record Google Search Console provides for a **Domain**
+   property. DNS is managed outside this application. Wait for the record to propagate, then
+   complete verification in Search Console. A Domain property covers both `www` and non-`www`
+   hostnames and their subdomains; keep the application's canonical URL pointed at the one
+   hostname you selected.
+3. On the deployed production hostname, open `/robots.txt` and `/sitemap.xml`. Confirm robots
+   allows public pages and references the sitemap, and that sitemap URLs use the chosen canonical
+   hostname. Preview deployments intentionally disallow crawling.
+4. In Search Console, open **Sitemaps** and submit `https://<canonical-hostname>/sitemap.xml`.
+   Use **URL Inspection** on the homepage and representative public pages to confirm Google can
+   fetch them and that their declared canonical matches the selected hostname.
+5. Monitor the Page indexing and Sitemaps reports. Filtered searches and private/authentication
+   pages are intentionally excluded; do not treat those exclusions as indexing failures.
+6. Replace demonstration listings and other sample content before asking search engines to index
+   the production site. Write location guides and insights for the neighbourhoods you actually
+   serve; they are the main organic landing pages.
